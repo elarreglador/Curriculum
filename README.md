@@ -5,19 +5,15 @@ Técnico con más de **15 años de experiencia** en atención al cliente, ventas
 
 ## Contacto
 <a href="https://www.linkedin.com/in/elarreglador/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Redes-LinkedIn.png" alt="Linkedin">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20LinkedIn.png" alt="Linkedin">
 </a>
 
 <a href="mailto:elarreglador@protonmail.com">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Redes-Correo.png" alt="Correo">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20Correo.png" alt="Correo">
 </a>
 
 <a href="http://82.223.50.169/wordpress/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Redes-Web.png" alt="Web">
-</a>
-
-<a href="https://github.com/elarreglador" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Redes-GitHub.png" alt="GitHub">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20Web.png" alt="Web">
 </a>
 
 ## Tecnologias
@@ -25,25 +21,28 @@ Técnico con más de **15 años de experiencia** en atención al cliente, ventas
 A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas destacadas.
 
 <a href="http://82.223.50.169/wordpress/index.php/tag/java/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Java.png" alt="JAVA">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Java.png" alt="JAVA">
 </a>
 <a href="http://82.223.50.169/wordpress/index.php/tag/git/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Git.png" alt="GIT">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Git.png" alt="GIT">
+</a>
+<a href="https://github.com/elarreglador" target="_blank">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GitHub.png" alt="GitHub">
 </a>
 <a href="http://82.223.50.169/wordpress/index.php/tag/HTML/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-HTML-CSS.png" alt="HTML/CSS">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20HTML-CSS.png" alt="HTML/CSS">
 </a>
 <a href="http://82.223.50.169/wordpress/index.php/tag/dart/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Dart.png" alt="DART">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Dart.png" alt="DART">
 </a>
 <a href="http://82.223.50.169/wordpress/index.php/tag/python/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Python.png" alt="PYTHON">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Python.png" alt="PYTHON">
 </a>
 <a href="http://82.223.50.169/wordpress/index.php/tag/linux/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-GNU-Linux.png" alt="GNU/Linux">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GNU-Linux.png" alt="GNU/Linux">
 </a>
 <a href="http://82.223.50.169/wordpress/index.php/tag/Apple/" target="_blank">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Apple.png" alt="APPLE">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Apple.png" alt="APPLE">
 </a>
 
 ## Experiencia Laboral
