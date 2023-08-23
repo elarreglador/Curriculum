@@ -136,6 +136,18 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 </details>
 
 <details>
+<summary>📚 <strong>Curso: GIT y GITHUB desde cero</strong> - Agosto 2023</summary>
+- Curso alojado en Youtube [5 horas]<a href="https://www.youtube.com/watch?v=3GymExBkKjE&ab_channel=MoureDevbyBraisMoure"> Link </a>.<br>
+- Apuntes del curso en formato PDF. <a href="https://drive.google.com/file/d/1_ehEDCoImk9uIjMP1byfesT6u9jE-g2f/view?usp=drive_link"> Link </a>.
+</details>
+
+<details>
+<summary>📚 <strong>Curso: Dart desde cero</strong> - Agosto 2023</summary>
+- Curso alojado en Youtube [1 hora]<a href="https://www.youtube.com/watch?v=5tTDztEQzQQ&ab_channel=MoureDevbyBraisMoure"> Link </a>.<br>
+- Apuntes del curso en formato PDF. <a href="https://drive.google.com/file/d/1LXM5__m8q51Hnt7Q3t9A2swaKdB5ngTe/view?usp=drive_link"> Link </a>.
+</details>
+
+<details>
 <summary>👨‍🏫 <strong>Tutor de Prácticas en Empresa</strong> - Marzo 2017 - Junio 2017</summary>
 - Responsable del aprendizaje y supervisión de tareas de los alumnos en la empresa.
 </details>
