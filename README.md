@@ -136,8 +136,14 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 </details>
 
 <details>
+<summary>📚 <strong>Curso: Flutter nivel facil: aprende a desarrollar tu prrimera App</strong> - Agosto 2023</summary>
+- Curso alojado en Udemy [2 horas]<a href="https://www.youtube.com/watch?v=3GymExBkKjE&ab_channel=MoureDevbyBraisMoure"> Link </a>.<br>
+- Apuntes del curso en formato PDF. <a href="https://drive.google.com/file/d/19uG57_OQJg2c_dISVMAJAweii-y2siMq/view?usp=sharing"> Link </a>.
+</details>
+
+<details>
 <summary>📚 <strong>Curso: GIT y GITHUB desde cero</strong> - Agosto 2023</summary>
-- Curso alojado en Youtube [5 horas]<a href="https://www.youtube.com/watch?v=3GymExBkKjE&ab_channel=MoureDevbyBraisMoure"> Link </a>.<br>
+- Curso alojado en Youtube [5 horas]<a href="https://www.udemy.com/course/flutter-nivel-facil-aprende-a-desarrollar-tu-primera-app/learn/lecture/23056588?start=1#overview"> Link </a>.<br>
 - Apuntes del curso en formato PDF. <a href="https://drive.google.com/file/d/1_ehEDCoImk9uIjMP1byfesT6u9jE-g2f/view?usp=drive_link"> Link </a>.
 </details>
 
