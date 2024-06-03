@@ -38,7 +38,7 @@ A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas
 
 ## Experiencia Laboral
 
-<details>
+<details open>
 <summary>💻 <strong>Técnico certificado Apple</strong> - Desde febrero de 2019</summary><br>
   
   QUARTCOM TELECOMUNICACIONES S.L.U. es una empresa reparadora de hardware informático, con atención al publico en Alicante,
