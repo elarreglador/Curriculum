@@ -127,6 +127,12 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 </details>
 
 <details>
+<summary>📚 <strong>Curso: Curso Crea una REST API desde Cero con NodeJS y AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
+- Curso alojado en Udemy [4 horas]<a href="https://www.udemy.com/course/curso-crea-una-rest-api-desde-cero-con-nodejs-y-adonisjs/"> Link </a>.<br>
+- Apuntes del curso. <a href="https://github.com/morenolfd/CursoAdonisJS_res-api"> Link </a>.
+</details>
+
+<details>
 <summary>📚 <strong>Curso: Flutter - Móvil: De cero a experto</strong> - Marzo 2024 - Actualidad </summary>
 - Curso alojado en devtalles [50 horas]<a href="https://cursos.devtalles.com/courses/flutter-movil-cero-a-experto"> Link </a>.<br>
 - Apuntes del curso. <a href="https://github.com/elarreglador?tab=repositories&q=flutter_movil&type=&language=&sort="> Link </a>.
