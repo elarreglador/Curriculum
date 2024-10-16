@@ -129,6 +129,7 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 <details>
 <summary>📚 <strong>Curso: Curso de AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
 - Curso alojado en Youtube [2 horas]<a href="https://www.youtube.com/watch?v=WNuieHWH4ws&list=PLragRJz4OWvoqxHjki9Orkwk7_lUVHbpg&ab_channel=ConejosProgramadores"> Link </a>.<br>
+- Anotaciones realizadas  <a href="https://github.com/elarreglador/Curso_de_AdonisJS"> Link </a>.<br>
 </details>
 
 <details>
