@@ -50,7 +50,7 @@ Murcia, Palma, Madrid, Albacete y Valencia donde tiene además su centro de oper
 </details>
 
 <details>
-<summary>🛠️ <strong>Propietario y Técnico</strong> - Septiembre 2005 - Enero 2019</summary><br>
+<summary>💻 <strong>Propietario y Técnico</strong> - Septiembre 2005 - Enero 2019</summary><br>
 
   MB SISTEMAS INFORMÁTICOS, negocio propio de reparación y venta de productos electrónicos e informáticos; ordenadores, telefonía,
 consolas, etc.
