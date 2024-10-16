@@ -127,6 +127,11 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 </details>
 
 <details>
+<summary>📚 <strong>Curso: Curso de AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
+- Curso alojado en Youtube [2 horas]<a href="https://www.youtube.com/watch?v=WNuieHWH4ws&list=PLragRJz4OWvoqxHjki9Orkwk7_lUVHbpg&ab_channel=ConejosProgramadores"> Link </a>.<br>
+</details>
+
+<details>
 <summary>📚 <strong>Curso: Curso Crea una REST API desde Cero con NodeJS y AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
 - Curso alojado en Udemy [4 horas]<a href="https://www.udemy.com/course/curso-crea-una-rest-api-desde-cero-con-nodejs-y-adonisjs/"> Link </a>.<br>
 - Apuntes del curso. <a href="https://github.com/morenolfd/CursoAdonisJS_res-api"> Link </a>.
