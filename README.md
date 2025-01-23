@@ -22,18 +22,28 @@ A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas
 
 <div style="display: flex;">
 <img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Java.png" alt="JAVA">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Git.png" alt="GIT">
 <img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-HTML-CSS.png" alt="HTML/CSS">
 <img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Dart.png" alt="DART">
 <img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Python.png" alt="PYTHON">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-GNU-Linux.png" alt="GNU/Linux">
-<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Apple.png" alt="APPLE">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Bash.png" alt="Bash">
 <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20C.png" alt="C">
+  
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20MySQL.png" alt="MySQL">
+
 <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Electron.png" alt="Electron">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GitHub.png" alt="GitHub">
 <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20NodeJS.png" alt="NodeJS">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Flutter.png" alt="Flutter">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20JetpackCompose.png" alt="Jetpack Compose">
+
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Android%20Studio.png" alt="Android studio">
 <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Visual%20Studio%20Code.png" alt="Visual Studio Code">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Eclipse.png" alt="Eclipse IDE">
+
+<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Git.png" alt="GIT">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GitHub.png" alt="GitHub">
+
+<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-Apple.png" alt="APPLE">
+<img src="http://82.223.50.169/wordpress/wp-content/uploads/2023/08/Tecnologias-GNU-Linux.png" alt="GNU/Linux">
+<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Bash.png" alt="Bash">
 </div>
 
 ## Experiencia Laboral
