@@ -47,12 +47,19 @@ A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas
 </div>
 
 ## Experiencia Laboral
-
 <details open>
-<summary>💻 <strong>Técnico certificado Apple</strong> - Desde febrero de 2019</summary><br>
+<summary>🪄 <strong>Formacion en Centro de Trabajo (FCT)</strong> - marzo 2025 a actualidad</summary><br>
   
-  QUARTCOM TELECOMUNICACIONES S.L.U. es una empresa reparadora de hardware informático, con atención al publico en Alicante,
-Murcia, Palma, Madrid, Albacete y Valencia donde tiene además su centro de operaciones.
+  Living Properties S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
+  
+- Instalacion de servidores kubernetes
+- programacion dispositivos IOT
+</details>
+
+<details>
+<summary>💻 <strong>Técnico certificado Apple</strong> - febrero 2019 - marzo 2025</summary><br>
+  
+  QUARTCOM TELECOMUNICACIONES S.L.U. es una empresa reparadora de hardware informático, con atención al publico en Alicante, Murcia, Palma, Madrid, Albacete y Valencia donde tiene además su centro de operaciones.
   
 - Reparación de equipos MacOS portátiles y sobremesa.
 - Manejo de averías de hardware y reemplazo de piezas.
