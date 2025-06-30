@@ -143,7 +143,7 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 <summary>🎓 <strong>C.F.S. Desarrollo de Aplicaciones Multiplataforma (D.A.M.)</strong> - 2020 - junio 2025 </summary>
 - Formación compaginada con empleo<br>
 - Ciclo formativo superior en Desarrollo de Aplicaciones Informáticas en <a href="https://portal.edu.gva.es/iesabastos/es/centre/">IES Abastos</a>.<br>
-- Enfoque en desarrollo multiplataforma.
+- Notas disponibles en <a href="https://github.com/elarreglador/Curriculum/blob/main/Certif_academic_DAM.pdf">certificado academico</a>.
 </details>
 
 <details>
