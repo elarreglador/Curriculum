@@ -1,7 +1,8 @@
 # David Moreno Bolívar
 #### Técnico Informático
 
-Técnico con más de **15 años de experiencia** en atención al cliente, ventas, asistencia y reparación de productos. Certificado para la reparación de productos Apple. Conocimientos en electricidad, electrónica, CNC, impresión 3D, etc. Actualmente cursando DAM (Desarrollo de Aplicaciones Multiplataforma).
+Técnico informático con más de 15 años de experiencia en hardware, atención al cliente y soporte técnico. Enfocado en el desarrollo de aplicaciones sistemas embebidos, con experiencia en programación de dispositivos IoT, interfaces gráficas y gestión de servidores. Perfil híbrido con conocimientos sólidos en electrónica, reparación, y programación.
+
 
 ## Contacto
 <a href="https://www.linkedin.com/in/elarreglador/" target="_blank">
@@ -48,12 +49,13 @@ A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas
 
 ## Experiencia Laboral
 <details open>
-<summary>🪄 <strong>Formacion en Centro de Trabajo (FCT)</strong> - marzo 2025 a actualidad</summary><br>
+<summary>📲 <strong>Programador entorno embebido IOT</strong> - Formacion en Centro de Trabajo o FCT: marzo 2025 - junio 2025</summary><br>
   
-  Living Properties S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
+  LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
   
-- Instalacion de servidores kubernetes
-- programacion dispositivos IOT
+- Diseño e implementación de logica y entorno gráfico en pantalla táctil (espressif esp32-s3) para gestion de perifericos Zigbee/MQTT.<br>
+- Programación de APP para apertura remota de puerta de acceso e instalacion de hardware Zigbee/MQTT
+- Instalacion de impresora y primeras tareas de impresion 3D en resina.
 </details>
 
 <details>
@@ -137,9 +139,10 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 
 ## Formación
 
-<details>
-<summary>🎓 <strong>C.F.S. Desarrollo de Aplicaciones Multiplataforma (D.A.M.)</strong> - Actualidad</summary>
-- Ciclo formativo superior en Desarrollo de Aplicaciones Informáticas.
+<details open>
+<summary>🎓 <strong>C.F.S. Desarrollo de Aplicaciones Multiplataforma (D.A.M.)</strong> - 2020 - junio 2025 </summary>
+- Formación compaginada con empleo<br>
+- Ciclo formativo superior en Desarrollo de Aplicaciones Informáticas en <a href="https://portal.edu.gva.es/iesabastos/es/centre/">IES Abastos</a>.<br>
 - Enfoque en desarrollo multiplataforma.
 </details>
 
