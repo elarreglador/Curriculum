@@ -13,10 +13,6 @@ Técnico informático con más de 15 años de experiencia en hardware, atención
 <img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20Correo.png" alt="Correo">
 </a>
 
-<a href="http://82.223.50.169/wordpress/" target="_blank">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20Web.png" alt="Web">
-</a>
-
 ## Tecnologias
 
 A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas destacadas.
