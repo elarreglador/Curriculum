@@ -135,6 +135,13 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 
 ## Formación
 
+<details>
+<summary>📚 <strong>Hardware hacking desde 0: Pirate bus</strong> - Enero 2026 </summary>
+- Taller intensivo telepresencial [8 horas].<br>
+- <a href="https://github.com/elarreglador/Curso-pirate-Bus/tree/main"> Apuntes del curso</a><br>
+- <a href="https://github.com/elarreglador/Curso-pirate-Bus/blob/main/Certificacion/424a688e-e71e-434a-9515-26bd74dce80c.pdf"> Certificacion </a> y <a href="https://hardwarehacking.es/validate/?formacion=Hardware_Hacking_Bus_Piratev6_2026_01_24&dni=52659548J&codigo=8780bbaafb6811f083d2a0a4c54671c6879b1b34fb6811f0a38ba0a4c54671c6"> validacion </a>
+</details>
+
 <details open>
 <summary>🎓 <strong>C.F.S. Desarrollo de Aplicaciones Multiplataforma (D.A.M.)</strong> - 2020 - junio 2025 </summary>
 - Formación compaginada con empleo<br>
@@ -156,7 +163,7 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 </details>
 
 <details>
-<summary>📚 <strong>Curso: Flutter - Móvil: De cero a experto</strong> - Marzo 2024 - Actualidad </summary>
+<summary>📚 <strong>Curso: Flutter - Móvil: De cero a experto</strong> - Marzo 2024 - Noviembre 2025 </summary>
 - Curso alojado en devtalles [50 horas]<a href="https://cursos.devtalles.com/courses/flutter-movil-cero-a-experto"> Link </a>.<br>
 - Apuntes del curso. <a href="https://github.com/elarreglador?tab=repositories&q=flutter_movil&type=&language=&sort="> Link </a>.
 </details>
