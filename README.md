@@ -50,8 +50,9 @@ A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas
   LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
   
 - Diseño e implementación de logica y entorno gráfico en pantalla táctil (espressif esp32-s3) para gestion de perifericos Zigbee/MQTT.<br>
-- Programación de APP para apertura remota de puerta de acceso e instalacion de hardware Zigbee/MQTT
-- Instalacion de impresora y primeras tareas de impresion 3D en resina.
+- Programación de APP para apertura remota de puerta de acceso e instalacion de hardware Zigbee/MQTT.<br>
+- Instalacion de hardware de control de acceso.<br>
+- Instalacion de impresora y primeras tareas de impresion 3D en resina.<br>
 </details>
 
 <details>
