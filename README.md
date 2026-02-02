@@ -190,7 +190,7 @@ Bootcamp dedicado exclusivamente al hardware hacking.<br>
 - Formación compaginada con empleo<br>
 - Ciclo formativo superior en Desarrollo de Aplicaciones Informáticas en <a href="https://portal.edu.gva.es/iesabastos/es/centre/">IES Abastos</a>.<br>
 - Trabajo de fin de ciclo (TFC): <a href="https://github.com/elarreglador/TFC-Panpaceli">Panpaceli</a>.<br>
-- Notas disponibles en <a href="https://github.com/elarreglador/Curriculum/blob/main/Certif_academic_DAM.pdf">certificado academico</a>.
+- Notas disponibles en <a href="https://github.com/elarreglador/Curriculum/blob/main/certificados/Certif_academic_DAM.pdf">certificado academico</a>.
 </details>
 
 <details>
