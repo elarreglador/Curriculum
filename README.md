@@ -142,6 +142,49 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 - <a href="https://github.com/elarreglador/Curso-pirate-Bus/blob/main/Certificacion/424a688e-e71e-434a-9515-26bd74dce80c.pdf"> Certificacion </a> y <a href="https://hardwarehacking.es/validate/?formacion=Hardware_Hacking_Bus_Piratev6_2026_01_24&dni=52659548J&codigo=8780bbaafb6811f083d2a0a4c54671c6879b1b34fb6811f0a38ba0a4c54671c6"> validacion </a>
 </details>
 
+<details>
+<summary>📚 <strong>Hardware Hacking Bootcamp</strong> - 6 y 7 de Diciembre 2025 </summary>
+Bootcamp dedicado exclusivamente al hardware hacking.<br>
+<br>
+- <b>Hardware Hacking desde 0 con Bus Pirate v6</b> - [4 horas] David Reguera García “Dreg”<br>
+    * Integridad de señal: ringing, crosstalk, jitter, capacitancia, TDR demo, uso de sonda...<br>
+    * Bus Pirate v6<br>
+    * Analizador logico<br>
+    * UART<br>
+    * I2C EEPROM<br>
+    * SPI FLASH<br>
+    * etc.<br>
+  <br>
+- <b>Glitching, Side Channel, Power Analysis</b> - [3.5 horas] Francisco M Alvarez “fmawic”<br>
+    Introducción a los ataques de canal paralelo<br>
+    * Modos y configuraciones de ataques en función de su objetivo<br>
+    * Análisis de potencia<br>
+    * Fallo de computación por pulso de tensión<br>
+    * Fallo de computación por control de reloj<br>
+    * Ejemplo de ataque por pulso de tensión (práctico)<br>
+    * Ejemplo de ataque por control de reloj (práctico)<br>
+    * Ejemplo de ataque análisis de ponencia (explicación)<br>
+  <br>
+- <b>Soldadura & Desoldadura desde 0</b> - [4 horas] Cristina Casas Sastre<br>
+    * Soldadura, Desoldadura: SMD, Through-hole, uso de cautin, flux, estación de aire caliente, malla de desoldadura, estaño...<br>
+  <br>
+- <b>Offensive Bluetooth</b> - [4.5 horas] Anton Vázquez Blanco<br>
+    * Bluetooth<br>
+    * Arquitectura<br>
+    * Introducción a HCI (paquetes)<br>
+    * Capa física de Bluetooth (canales)<br>
+    * Introducción a los advertisements<br>
+    * Autenticación<br>
+    * Etc.<br>
+  <br>
+- <b>Introducción a Hardware Hacking con SDR + TEMPEST</b> - [4.5 horas] Gonzalo Carracedo “BatchDrake”<br>
+    Los ataques TEMPEST explotan radiaciones electromagnéticas, acústicas u ópticas que emiten los equipos, tras procesarlas, se reconstruye información sensible (p. ej., texto en pantalla, pulsaciones de teclado o claves).<br>
+    * Qué es SDR y para qué sirve<br>
+    * El espectro electromagnético<br>
+    * Analizando bandas ICM con SigDigger<br>
+    * Breve introducción a TEMPEST<br>
+</details>
+
 <details open>
 <summary>🎓 <strong>C.F.S. Desarrollo de Aplicaciones Multiplataforma (D.A.M.)</strong> - 2020 - junio 2025 </summary>
 - Formación compaginada con empleo<br>
