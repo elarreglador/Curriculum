@@ -139,12 +139,13 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 <summary>📚 <strong>Hardware hacking desde 0: Pirate bus</strong> - Enero 2026 </summary>
 - Taller intensivo telepresencial [8 horas].<br>
 - <a href="https://github.com/elarreglador/Curso-pirate-Bus/tree/main"> Apuntes del curso</a><br>
-- <a href="https://github.com/elarreglador/Curso-pirate-Bus/blob/main/Certificacion/424a688e-e71e-434a-9515-26bd74dce80c.pdf"> Certificacion </a> y <a href="https://hardwarehacking.es/validate/?formacion=Hardware_Hacking_Bus_Piratev6_2026_01_24&dni=52659548J&codigo=8780bbaafb6811f083d2a0a4c54671c6879b1b34fb6811f0a38ba0a4c54671c6"> validacion </a>
+- <a href="https://github.com/elarreglador/Curriculum/blob/main/certificados/Hardware_hacking_2026ener.pdf"> Certificacion </a> y <a href="https://hardwarehacking.es/validate/?formacion=Hardware_Hacking_Bus_Piratev6_2026_01_24&dni=52659548J&codigo=8780bbaafb6811f083d2a0a4c54671c6879b1b34fb6811f0a38ba0a4c54671c6"> validacion </a>
 </details>
 
 <details>
 <summary>📚 <strong>Hardware Hacking Bootcamp</strong> - 6 y 7 de Diciembre 2025 </summary>
 Bootcamp dedicado exclusivamente al hardware hacking.<br>
+- <a href="https://github.com/elarreglador/Curriculum/blob/main/certificados/Hardware_hacking_2025dic.pdf"> Certificacion </a> y <a href="https://hardwarehacking.es/validate/?formacion=Bootcamp_Madrid_2025_12_06&dni=52659548J&codigo=0339d86bd6bf11f094e2a0a4c54671c903cd5a9fd6bf11f08946a0a4c54671c9"> validacion </a>
 <br>
 - <b>Hardware Hacking desde 0 con Bus Pirate v6</b> - [4 horas] David Reguera García “Dreg”<br>
     * Integridad de señal: ringing, crosstalk, jitter, capacitancia, TDR demo, uso de sonda...<br>
