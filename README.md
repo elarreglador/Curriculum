@@ -46,14 +46,16 @@ A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas
 ## Experiencia Laboral
 
 <details open>
-<summary>📲 <strong>CTO de Infraestructura Física y Digital</strong> - Agosto 2025 - actualidad</summary>
+<summary>🏨 <strong>CTO de Infraestructura Física y Digital</strong> - Agosto 2025 - actualidad</summary><br>
 
-- Desarrollo y mantenimiento de soluciones tecnológicas para gestión automatizada de espacios inteligentes, enfocadas en la integración de servicios de red y control de dispositivos en tiempo real.
-- Configuración y despliegue equipos informaticos y redes.
-- Despliegue, comunicacion y logica de control de acceso de clientes y empleados.
-- Administración de sistemas linux, optimizando el entorno de ejecución y la resolución problemas de software crítico.
-- Implantacion de redes zigbee de dispositivos domoticos para su gestion automatizada y/o manual.
-- Creacion, mantenimiento y resiliencia de logica de negocio centralizada.
+LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
+
+- Desarrollo y mantenimiento de soluciones tecnológicas para gestión automatizada de espacios inteligentes, enfocadas en la integración de servicios de red y control de dispositivos en tiempo real.<br>
+- Configuración y despliegue equipos informaticos y redes.<br>
+- Despliegue, comunicacion y logica de control de acceso de clientes y empleados.<br>
+- Administración de sistemas linux, optimizando el entorno de ejecución y la resolución problemas de software crítico.<br>
+- Implantacion de redes zigbee de dispositivos domoticos para su gestion automatizada y/o manual.<br>
+- Creacion, mantenimiento y resiliencia de logica de negocio centralizada.<br>
 </details>
 
 <details>
