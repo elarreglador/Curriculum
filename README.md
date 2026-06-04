@@ -1,52 +1,72 @@
 # David Moreno Bolívar
-#### Técnico Informático
+## Perfil Profesional:
+Especialista con perfil híbrido, formación en electricidad (FP2) y programacion (DAM). Cuento con más de 20 años de experiencia en gestión de hardware, soporte técnico avanzado y atención al cliente. 
 
-Técnico informático con más de 15 años de experiencia en hardware, atención al cliente y soporte técnico. Enfocado en el desarrollo de aplicaciones sistemas embebidos, con experiencia en programación de dispositivos IoT, interfaces gráficas y gestión de servidores. Perfil híbrido con conocimientos sólidos en electrónica, reparación, y programación.
+Mi trayectoria ha evolucionado hacia la arquitectura de soluciones IoT completas y la ingeniería de fiabilidad de sistemas, trabajando desde el diseño y cableado de cuadros eléctricos de control hasta la orquestación de clusters de alta disponibilidad sobre entornos virtualizados. Capaz de conectar el mundo físico con el digital mediante la programación de sistemas embebidos y la integración de redes de automatización.
 
 
 ## Contacto
-<a href="https://www.linkedin.com/in/elarreglador/" target="_blank">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20LinkedIn.png" alt="Linkedin">
-</a>
 
-<a href="mailto:elarreglador@protonmail.com">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20Correo.png" alt="Correo">
-</a>
+<p align="left">
+  <a href="https://www.linkedin.com/in/elarreglador/" target="_blank">
+    <img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20LinkedIn.png" alt="LinkedIn" height="40">
+  </a>
+  <a href="mailto:elarreglador@protonmail.com">
+    <img src="https://github.com/elarreglador/rotulos/blob/main/Redes%20Correo.png" alt="Correo" height="40">
+  </a>
+</p>
 
-## Tecnologias
+---
 
-A lo largo de este tiempo he estudiado diferentes tecnologias, estas son las mas destacadas.
+## Tecnologías e Infraestructura
 
-<div style="display: flex;">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Java.png" alt="JAVA">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20HTML-CSS.png" alt="HTML/CSS">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Dart.png" alt="DART">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Python.png" alt="PYTHON">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20C.png" alt="C">
-  
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20MySQL.png" alt="MySQL">
+A lo largo de mi trayectoria he dominado diversas tecnologías, especializándome en la convergencia entre el desarrollo de software, la administración de sistemas y el control de hardware.
 
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Electron.png" alt="Electron">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20NodeJS.png" alt="NodeJS">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Flutter.png" alt="Flutter">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20JetpackCompose.png" alt="Jetpack Compose">
+### Sistemas, Cloud e Infraestructura (SRE)
+<p align="left">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GNU-Linux.png" alt="GNU/Linux">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Bash.png" alt="Bash">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20K8s.png" alt="Kubernetes">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20lxc.png" alt="LXC">
+</p>
 
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Android%20Studio.png" alt="Android studio">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Visual%20Studio%20Code.png" alt="Visual Studio Code">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Eclipse.png" alt="Eclipse IDE">
+### IoT, Automatización y Hardware
+<p align="left">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Node%20RED.png" alt="Node RED">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Zigbee.png" alt="Zigbee">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20MQTT.png" alt="MQTT">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20ESP32.png" alt="ESP32">
+</p>
 
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Git.png" alt="GIT">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GitHub.png" alt="GitHub">
+### Desarrollo de Software y Lenguajes (DAM)
+<p align="left">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20C.png" alt="C">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Python.png" alt="Python">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Java.png" alt="Java">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20MySQL.png" alt="MySQL">
+</p>
 
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Apple.png" alt="APPLE">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GNU-Linux.png" alt="GNU/Linux">
-<img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Bash.png" alt="Bash">
-</div>
+### Frameworks y Entornos de Desarrollo
+<p align="left">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Flutter.png" alt="Flutter">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20JetpackCompose.png" alt="Jetpack Compose">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Electron.png" alt="Electron">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20HTML-CSS.png" alt="HTML/CSS">
+</p>
+
+### Herramientas de Trabajo
+<p align="left">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Git.png" alt="Git">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20GitHub.png" alt="GitHub">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Visual%20Studio%20Code.png" alt="VS Code">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20Android%20Studio.png" alt="Android Studio">
+  <img src="https://github.com/elarreglador/rotulos/blob/main/Tecnologias%20warp%20terminal.png" alt="Warp terminal">
+</p>
 
 ## Experiencia Laboral
 
 <details open>
-<summary>🏨 <strong>CTO de Infraestructura Física y Digital</strong> - Agosto 2025 - actualidad</summary><br>
+<summary> <strong>CTO de Infraestructura Física y Digital</strong> - Agosto 2025 - actualidad</summary><br>
 
 LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
 
@@ -59,7 +79,7 @@ LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercializa
 </details>
 
 <details>
-<summary>📲 <strong>Programador entorno embebido IOT</strong> - Formacion en Centro de Trabajo o FCT: marzo 2025 - junio 2025</summary><br>
+<summary> <strong>Programador entorno embebido IOT</strong> - Formacion en Centro de Trabajo o FCT: marzo 2025 - junio 2025</summary><br>
   
   LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
   
@@ -70,7 +90,7 @@ LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercializa
 </details>
 
 <details>
-<summary>💻 <strong>Técnico certificado Apple</strong> - febrero 2019 - marzo 2025</summary><br>
+<summary> <strong>Técnico certificado Apple</strong> - febrero 2019 - marzo 2025</summary><br>
   
   QUARTCOM TELECOMUNICACIONES S.L.U. es una empresa reparadora de hardware informático, con atención al publico en Alicante, Murcia, Palma, Madrid, Albacete y Valencia donde tiene además su centro de operaciones.
   
@@ -80,7 +100,7 @@ LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercializa
 </details>
 
 <details>
-<summary>💻 <strong>Propietario y Técnico</strong> - Septiembre 2005 - Enero 2019</summary><br>
+<summary> <strong>Propietario y Técnico</strong> - Septiembre 2005 - Enero 2019</summary><br>
 
   MB SISTEMAS INFORMÁTICOS, negocio propio de reparación y venta de productos electrónicos e informáticos; ordenadores, telefonía,
 consolas, etc.
@@ -91,7 +111,7 @@ consolas, etc.
 </details>
 
 <details>
-<summary>🔩 <strong>Tornero Fresador</strong> - Octubre 2004 - Abril 2005</summary><br>
+<summary> <strong>Tornero Fresador</strong> - Octubre 2004 - Abril 2005</summary><br>
 
   REDUCTORES CUÑAT, S.A. es una empresa fundada en 1962, dedicada al diseño y fabricación de elementos de
 transmisión de potencia, fabricación de productos de serie y bajo requisitos especiales a solicitud del
@@ -102,7 +122,7 @@ cliente.
 </details>
 
 <details>
-<summary>🔌 <strong>Instalador</strong> - Mayo 2004 - Agosto 2004</summary><br>
+<summary> <strong>Instalador</strong> - Mayo 2004 - Agosto 2004</summary><br>
 
   FRICOMAN ELECTRICIDAD, S.L. Empresa dedicada a la venta e instalación de material eléctrico, aires acondicionados, redes y sistemas informáticos
 
@@ -110,7 +130,7 @@ cliente.
 </details>
 
 <details>
-<summary>⚙️ <strong>Ayudante de Supervisor</strong> - Octubre 2002 - Marzo 2003</summary><br>
+<summary> <strong>Ayudante de Supervisor</strong> - Octubre 2002 - Marzo 2003</summary><br>
 
   Moyresa Molturación Y Refino S.A. (BUNGE IBERICA S.A.), empresa portuaria dedicada a la recepción de soja en grano para su
 posterior tratamiento alimentario. 
@@ -120,7 +140,7 @@ posterior tratamiento alimentario.
 </details>
 
 <details>
-<summary>🔌 <strong>Auxiliar Electricista</strong> - Marzo 2002 - Septiembre 2002</summary><br>
+<summary> <strong>Auxiliar Electricista</strong> - Marzo 2002 - Septiembre 2002</summary><br>
 
   MONTAJES ELÉCTRICOS TEISA, S.L, fundada en el año 1993, consolidada en Picaña. Especialización en instalaciones y
 mantenimiento en locales de pública concurrencia, instalaciones deportivas y alumbrado público, montaje de cuadros de automatismos, mantenimiento de edificios y centros de transformación.
@@ -130,7 +150,7 @@ mantenimiento en locales de pública concurrencia, instalaciones deportivas y al
 </details>
 
 <details>
-<summary>🔌 <strong>Auxiliar Electricista</strong> - Febrero 2002 - Marzo 2002</summary><br>
+<summary> <strong>Auxiliar Electricista</strong> - Febrero 2002 - Marzo 2002</summary><br>
 
   IMEVAL, S.L. es una empresa importadora, distribuidora, e instaladora de equipos para la monitorización y
 automatización industrial.
@@ -139,7 +159,7 @@ automatización industrial.
 </details>
 
 <details>
-<summary>📦 <strong>Mozo de Almacén</strong> - Diciembre 2001 - Enero 2002</summary><br>
+<summary> <strong>Mozo de Almacén</strong> - Diciembre 2001 - Enero 2002</summary><br>
 
   EL CORTE INGLES, S.A. basa su modelo de negocio en una propuesta comercial atractiva, amplia y variada,
 incorporando de forma permanente productos y servicios pioneros como Supercor, Sfera, Bricor, Viajes
@@ -151,14 +171,14 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 ## Formación
 
 <details>
-<summary>📚 <strong>Hardware hacking desde 0: Pirate bus</strong> - Enero 2026 </summary>
+<summary> <strong>Hardware hacking desde 0: Pirate bus</strong> - Enero 2026 </summary>
 - Taller intensivo telepresencial [8 horas].<br>
 - <a href="https://github.com/elarreglador/Curso-pirate-Bus/tree/main"> Apuntes del curso</a><br>
 - <a href="https://github.com/elarreglador/Curriculum/blob/main/certificados/Hardware_hacking_2026ener.pdf"> Certificacion </a> y <a href="https://hardwarehacking.es/validate/?formacion=Hardware_Hacking_Bus_Piratev6_2026_01_24&dni=52659548J&codigo=8780bbaafb6811f083d2a0a4c54671c6879b1b34fb6811f0a38ba0a4c54671c6"> validacion </a>
 </details>
 
 <details>
-<summary>📚 <strong>Hardware Hacking Bootcamp</strong> - 6 y 7 de Diciembre 2025 </summary>
+<summary> <strong>Hardware Hacking Bootcamp</strong> - 6 y 7 de Diciembre 2025 </summary>
 Bootcamp dedicado exclusivamente al hardware hacking.<br>
 - <a href="https://github.com/elarreglador/Curriculum/blob/main/certificados/Hardware_hacking_2025dic.pdf"> Certificacion </a> y <a href="https://hardwarehacking.es/validate/?formacion=Bootcamp_Madrid_2025_12_06&dni=52659548J&codigo=0339d86bd6bf11f094e2a0a4c54671c903cd5a9fd6bf11f08946a0a4c54671c9"> validacion </a>
 <br>
@@ -202,7 +222,7 @@ Bootcamp dedicado exclusivamente al hardware hacking.<br>
 </details>
 
 <details open>
-<summary>🎓 <strong>C.F.S. Desarrollo de Aplicaciones Multiplataforma (D.A.M.)</strong> - 2020 - junio 2025 </summary>
+<summary> <strong>C.F.S. Desarrollo de Aplicaciones Multiplataforma (D.A.M.)</strong> - 2020 - junio 2025 </summary>
 - Formación compaginada con empleo<br>
 - Ciclo formativo superior en Desarrollo de Aplicaciones Informáticas en <a href="https://portal.edu.gva.es/iesabastos/es/centre/">IES Abastos</a>.<br>
 - Trabajo de fin de ciclo (TFC): <a href="https://github.com/elarreglador/TFC-Panpaceli">Panpaceli</a>.<br>
@@ -210,43 +230,43 @@ Bootcamp dedicado exclusivamente al hardware hacking.<br>
 </details>
 
 <details>
-<summary>📚 <strong>Curso: Curso de AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
+<summary> <strong>Curso: Curso de AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
 - Curso alojado en Youtube [2 horas]<a href="https://www.youtube.com/watch?v=WNuieHWH4ws&list=PLragRJz4OWvoqxHjki9Orkwk7_lUVHbpg&ab_channel=ConejosProgramadores"> Link </a>.<br>
 - Anotaciones realizadas  <a href="https://github.com/elarreglador/Curso_de_AdonisJS"> Link </a>.<br>
 </details>
 
 <details>
-<summary>📚 <strong>Curso: Curso Crea una REST API desde Cero con NodeJS y AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
+<summary> <strong>Curso: Curso Crea una REST API desde Cero con NodeJS y AdonisJS</strong> - Septiembre - Octubre 2024 </summary>
 - Curso alojado en Udemy [4 horas]<a href="https://www.udemy.com/course/curso-crea-una-rest-api-desde-cero-con-nodejs-y-adonisjs/"> Link </a>.<br>
 - Apuntes del curso. <a href="https://github.com/morenolfd/CursoAdonisJS_res-api"> Link </a>.
 </details>
 
 <details>
-<summary>📚 <strong>Curso: Flutter - Móvil: De cero a experto</strong> - Marzo 2024 - Noviembre 2025 </summary>
+<summary> <strong>Curso: Flutter - Móvil: De cero a experto</strong> - Marzo 2024 - Noviembre 2025 </summary>
 - Curso alojado en devtalles [50 horas]<a href="https://cursos.devtalles.com/courses/flutter-movil-cero-a-experto"> Link </a>.<br>
 - Apuntes del curso. <a href="https://github.com/elarreglador?tab=repositories&q=flutter_movil&type=&language=&sort="> Link </a>.
 </details>
 
 <details>
-<summary>📚 <strong>Curso: Flutter nivel facil: aprende a desarrollar tu prrimera App</strong> - Agosto 2023</summary>
+<summary> <strong>Curso: Flutter nivel facil: aprende a desarrollar tu prrimera App</strong> - Agosto 2023</summary>
 - Curso alojado en Udemy [2 horas]<a href="https://www.udemy.com/course/flutter-nivel-facil-aprende-a-desarrollar-tu-primera-app/"> Link </a>.<br>
 - Apuntes del curso en formato PDF. <a href="https://drive.google.com/file/d/19uG57_OQJg2c_dISVMAJAweii-y2siMq/view?usp=sharing"> Link </a>.
 </details>
 
 <details>
-<summary>📚 <strong>Curso: GIT y GITHUB desde cero</strong> - Agosto 2023</summary>
+<summary> <strong>Curso: GIT y GITHUB desde cero</strong> - Agosto 2023</summary>
 - Curso alojado en Youtube [5 horas]<a href="https://www.udemy.com/course/flutter-nivel-facil-aprende-a-desarrollar-tu-primera-app/learn/lecture/23056588?start=1#overview"> Link </a>.<br>
 - Apuntes del curso en formato PDF. <a href="https://drive.google.com/file/d/1_ehEDCoImk9uIjMP1byfesT6u9jE-g2f/view?usp=drive_link"> Link </a>.
 </details>
 
 <details>
-<summary>📚 <strong>Curso: Dart desde cero</strong> - Agosto 2023</summary>
+<summary> <strong>Curso: Dart desde cero</strong> - Agosto 2023</summary>
 - Curso alojado en Youtube [1 hora]<a href="https://www.youtube.com/watch?v=5tTDztEQzQQ&ab_channel=MoureDevbyBraisMoure"> Link </a>.<br>
 - Apuntes del curso en formato PDF. <a href="https://drive.google.com/file/d/1LXM5__m8q51Hnt7Q3t9A2swaKdB5ngTe/view?usp=drive_link"> Link </a>.
 </details>
 
 <details>
-<summary>👨‍🏫 <strong>Tutor de Prácticas en Empresa</strong> - Marzo 2017 - Junio 2017</summary>
+<summary> <strong>Tutor de Prácticas en Empresa</strong> - Marzo 2017 - Junio 2017</summary>
 - Responsable del aprendizaje y supervisión de tareas de los alumnos en la empresa.
 </details>
 
@@ -256,7 +276,7 @@ Bootcamp dedicado exclusivamente al hardware hacking.<br>
 </details>
 
 <details>
-<summary>📱 <strong>Social Marketing</strong> - Marzo 2014 - Mayo 2014</summary>
+<summary> <strong>Social Marketing</strong> - Marzo 2014 - Mayo 2014</summary>
 - Enfoque en el uso de redes sociales y nuevas tecnologías en el comercio.
 </details>
 
@@ -265,7 +285,8 @@ Bootcamp dedicado exclusivamente al hardware hacking.<br>
 - Formación en herramientas de control numérico.
 </details>
 
-<details>
-<summary>🔌 <strong>FP2 – Especialista en Instalaciones de Líneas Eléctricas</strong> - 1996 - 2001</summary>
+<details open>
+<summary> <strong>FP2 – Especialista en Instalaciones de Líneas Eléctricas</strong> - 1996 - 2001</summary>
+- Formación Profesional de Segundo Grado (FP2) en <a href="https://portal.edu.gva.es/iesabastos/es/centre/">Escuelas Profesionales Luis Amigó</a>.<br>
 - Técnico Superior en Sistemas Electrotécnicos y Automatizados.
 </details>
