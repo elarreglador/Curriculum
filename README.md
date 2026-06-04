@@ -20,7 +20,7 @@ Mi trayectoria ha evolucionado hacia la arquitectura de soluciones IoT completas
 
 ## Tecnologías e Infraestructura
 
-A lo largo de mi trayectoria he dominado diversas tecnologías, especializándome en la convergencia entre el desarrollo de software, la administración de sistemas y el control de hardware.
+A lo largo de mi trayectoria he dominado diversas tecnologías, especializándome en la convergencia entre el desarrollo de software, la administración de sistemas y el control de hardware. Estas que se muestran son solo las mas destacadas, pero puedes ver todas las que he trabajado desde <a href="https://github.com/elarreglador/rotulos" target="_blank">este repositorio</a>
 
 ### Sistemas, Cloud e Infraestructura (SRE)
 <p align="left">
