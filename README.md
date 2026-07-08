@@ -66,7 +66,7 @@ A lo largo de mi trayectoria he dominado diversas tecnologías, especializándom
 ## Experiencia Laboral
 
 <details open>
-<summary> <strong>CTO de Infraestructura Física y Digital</strong> - Agosto 2025 - actualidad</summary><br>
+<summary> <strong>CTO de Infraestructura Física y Digital</strong> - Agosto 2025 - Julio 2026</summary><br>
 
 LIVING PROPERTIES S.L. es una empresa especializada en la gestión, comercialización y desarrollo de proyectos inmobiliarios innovadores, centrados en viviendas residenciales con alto componente tecnológico.
 
