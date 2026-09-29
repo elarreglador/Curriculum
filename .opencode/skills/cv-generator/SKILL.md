@@ -1,7 +1,8 @@
 # CV Generator Skill
 
 Genera CVs y cartas de presentación adaptados a empresas específicas, con
-salida en `output/YYYYMMDD-nombreempresa/`.
+salida en `output/YYYYMMDD-nombreempresa/`. Junto a ellos deja `info.md`, el
+documento de trabajo con los datos de la empresa y de la oferta.
 
 ## Cuándo usar esta skill
 
@@ -19,6 +20,7 @@ Cada candidatura vive en su propio directorio:
 
 ```
 output/YYYYMMDD-nombreempresa/
+├── info.md                    # datos de empresa y oferta (uso interno)
 ├── curriculum-EMPRESA.md      # fuente editable
 ├── curriculum-EMPRESA.odt     # entregable ofimática
 ├── curriculum-EMPRESA.pdf     # entregable para enviar
@@ -32,6 +34,8 @@ output/YYYYMMDD-nombreempresa/
   sin espacios** (`CityPrive PSFP` → `cityprive-psfp`).
 - Los ficheros internos conservan el nombre de la empresa **en mayúsculas**
   (`curriculum-WECITY.md`), que es como se lee en la carta.
+- `info.md` **no se envía a la empresa**: es el soporte de trabajo que sostiene
+  las cifras citadas en el CV y en la carta. Se genera en el Paso 5.
 
 No lo construyas a mano: el script aplica la normalización y reutiliza el
 directorio si ya existe (así se puede reejecutar tras revisar el `.md`).
@@ -113,10 +117,79 @@ Si no hay link ni detalles, pregunta:
 ¿Tienes más detalles sobre el puesto? (responsabilidades, requisitos, etc.)
 ```
 
-### Paso 5 — Generar CV adaptado
+Con esto se tiene todo lo necesario para el Paso 5.
+
+### Paso 5 — Redactar `info.md`
+
+Consolida en `output/YYYYMMDD-nombreempresa/info.md` todo lo recogido en los
+Pasos 2 y 4. **No repitas búsquedas**: escribe con lo que ya tienes a mano.
+
+Estructura:
+
+```markdown
+# Información de la candidatura — EMPRESA
+
+> Documento de trabajo interno. No se envía a la empresa.
+> Es la fuente de las cifras citadas en el CV y en la carta.
+
+- **Fecha:** YYYY-MM-DD
+- **Puesto:** [nombre del puesto]
+- **Link de la oferta:** [url | no facilitado]
+
+## Empresa
+
+| Campo | Valor |
+| --- | --- |
+| Nombre comercial | |
+| Razón social | |
+| Sector | |
+| Fundación | |
+| Tamaño (empleados) | |
+| Sede | |
+| Producto o servicio principal | |
+
+- **Cifras verificables:** [las que se citarán en la carta, con su año]
+- **Cultura o valores:** [solo si son públicos y relevantes para el puesto]
+
+## Oferta
+
+- **Puesto:**
+- **Responsabilidades:**
+- **Requisitos obligatorios:**
+- **Deseables:**
+- **Condiciones:** [jornada, ubicación, remoto/presencial, rango si consta]
+- **Encaje con el perfil:** [qué parte de `sources/curriculum-base.md`
+  cubre cada requisito; y qué requisitos no puedes cubrir]
+
+## Fuentes
+
+| Dato | Fuente | Fecha |
+| --- | --- | --- |
+| Razón social | Registro Mercantil | 2026-09-29 |
+```
+
+De dónde sale cada bloque:
+
+- **Empresa:** salida de `company_research.py` (`--section identity`,
+  `--section financials`, `--section registry`) más lo que devuelva `websearch`.
+- **Oferta:** el `webfetch` del enlace, o lo que cuenta el usuario.
+- **Fuentes:** la URL de cada dato. La oferta va siempre; el resto, solo lo que
+  se haya citado de forma verificable.
+
+Reglas del fichero:
+
+- **Si un dato no aparece en ninguna fuente, escribe `No consta`.** Nunca
+  completes con estimaciones ni con memoria del modelo: la misma regla de
+  verificación que aplica `company-research`.
+- **Toda cifra que aparezca en el CV o en la carta debe ser rastreable hasta una
+  fila de la tabla `Fuentes`.** Si no lo está, no se cita.
+- Muestra el fichero al usuario antes de continuar. Es el momento barato de
+  detectar que la oferta es de otra empresa o que el puesto no encaja.
+
+### Paso 6 — Generar CV adaptado
 
 1. Lee `sources/curriculum-base.md`
-2. Crea el directorio de la candidatura (Paso 1 de "Convención de salida")
+2. Crea el directorio con `nueva_candidatura.py` (ver "Convención de salida")
 3. Adapta el CV según la empresa y el puesto:
    - **Perfil profesional:** ajusta el énfasis según el sector de la empresa
    - **Experiencia laboral:** resalta la experiencia más relevante para el puesto
@@ -137,7 +210,7 @@ profesional. Ver el ejemplo de WeCity: el eje es conocer el edificio
 inteligente *y* su software, que es justo lo que aporta a una plataforma
 financiera inmobiliaria.
 
-### Paso 6 — Generar carta de presentación
+### Paso 7 — Generar carta de presentación
 
 Genera `carta-EMPRESA.md` con **tono formal** (estándar en el mercado español).
 
@@ -175,7 +248,7 @@ Reglas de estilo:
 - **Sin excessos ni adornos.** Una frase de despedida basta.
 - Firma siempre con "Atentamente," y el nombre completo.
 
-### Paso 7 — Convertir a ODT y PDF
+### Paso 8 — Convertir a ODT y PDF
 
 Convierte ambos ficheros con el script de la skill:
 
@@ -196,12 +269,13 @@ ajustar el contenido, no el formato.
 > Ajusta con `--base-size` (cuerpo, por defecto 8.5) y `--margin` (por defecto
 > 1.2 cm) antes de recortar contenido.
 
-### Paso 8 — Confirmar archivos generados
+### Paso 9 — Confirmar archivos generados
 
 Muestra al usuario un resumen:
 
 ```
 ✅ Archivos generados en output/20260929-nombreempresa/:
+- info.md                                (uso interno, no enviar)
 - curriculum-EMPRESA.md / .odt / .pdf   (1 página)
 - carta-EMPRESA.md / .odt / .pdf        (1 página)
 ```
@@ -233,6 +307,9 @@ trabajo/
         └── md2odt.py               # Markdown -> ODT + PDF, valida 1 página
 ```
 
+`20260929-wecity/` se generó antes de que `info.md` entrara en el estándar
+(Paso 5), por lo que no lo tiene. Las candidaturas nuevas sí.
+
 ## Reglas importantes
 
 1. **Siempre confirma la empresa con el usuario** antes de generar archivos
@@ -247,6 +324,10 @@ trabajo/
    así, no hacer commit sin que el usuario lo pida expresamente.
 7. **Nada de separadores `---`** en el Markdown del CV: se renderizan como
    doble línea. Las cabeceras `##` ya delimitan las secciones.
+8. **Traza de los datos externos:** toda cifra o dato sobre la empresa citado en
+   el CV o en la carta debe ser rastreable en `info.md`, con su fuente. Si no
+   aparece ahí, no va. Un dato que no se ha podido verificar se escribe como
+   `No consta`, nunca estimado.
 
 ## Ejemplo de uso
 
@@ -259,10 +340,11 @@ Skill:
  3. Confirma: "He encontrado Inditex, sector retail/textil, ¿es correcto?"
  4. [Si hay link, webfetch; si no, pregunta detalles]
  5. nueva_candidatura.py "Inditex"  ->  output/20260929-inditex/
- 6. Escribe output/20260929-inditex/curriculum-INDITEX.md
- 7. Escribe output/20260929-inditex/carta-INDITEX.md
- 8. md2odt.py sobre ambos  ->  .odt + .pdf, 1 pagina cada uno
- 9. Confirma archivos generados
+ 6. Escribe output/20260929-inditex/info.md (empresa + oferta + fuentes)
+ 7. Escribe output/20260929-inditex/curriculum-INDITEX.md
+ 8. Escribe output/20260929-inditex/carta-INDITEX.md
+ 9. md2odt.py sobre ambos  ->  .odt + .pdf, 1 pagina cada uno
+10. Confirma archivos generados
 ```
 
 ## Ejemplo de referencia
