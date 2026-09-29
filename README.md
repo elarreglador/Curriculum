@@ -25,23 +25,19 @@ Ingeniero con perfil híbrido: formación en electricidad (FP2) y desarrollo de 
 - Programación de app para apertura remota de puerta de acceso.
 - Instalación de hardware de control de acceso y primeras tareas de impresión 3D.
 
----
+## Proyecto Destacado en Living Properties S.L.
 
-## Proyecto Destacado: Control de Acceso IoT
+Arquitectura completa de **control de acceso** al hotel capsula con verificacion de usuarios en accesos exteriores, dormitorio y pod (cama) a partir de codigo numerico y pulsera RFID.
 
-Arquitectura completa de control de acceso para Living Properties S.L. basada en teclados numéricos con lector RFID conectados vía wiregand a la electrónica de control que se comunica a través de zigbee con un pod k8s/zigbee2mqtt que permitie a node-red leer MQTT y verificar el código de usuario y enviar petición de apertura al hardware de acceso.
+**Comunicacion**: Redes TCP/IP, wireguard, Zigbee, MQTT
 
-**ESP32-C6** → red **Zigbee** → protocolo **MQTT** → **Node-RED** → despliegue en **Kubernetes** para alta disponibilidad.
+**Hardware**: teclados con lector RFID, ESP32-C6 
 
-**IoT y Hardware:** ESP32, Zigbee, MQTT, Node-RED, Arduino, Raspberry Pi
+**Software**: GNU/Linux, Bash, LXC, Kubernetes, Node-RED, zigbee2MQTT
 
-**Infraestructura y Cloud:** GNU/Linux, Kubernetes, LXC, Bash, Redes TCP/IP
-
-**Desarrollo:** Flutter, C, HTML/CSS, JavaScript
+**IoT y Hardware:** ESP32, keypad RFID wiregand
 
 **Frameworks y Herramientas:** Git, GitHub, VS Code, ESP-IDF
-
----
 
 ## Formación
 
@@ -54,7 +50,6 @@ Arquitectura completa de control de acceso para Living Properties S.L. basada en
 ## Experiencia Anterior
 
 Técnico certificado Apple (2019–2025) en reparación de hardware MacOS. Propietario de MB Sistemas Informáticos (2005–2019), negocio de reparación y venta de productos electrónicos. Formación en electricidad desde 2002: auxiliar electricista en instalaciones industriales y viviendas.
-
 
 <details>
 <summary> <strong>Técnico certificado Apple</strong> - febrero 2019 - marzo 2025</summary><br>
