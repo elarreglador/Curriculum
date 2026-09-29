@@ -1,18 +1,12 @@
-# David Moreno Bolívar
+# David Moreno Bolívar 
 
-**IoT/Embedded Engineer + Full-stack + Hardware**
+IoT/Embedded Engineer + Full-stack + Hardware
 
-📧 elarreglador@protonmail.com | 📱 651 73 77 65 | 📍 Valencia
-
-[LinkedIn](https://www.linkedin.com/in/elarreglador/) | [GitHub](https://github.com/elarreglador/Curriculum)
-
----
+📍 Valencia
 
 ## Perfil Profesional
 
 Ingeniero con perfil híbrido: formación en electricidad (FP2) y desarrollo de software (DAM). Más de 20 años de experiencia en hardware, soporte técnico avanzado y gestión de infraestructuras. Especializado en arquitectura de soluciones IoT completas, desde el diseño de cuadros eléctricos hasta la orquestación de clusters Kubernetes.
-
----
 
 ## Experiencia Laboral
 
@@ -35,19 +29,17 @@ Ingeniero con perfil híbrido: formación en electricidad (FP2) y desarrollo de 
 
 ## Proyecto Destacado: Control de Acceso IoT
 
-Arquitectura completa de control de acceso para edificios inteligentes: **ESP32-C6** → red **Zigbee** → protocolo **MQTT** → **Node-RED** → despliegue en **Kubernetes** para alta disponibilidad.
+Arquitectura completa de control de acceso para Living Properties S.L. basada en teclados numéricos con lector RFID conectados vía wiregand a la electrónica de control que se comunica a través de zigbee con un pod k8s/zigbee2mqtt que permitie a node-red leer MQTT y verificar el código de usuario y enviar petición de apertura al hardware de acceso.
 
----
-
-## Tecnologías
+**ESP32-C6** → red **Zigbee** → protocolo **MQTT** → **Node-RED** → despliegue en **Kubernetes** para alta disponibilidad.
 
 **IoT y Hardware:** ESP32, Zigbee, MQTT, Node-RED, Arduino, Raspberry Pi
 
-**Infraestructura y Cloud:** GNU/Linux, Kubernetes, LXC, Bash, Docker, Redes TCP/IP
+**Infraestructura y Cloud:** GNU/Linux, Kubernetes, LXC, Bash, Redes TCP/IP
 
-**Desarrollo:** C, Python, Java, MySQL, HTML/CSS, JavaScript
+**Desarrollo:** Flutter, C, HTML/CSS, JavaScript
 
-**Frameworks y Herramientas:** Flutter, Jetpack Compose, Electron, Git, GitHub, VS Code, Android Studio
+**Frameworks y Herramientas:** Git, GitHub, VS Code, ESP-IDF
 
 ---
 
@@ -142,3 +134,10 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 
 - Tareas variadas en el área de pescadería, desde preparación de hielo hasta revisión de stock.
 </details>
+
+## Contacto
+
+📧 elarreglador@protonmail.com | 📱 651 73 77 65 | 
+<a href="https://www.linkedin.com/in/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="32" height="32" alt="LinkedIn"></a>
+ | 
+<a href="https://github.com/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="32" height="32" alt="GitHub"></a>
