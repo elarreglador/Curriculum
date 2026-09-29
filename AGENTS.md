@@ -14,9 +14,10 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 - `specs/NN-slug.md` — especificaciones con metadatos (Estado, Depende de, Fecha, Objetivo). Flujo: `spec` → `spec-impl`.
 
 ## Generación ODT por empresa
-- **Estándar:** por cada empresa, generar `output/curriculum-NOMBREEMPRESA.md` + `output/curriculum-NOMBREEMPRESA.odt`.
+- **Estándar:** por cada empresa, generar `output/curriculum-NOMBREEMPRESA.md` + `output/curriculum-NOMBREEMPRESA.odt` + `output/carta-NOMBREEMPRESA.md` + `output/carta-NOMBREEMPRESA.odt`.
 - Flujo: copiar `sources/curriculum-base.md` → editar → convertir con LibreOffice.
 - Fallback sin pandoc: `libreoffice --headless --convert-to odt output/curriculum-NOMBREEMPRESA.md --outdir output/`
+- Skill automatizada: `.opencode/skills/cv-generator/` (ver spec 02)
 
 ## Git
 - Repositorio git inicializado. Remote: `https://github.com/elarreglador/Curriculum`.

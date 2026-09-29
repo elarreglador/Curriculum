@@ -9,8 +9,7 @@ Repositorio personal de CV y portfolio.
   - `curriculum-base.md` — CV 1 página base en Markdown (para generar ODT).
 - [`templates/`](templates/) — Plantillas de referencia
   - `curriculum-odt.odt` — Última versión ODT generada como referencia.
-- [`output/`](output/) — CVs generados por empresa (ignorado por git)
-- [`archive/`](archive/) — Documentos anteriores a 2026 (referencia, ignorado por git)
+- [`archive/`](archive/) — Documentos anteriores a 2026
 - [`assets/`](assets/) — Fotografías para el CV
 - [`specs/`](specs/) — Especificaciones de trabajo
 
