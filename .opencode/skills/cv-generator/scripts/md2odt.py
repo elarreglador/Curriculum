@@ -123,7 +123,7 @@ def to_odt(html_path: pathlib.Path, outdir: pathlib.Path) -> pathlib.Path:
     return outdir / (html_path.stem + ".odt")
 
 
-def page_count(odt: pathlib.Path, workdir: pathlib.Path) -> int:
+def to_pdf(odt: pathlib.Path, outdir: pathlib.Path) -> pathlib.Path:
     subprocess.run(
         [
             "libreoffice",
@@ -131,14 +131,17 @@ def page_count(odt: pathlib.Path, workdir: pathlib.Path) -> int:
             "--convert-to",
             "pdf",
             "--outdir",
-            str(workdir),
+            str(outdir),
             str(odt),
         ],
         check=True,
         capture_output=True,
         timeout=180,
     )
-    pdf = workdir / (odt.stem + ".pdf")
+    return outdir / (odt.stem + ".pdf")
+
+
+def page_count(pdf: pathlib.Path) -> int:
     result = subprocess.run(
         ["pdfinfo", str(pdf)],
         check=True,
@@ -153,11 +156,12 @@ def page_count(odt: pathlib.Path, workdir: pathlib.Path) -> int:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Markdown -> ODT de una pagina")
+    ap = argparse.ArgumentParser(description="Markdown -> ODT + PDF de una pagina")
     ap.add_argument("source", type=pathlib.Path)
     ap.add_argument("--outdir", type=pathlib.Path, default=None)
     ap.add_argument("--base-size", type=float, default=DEFAULTS["base"])
     ap.add_argument("--margin", type=float, default=DEFAULTS["margin"])
+    ap.add_argument("--no-pdf", action="store_true", help="No generar el PDF")
     args = ap.parse_args()
 
     src: pathlib.Path = args.source
@@ -168,13 +172,15 @@ def main() -> int:
     html = md_to_html(src.read_text(encoding="utf-8"), CSS.format(**config), src.stem)
 
     with tempfile.TemporaryDirectory() as tmp:
-        tmpdir = pathlib.Path(tmp)
-        html_path = tmpdir / f"{src.stem}.html"
+        html_path = pathlib.Path(tmp) / f"{src.stem}.html"
         html_path.write_text(html, encoding="utf-8")
         odt = to_odt(html_path, outdir)
-        pages = page_count(odt, tmpdir)
+        pdf = None if args.no_pdf else to_pdf(odt, outdir)
+        pages = page_count(pdf if pdf else odt)
 
     print(f"{odt}  ({pages} pagina{'s' if pages != 1 else ''})")
+    if pdf:
+        print(f"{pdf}")
     return 0 if pages == 1 else 2
 
 
