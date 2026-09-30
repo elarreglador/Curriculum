@@ -1,8 +1,6 @@
 # David Moreno Bolívar 
 
-IoT/Embedded Engineer + Full-stack + Hardware
-
-📍 Valencia
+**IoT/Embedded Engineer + Full-stack + Hardware**
 
 ## Perfil Profesional
 
@@ -45,7 +43,12 @@ Arquitectura completa de **control de acceso** al hotel capsula con verificacion
 
 **FP2 – Especialista en Instalaciones de Líneas Eléctricas** — Escuelas Profesionales Luis Amigó, 1996–2001
 
-**Cursos relevantes:** Hardware Hacking Bootcamp (2025), Hardware Hacking desde 0: Pirate Bus (2026), Flutter – De cero a experto (50h), REST API con NodeJS y AdonisJS
+**Cursos relevantes:** 
+
+- Flutter – De cero a experto
+- Hardware Hacking Bootcamp (2025)
+- Hardware Hacking desde 0: Pirate Bus (2026)
+- OpenCode: Guía completa para desarrolladores de software (2026)
 
 ## Experiencia Anterior
 
@@ -132,7 +135,10 @@ El Corte Inglés, El Corte Inglés Seguros y Grupo SICOR, entre otros.
 
 ## Contacto
 
-📧 elarreglador@protonmail.com | 📱 651 73 77 65 | 
-<a href="https://www.linkedin.com/in/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="32" height="32" alt="LinkedIn"></a>
- | 
-<a href="https://github.com/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="32" height="32" alt="GitHub"></a>
+elarreglador@protonmail.com | 
+<a href="https://elarreglador.eu/">elarreglador.eu</a> | 
+<a href="tel:+34651737765">651 73 77 65</a> | 
+<a href="https://www.linkedin.com/in/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="16" height="16" alt="LinkedIn"></a> | 
+<a href="https://github.com/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="16" height="16" alt="GitHub"></a>
+
+<br><br><br><br>
