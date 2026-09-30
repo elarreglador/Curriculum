@@ -9,12 +9,22 @@ si es funcional y respeta @page, tipografia y espaciados.
 """
 
 import argparse
+import base64
+import mimetypes
 import pathlib
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
 
 import markdown
+
+# Perfil de LibreOffice propio. Sin esto, si ya hay una instancia abierta (por
+# ejemplo el Writer del usuario revisando un .odt), las conversiones headless se
+# delegan en ella: el proceso sale con codigo 0, el script no se entera y entrega
+# un .odt/.pdf antiguo como si fuera recien generado.
+LO_PROFILE = pathlib.Path(tempfile.gettempdir()) / "md2odt-lo-profile"
 
 CSS = """
 @page {{
@@ -105,40 +115,71 @@ def md_to_html(text: str, css: str, title: str) -> str:
     )
 
 
-def to_odt(html_path: pathlib.Path, outdir: pathlib.Path) -> pathlib.Path:
+def resolve_local_images(html: str, base: pathlib.Path) -> str:
+    """Incrusta como data: URI las imagenes locales de referencia relativa.
+
+    Asi el .md puede usar rutas relativas portables y el HTML sale autonomo. Es
+    la unica via que funciona con LibreOffice, por dos motivos aprendidos a la
+    mala: el importador HTML no resuelve rutas relativas, y ya no carga ficheros
+    locales por file://, y lo hace en silencio (el .odt sale sin la imagen y el
+    proceso termina con codigo 0).
+    """
+    def rewrite(match: re.Match[str]) -> str:
+        src = match.group("src")
+        if re.match(r"^(?:[a-z][a-z0-9+.-]*:|//)", src, re.IGNORECASE):
+            return match.group(0)
+        path = base / src
+        mime, _ = mimetypes.guess_type(path.name)
+        if mime is None or not mime.startswith("image/"):
+            return match.group(0)
+        data = base64.b64encode(path.read_bytes()).decode("ascii")
+        return f'{match.group("pre")}src="data:{mime};base64,{data}"'
+
+    return re.sub(r'(?P<pre><img\b[^>]*?\s)src="(?P<src>[^"]+)"', rewrite, html)
+
+
+def lo(args: list[str], timeout: int = 180) -> None:
     subprocess.run(
         [
             "libreoffice",
+            f"-env:UserInstallation=file://{LO_PROFILE}",
             "--headless",
-            "--convert-to",
-            "odt:writer8",
-            "--outdir",
-            str(outdir),
-            str(html_path),
+            *args,
         ],
         check=True,
         capture_output=True,
-        timeout=180,
+        timeout=timeout,
     )
-    return outdir / (html_path.stem + ".odt")
+
+
+def convert(
+    source: pathlib.Path, target: str, suffix: str, outdir: pathlib.Path
+) -> pathlib.Path:
+    """Convierte `source` en un directorio auxiliar y mueve el resultado a `outdir`.
+
+    Convertir aparte y mover despues es lo que permite detectar el fallo
+    silencioso de LibreOffice: si el fichero no aparece, se lanza el error y el
+    entregable anterior no se presenta como recien generado.
+    """
+    with tempfile.TemporaryDirectory() as stage:
+        lo(["--convert-to", target, "--outdir", stage, str(source)])
+        produced = pathlib.Path(stage) / (source.stem + suffix)
+        if not produced.exists():
+            raise RuntimeError(
+                f"LibreOffice no genero {produced.name}. Revise si hay otra "
+                f"instancia de LibreOffice abierta bloqueando la conversion."
+            )
+        final = outdir / produced.name
+        shutil.move(str(produced), str(final))
+    return final
+
+
+def to_odt(html_path: pathlib.Path, outdir: pathlib.Path) -> pathlib.Path:
+    return convert(html_path, "odt:writer8", ".odt", outdir)
 
 
 def to_pdf(odt: pathlib.Path, outdir: pathlib.Path) -> pathlib.Path:
-    subprocess.run(
-        [
-            "libreoffice",
-            "--headless",
-            "--convert-to",
-            "pdf",
-            "--outdir",
-            str(outdir),
-            str(odt),
-        ],
-        check=True,
-        capture_output=True,
-        timeout=180,
-    )
-    return outdir / (odt.stem + ".pdf")
+    return convert(odt, "pdf", ".pdf", outdir)
 
 
 def page_count(pdf: pathlib.Path) -> int:
@@ -170,13 +211,18 @@ def main() -> int:
 
     config = dict(DEFAULTS, base=args.base_size, margin=args.margin)
     html = md_to_html(src.read_text(encoding="utf-8"), CSS.format(**config), src.stem)
+    html = resolve_local_images(html, src.resolve().parent)
 
-    with tempfile.TemporaryDirectory() as tmp:
-        html_path = pathlib.Path(tmp) / f"{src.stem}.html"
-        html_path.write_text(html, encoding="utf-8")
+    # El HTML va junto al .md, no en un temporal: si no, las rutas relativas de
+    # las imagenes (por ejemplo "pin.png" en la cabecera del CV) no resuelven.
+    html_path = src.parent / f"{src.stem}.html"
+    html_path.write_text(html, encoding="utf-8")
+    try:
         odt = to_odt(html_path, outdir)
         pdf = None if args.no_pdf else to_pdf(odt, outdir)
         pages = page_count(pdf if pdf else odt)
+    finally:
+        html_path.unlink(missing_ok=True)
 
     print(f"{odt}  ({pages} pagina{'s' if pages != 1 else ''})")
     if pdf:
