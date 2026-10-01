@@ -61,7 +61,7 @@ Es el mismo recorrido que describe un puesto de desarrollo de software: un siste
 
 **Desarrollo web y móvil:** HTML/CSS, Flutter, Jetpack Compose, Electron, VS Code, Android Studio
 
-**IoT y Hardware:** ESP32, Zigbee, MQTT, Node-RED, Arduino, Raspberry Pi, C
+**IoT y Hardware:** ESP32, Zigbee, MQTT, Node-RED, Arduino, Raspberry Pi, C/C++ (nivel básico)
 
 ## Formación
 
