@@ -14,6 +14,8 @@ Repositorio personal de CV y portfolio.
 - [`output/`](output/) — Candidaturas generadas, una carpeta por empresa con su fecha
   (`output/YYYYMMDD-nombreempresa/`). Cada una lleva el CV y la carta en `.md`, `.odt` y `.pdf`.
   Ver `output/20260930-edicom/` como referencia de formato del CV.
+- [`ofertas/`](ofertas/) — Listas de ofertas por encaje, una carpeta por día
+  (`ofertas/YYYYMMDD/lista-HHMM.md`). Guardan qué había disponible en cada búsqueda.
 - [`archive/`](archive/) — Documentos anteriores a 2026
 - [`assets/`](assets/) — Fotografías para el CV (`pin.png` es la de la cabecera)
 - [`specs/`](specs/) — Especificaciones de trabajo
@@ -40,6 +42,25 @@ python3 $S/md2odt.py output/20260930-cityprive/carta-CITYPRIVE.md
 
 La skill `cv-generator` automatiza el proceso completo, incluida la investigación
 de la empresa.
+
+## Buscar ofertas a las que presentarse
+
+```bash
+S=.opencode/skills/job-search/scripts/ofertas.py
+
+# 1. Buscar (el criterio lo deriva el agente del CV)
+python3 $S buscar "IoT" --geo "Valencia, Spain" --dias 21 --minimo 30 \
+  --clave "iot,zigbee,embedded,firmware,kubernetes,python" \
+  --ubicacion "valencia,valencian" --formato json
+python3 $S remoto "backend python" --ubicacion "spain,worldwide,europe"
+
+# 2. Descripción completa de una oferta concreta
+python3 $S detalle 4441123182
+```
+
+El agente deriva del CV los términos y las palabras clave, puntúa cada oferta y
+escribe la lista corta en `ofertas/YYYYMMDD/lista-HHMM.md` con la justificación y
+**los requisitos que no cubres**. Ver `ofertas/20261001/` como referencia.
 
 ## Perfil
 
