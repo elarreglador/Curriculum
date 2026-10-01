@@ -28,11 +28,7 @@ output/YYYYMMDD-nombreempresa/
 ├── info.md                    # datos de empresa y oferta (uso interno)
 ├── pin.png                    # foto de la cabecera del CV
 ├── curriculum-EMPRESA.md      # fuente editable
-├── curriculum-EMPRESA.odt     # entregable ofimática
-├── curriculum-EMPRESA.pdf     # entregable para enviar
-├── carta-EMPRESA.md           # fuente editable
-├── carta-EMPRESA.odt
-└── carta-EMPRESA.pdf
+└── carta-EMPRESA.md           # fuente editable
 ```
 
 - `YYYYMMDD` = fecha de generación.
@@ -210,6 +206,7 @@ Reglas del fichero:
   verificación que aplica `company-research`.
 - **Toda cifra que aparezca en el CV o en la carta debe ser rastreable hasta una
   fila de la tabla `Fuentes`.** Si no lo está, no se cita.
+- Si escribes un email o link web debe ser navegable.
 - Muestra el fichero al usuario antes de continuar. Es el momento barato de
   detectar que la oferta es de otra empresa o que el puesto no encaja.
 
@@ -291,36 +288,15 @@ Reglas de estilo:
 - **Sin excessos ni adornos.** Una frase de despedida basta.
 - Firma siempre con "Atentamente," y el nombre completo.
 
-### Paso 8 — Convertir a ODT y PDF
-
-Convierte ambos ficheros con el script de la skill:
-
-```bash
-python3 .opencode/skills/cv-generator/scripts/md2odt.py output/20260929-nombreempresa/curriculum-EMPRESA.md
-python3 .opencode/skills/cv-generator/scripts/md2odt.py output/20260929-nombreempresa/carta-EMPRESA.md
-```
-
-Genera `.odt` y `.pdf` junto al `.md`, e imprime el número de páginas. **Devuelve
-código de salida 2 si el documento no cabe en una página**: en ese caso hay que
-ajustar el contenido, no el formato.
-
-> **Por qué el script y no `libreoffice --convert-to odt` directamente**
-> El filtro de importación Markdown de LibreOffice no está disponible en esta
-> máquina y degrada el fichero a *texto preformateado*, dejando los `#` y `**`
-> literales dentro del ODT. El script va por Markdown → HTML con CSS de
-> impresión A4 → ODT, que sí respeta tipografía, márgenes y espaciados.
-> Ajusta con `--base-size` (cuerpo, por defecto 8.5) y `--margin` (por defecto
-> 1.2 cm) antes de recortar contenido.
-
-### Paso 9 — Confirmar archivos generados
+### Paso 8 — Confirmar archivos generados
 
 Muestra al usuario un resumen:
 
 ```
 ✅ Archivos generados en output/20260929-nombreempresa/:
-- info.md                                (uso interno, no enviar)
-- curriculum-EMPRESA.md / .odt / .pdf   (1 página)
-- carta-EMPRESA.md / .odt / .pdf        (1 página)
+- info.md                 (uso interno, no enviar)
+- curriculum-EMPRESA.md   (1 página)
+- carta-EMPRESA.md        (1 página)
 ```
 
 ## Estructura de archivos del proyecto
@@ -331,15 +307,7 @@ trabajo/
 │   ├── curriculum-base.md          # CV base: contenido + estructura de referencia
 │   └── curriculum-github.md        # CV en formato GitHub
 ├── output/                         # Candidaturas generadas
-│   └── 20260930-edicom/
-│       ├── pin.png
-│       ├── info.md
-│       ├── curriculum-EDICOM.md
-│       ├── curriculum-EDICOM.odt
-│       ├── curriculum-EDICOM.pdf
-│       ├── carta-EDICOM.md
-│       ├── carta-EDICOM.odt
-│       └── carta-EDICOM.pdf
+│   └── ...
 ├── assets/
 │   ├── pin.png                     # Foto de la cabecera del CV
 │   ├── foto.jpg
@@ -353,9 +321,6 @@ trabajo/
         └── md2odt.py               # Markdown -> ODT + PDF, valida 1 página
 ```
 
-`20260929-wecity/` se generó antes de que `info.md` entrara en el estándar
-(Paso 5), por lo que no lo tiene. Las candidaturas nuevas sí.
-
 ## Reglas importantes
 
 1. **Siempre confirma la empresa con el usuario** antes de generar archivos
@@ -364,7 +329,6 @@ trabajo/
 3. **Adapta, no inventes:** usa solo la información de
    `sources/curriculum-base.md` como base
 4. **Idioma:** castellano para CVs y cartas
-5. **Formato:** 1 página para el CV, 1 página para la carta
 6. **Output:** todo en `output/YYYYMMDD-nombreempresa/`, que **está versionado
    en git** a propósito: guarda el historial de lo enviado a cada empresa. Aun
    así, no hacer commit sin que el usuario lo pida expresamente.
@@ -400,9 +364,9 @@ Skill:
 
 ## Ejemplos de referencia
 
-- **Formato del CV:** `output/20260930-edicom/`. Cabecera con foto, contacto al
+- **Formato del CV:** `output/20260929-achm-hotels (Grand Hotel Centenari)/`. Cabecera con foto, contacto al
   final, `Experiencia Anterior` comprimida, proyecto destacado con la cadena
   técnica. Úsala como referencia de estructura y de encaje.
-- **Tono de la carta:** `output/20260929-wecity/carta-WECITY.md`. Corta, con
+- **Tono de la carta:** `output/20260929-achm-hotels (Grand Hotel Centenari)`. Corta, con
   encabezados en mayúsculas y cifras verificables. Úsala cuando no haya una
   oferta concreta de la que tirar.
