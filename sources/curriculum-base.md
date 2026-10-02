@@ -75,6 +75,8 @@ Es el mismo recorrido que describe un puesto de desarrollo de software: un siste
 - Hardware Hacking desde 0: Pirate Bus (2026)
 - REST API con NodeJS y AdonisJS (2024)
 
+Ingles: A2, sin certificado.
+
 ## Contacto
 
 elarreglador@protonmail.com | <a href="https://elarreglador.eu/">elarreglador.eu</a> | <a href="tel:+34651737765">651 73 77 65</a> | <a href="https://www.linkedin.com/in/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="16" height="16" alt="LinkedIn"></a> | <a href="https://github.com/elarreglador/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="16" height="16" alt="GitHub"></a>
