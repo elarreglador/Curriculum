@@ -7,7 +7,7 @@
 <td width="90" valign="top" align="left"><img src="pin.png" width="90" height="90" alt="David Moreno Bolívar"></td>
 <td width="610" valign="top">
 <h1>David Moreno Bolívar</h1>
-<p><strong>Desarrollador de software · Backend, cloud y dispositivos IoT</strong></p>
+<p><strong>Desarrollador de software · Backend en Python e infraestructura en producción</strong></p>
 </td>
 </tr>
 </table>
@@ -16,11 +16,9 @@
 
 Desarrollador de software con perfil híbrido: formación técnica en electricidad (FP2) y en desarrollo de aplicaciones multiplataforma (DAM), y más de 20 años de experiencia en hardware, soporte técnico avanzado y gestión de infraestructuras.
 
-Mi trabajo se ha desarrollado de extremo a extremo: analizar requisitos, diseñar la arquitectura, programar, desplegar y operar el servicio en producción.
+Mi trabajo se ha desarrollado de extremo a extremo: analizar requisitos, diseñar la arquitectura, programar, desplegar y operar el servicio en producción. Ese es el hábito que más aporto a un equipo de backend: un sistema que se pone en producción no se entrega, se sostiene, y para sostenerlo hay que saber qué se rompió primero.
 
-Aporto un perfil de backend y cloud con Kubernetes y contenedores ya en producción, junto con los lenguajes y el gestor de datos que maneja el sector. Sumo algo poco habitual dentro de un equipo de desarrollo, la lectura de la capa física —electricidad, redes y hardware—, una ventaja cuando el producto toca el mundo real y no solo el navegador.
-
-Trabajo a diario con agentes de código con IA: delego tareas acotadas, doy el contexto y las restricciones, sigo la ejecución y reviso, depuro y pruebo el resultado antes de darlo por bueno.
+Aporto Python y construcción de APIs REST junto con contenedores y Kubernetes ya en producción, y la lectura de la capa física —electricidad, redes y hardware—, que es la ventaja cuando el producto toca el mundo real y no solo el navegador.
 
 ## Experiencia Laboral
 
@@ -41,7 +39,7 @@ Trabajo a diario con agentes de código con IA: delego tareas acotadas, doy el c
 
 ### Experiencia Anterior
 
-**Propietario de MB Sistemas Informáticos (2005–2019)** — Negocio propio de reparación y venta de productos electrónicos: gestión de clientes, diagnóstico técnico y resolución de incidencias.
+**Propietario de MB Sistemas Informáticos (2005–2019)** — Negocio propio de reparación y venta de productos electrónicos: gestión de clientes, diagnóstico técnico y resolución de incidencias. El trabajo diario era aislar la causa de un fallo en un sistema que nadie había diseñado.
 
 **Técnico certificado Apple (2019–2025)** — Reparación de hardware MacOS en entorno de servicio oficial.
 
@@ -53,13 +51,13 @@ Sistema de control de acceso para edificios inteligentes, diseñado y desplegado
 
 **ESP32-C6** → red **Zigbee** → protocolo **MQTT** → **Node-RED** → despliegue en **Kubernetes** para alta disponibilidad.
 
-Es el mismo recorrido que describe un puesto de desarrollo de software: un sistema que se diseña desde cero, se despliega en cloud y se opera con criterios de producción. La diferencia es que el punto de partida es el dispositivo, no el navegador.
+Es el mismo recorrido que describe un puesto de backend: un sistema que se diseña desde cero, se despliega en cloud y se opera con criterios de producción. La diferencia es que el punto de partida es el dispositivo, no el navegador, y que cada eslabón —red, protocolo y despliegue— hay que sostenerlo cuando falla algo.
 
 ## Tecnologías
 
-**Backend y datos:** Java, Python, JavaScript, Node.js, MySQL, APIs REST
-
 **Cloud, infraestructura y DevOps:** Kubernetes, Docker, GNU/Linux, LXC, Bash, Redes TCP/IP, Git, GitHub
+
+**Backend y datos:** Python, Node.js, Java, JavaScript, MySQL, APIs REST
 
 **Desarrollo web y móvil:** HTML/CSS, Flutter, Jetpack Compose, Electron, VS Code, Android Studio
 

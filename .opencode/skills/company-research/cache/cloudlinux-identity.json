@@ -1,0 +1,26 @@
+[
+  {
+    "qid": "Q16122861",
+    "nombre": "CloudLinux",
+    "nombre_en": "CloudLinux",
+    "descripcion": "sistema operativo",
+    "url": "https://www.wikidata.org/wiki/Q16122861",
+    "wikidata_url": "https://www.wikidata.org/wiki/Q16122861",
+    "consulta_resuelta": "CloudLinux",
+    "puntuacion": 140
+  },
+  [
+    {
+      "qid": "Q16122861",
+      "label": "CloudLinux",
+      "description": "Linux distribution",
+      "matches": "CloudLinux"
+    }
+  ],
+  [
+    {
+      "consulta": "CloudLinux",
+      "resultados": 1
+    }
+  ]
+]

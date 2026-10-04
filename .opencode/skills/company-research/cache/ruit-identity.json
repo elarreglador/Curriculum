@@ -1,0 +1,50 @@
+[
+  {
+    "qid": "Q106890877",
+    "nombre": "Ruit",
+    "nombre_en": "Ruit",
+    "descripcion": "Estación de tren ligero en Stuttgart, Alemania",
+    "url": "https://www.wikidata.org/wiki/Q106890877",
+    "wikidata_url": "https://www.wikidata.org/wiki/Q106890877",
+    "consulta_resuelta": "ruit",
+    "puntuacion": 140
+  },
+  [
+    {
+      "qid": "Q106890877",
+      "label": "Ruit",
+      "description": "Light rail station in Stuttgart, Germany",
+      "matches": "Ruit"
+    },
+    {
+      "qid": "Q15299435",
+      "label": "Ruit",
+      "description": "crater on Venus",
+      "matches": "Ruit"
+    },
+    {
+      "qid": "Q2175532",
+      "label": "Ruit",
+      "description": "quarter of Ostfildern, Baden-Württemberg, Germany",
+      "matches": "Ruit"
+    },
+    {
+      "qid": "Q157177",
+      "label": "Thalictrum",
+      "description": "genus of plants",
+      "matches": "ruit"
+    },
+    {
+      "qid": "Q735272",
+      "label": "Ruitz",
+      "description": "commune in Pas-de-Calais, France",
+      "matches": "Ruitz"
+    }
+  ],
+  [
+    {
+      "consulta": "ruit",
+      "resultados": 5
+    }
+  ]
+]
