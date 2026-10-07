@@ -25,8 +25,9 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 ## Generación ODT por empresa
 - **Estándar:** por cada empresa, un directorio `output/YYYYMMDD-nombreempresa/` con `pin.png` + `info.md` + `curriculum-NOMBREEMPRESA.md` + `.odt` + `.pdf` y `carta-NOMBREEMPRESA.md` + `.odt` + `.pdf`. El directorio va en minúsculas y sin acentos; los ficheros en mayúsculas.
 - `info.md` — datos de la empresa y de la oferta, con sus fuentes. **Uso interno, no se envía a la empresa**: es el soporte de las cifras citadas en el CV y en la carta. Lo redacta el agente (Paso 5 de la skill); un dato sin verificar se escribe como `No consta`, nunca estimado.
-- Flujo: `nueva_candidatura.py` deja el directorio con la foto y una copia de `sources/curriculum-base.md` → el agente **adapta el texto** de esa copia (no la reescribe desde cero) → `md2odt.py` convierte.
-- Comandos: `nueva_candidatura.py "Empresa"` prepara el andamiaje (`--foto` cambia la imagen, `--sin-foto` la omite); `md2odt.py <fichero.md>` genera `.odt` y `.pdf` y falla con código 2 si no cabe en una página.
+- Flujo: `nueva_candidatura.py` deja el directorio con la foto y una copia de `sources/curriculum-base.md` → el agente **adapta el texto** de esa copia (no la reescribe desde cero).
+- Comandos: `nueva_candidatura.py "Empresa"` prepara el andamiaje (`--foto` cambia la imagen, `--sin-foto` la omite)
+
 - La cabecera del CV es una tabla HTML de dos columnas con la foto. Sus anchos van en **píxeles absolutos** (`700` = `90` + `610`) a propósito: el importador HTML de LibreOffice ignora los porcentajes y con `width="100%"` el nombre se parte en tres líneas.
 - **No usar** `libreoffice --headless --convert-to odt *.md`: el filtro Markdown de LibreOffice no está disponible en esta máquina y deja los `#` y `**` literales en el ODT.
 - Skill automatizada: `.opencode/skills/cv-generator/` (ver spec 02)

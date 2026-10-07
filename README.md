@@ -182,9 +182,6 @@ python3 $S/nueva_candidatura.py "CityPrive"
 #    carta-CITYPRIVE.md
 #    (NO reescribir el CV desde cero: la estructura es la de la plantilla)
 
-# 3. Convertir a ODT + PDF (falla con código 2 si no cabe en 1 página)
-python3 $S/md2odt.py output/20260930-cityprive/curriculum-CITYPRIVE.md
-python3 $S/md2odt.py output/20260930-cityprive/carta-CITYPRIVE.md
 ```
 
 La skill `cv-generator` automatiza el proceso completo, incluida la investigación

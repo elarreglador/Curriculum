@@ -317,8 +317,7 @@ trabajo/
 └── .opencode/skills/cv-generator/
     ├── SKILL.md
     └── scripts/
-        ├── nueva_candidatura.py    # Prepara output/YYYYMMDD-nombreempresa/
-        └── md2odt.py               # Markdown -> ODT + PDF, valida 1 página
+        └── nueva_candidatura.py    # Prepara output/YYYYMMDD-nombreempresa/
 ```
 
 ## Reglas importantes
@@ -358,8 +357,7 @@ Skill:
   6. Escribe output/20260930-inditex/info.md (empresa + oferta + fuentes)
   7. Edita output/20260930-inditex/curriculum-INDITEX.md (adapta, no reescribir)
   8. Escribe output/20260930-inditex/carta-INDITEX.md
-  9. md2odt.py sobre ambos  ->  .odt + .pdf, 1 pagina cada uno
- 10. Confirma archivos generados
+  9. Confirma archivos generados
 ```
 
 ## Ejemplos de referencia
