@@ -41,6 +41,14 @@ LINKEDIN_DETAIL = "https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{}"
 REMOTIVE_SEARCH = "https://remotive.com/api/remote-jobs"
 HIMALAYAS_SEARCH = "https://himalayas.app/jobs/api/search"
 
+# Convocatorias de empleo publico (oposiciones, PAS, personal investigador)
+UPV_CONVOCATORIAS = "https://www.upv.es/entidades/SRH/pas/676960normalc.html"
+UV_TURNO_LIBRE = ("https://www.uv.es/uvweb/servicio-recursos-humanos-pas/es/gestion-convocatorias-plantilla/"
+                  "pruebas-selectivas/turno-libre-1285919201515.html")
+GVA_NOVEDADES = "https://sede.gva.es/es/novetats-ocupacio-publica"
+CSIC_CONVOCATORIAS = "https://sede.csic.gob.es/tramites/convocatorias-de-personal"
+FUENTES_PUBLICO = ("upv", "uv", "gva", "csic")
+
 CONSULTORAS = (
     "randstad", "adecco", "robert half", "michael page", "hays", "grafton",
     "manpower", "gi group", "gi staffing", "kelly services", "activia",
@@ -123,7 +131,10 @@ def cache_write(url: str, body: str) -> None:
         pass
 
 
-def http_get(url: str, usar_cache: bool, ttl_horas: float, accept: str = "text/html") -> str | None:
+def http_get(url: str, usar_cache: bool, ttl_horas: float, accept: str = "text/html",
+             encoding: str | None = None) -> str | None:
+    """Descarga una URL con cache y rate-limit. `encoding` fuerza la codificacion
+    (la UPV se sirve en ISO-8859-1 y UTF-8 la dejaria en mojibake)."""
     global _last_request_at
     guardada = cache_read(url, ttl_horas, usar_cache)
     if guardada is not None:
@@ -137,7 +148,7 @@ def http_get(url: str, usar_cache: bool, ttl_horas: float, accept: str = "text/h
     _last_request_at = time.monotonic()
     try:
         with urllib.request.urlopen(peticion, timeout=REQUEST_TIMEOUT) as respuesta:
-            cuerpo = respuesta.read().decode("utf-8", errors="replace")
+            cuerpo = respuesta.read().decode(encoding or "utf-8", errors="replace")
     except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError) as error:
         print(f"[aviso] {url} -> {error}", file=sys.stderr)
         return None
@@ -349,6 +360,241 @@ def himalayas_search(terminos: str, limite: int, usar_cache: bool, ttl_horas: fl
     return ofertas
 
 
+def nueva_convocatoria(identificador: str, titulo: str, empresa: str, url: str, fuente: str,
+                       fecha: str | None = None, ubicacion: str | None = None,
+                       descripcion: str | None = None) -> dict:
+    """Esqueleto de una convocatoria de empleo publico.
+
+    La bandera `convocatoria` indica que no es una vacante privada: preparar no
+    le infiere seniority ni idioma, y la organizacion publica jamas es una
+    consultora. Asi la puntuacion no castiga rasgos que una oposicion no tiene.
+    """
+    return {
+        "id": identificador,
+        "titulo": titulo,
+        "empresa": empresa,
+        "ubicacion": ubicacion,
+        "remoto": False,
+        "fecha": fecha,
+        "url": url,
+        "beneficios": None,
+        "descripcion": descripcion,
+        "idioma": None,
+        "seniority": None,
+        "consultora": None,
+        "comercial": None,
+        "fuente": fuente,
+        "convocatoria": True,
+    }
+
+
+def upv_parse(html: str) -> list[dict]:
+    ofertas = []
+    for item in re.finditer(
+        r'<div id="(item_\d+)" class="mwc_ele_carpeta"[^>]*>\s*'
+        r'<a class="upv_enlace" href="([^"]+)"[^>]*>(.*?)</a>',
+        html, re.S,
+    ):
+        titulo = re.sub(r"\s*\(n\)", "", texto_plano(item.group(3)))
+        ofertas.append(nueva_convocatoria(
+            item.group(1), titulo, "Universitat Politècnica de València",
+            urllib.parse.urljoin("https://www.upv.es", item.group(2)), "upv",
+            ubicacion="Valencia",
+        ))
+    return ofertas
+
+
+def uv_parse(html: str) -> list[dict]:
+    ofertas = []
+    for url, titulo in re.findall(
+        r'<li>\s*<a href="([^"]*ConvPAS\.html\?id=\d+)"[^>]*>(.*?)</a>',
+        html, re.S,
+    ):
+        ofertas.append(nueva_convocatoria(
+            url.rsplit("id=", 1)[-1], texto_plano(titulo),
+            "Universitat de València", url, "uv", ubicacion="Valencia",
+        ))
+    return ofertas
+
+
+def gva_parse(html: str, fecha: str) -> list[dict]:
+    """Novedades de empleo publico de un dia (fecha ISO, el servidor la pide como dd/mm/yyyy).
+
+    Jerarquia del bloque: h3 sector, h4 tipo o provincia, h5 organismo o
+    municipio, y cada entrada es un `li` con enlace a la ficha y un `span.sufix`
+    con el tramite (bases, listas, adjudicacion...).
+    """
+    bloque = re.search(r'<div class="search-results news[^>]*>(.*?)<script', html, re.S)
+    if bloque is None:
+        return []
+    sector = tipo = organismo = None
+    ofertas = []
+    patron = re.compile(
+        r"<h3>(?P<sector>.*?)</h3>"
+        r"|<h4>(?P<tipo>.*?)</h4>"
+        r"|<h5>(?P<organismo>.*?)</h5>"
+        r"|<li><a href='(?P<url>[^']*)'>(?P<titulo>.*?)</a>"
+        r"(?:<span class='sufix[^']*'>(?P<tramite>.*?)</span>)?</li>",
+        re.S,
+    )
+    for match in patron.finditer(bloque.group(1)):
+        if match.group("sector") is not None:
+            sector, tipo, organismo = texto_plano(match.group("sector")), None, None
+        elif match.group("tipo") is not None:
+            tipo, organismo = texto_plano(match.group("tipo")), None
+        elif match.group("organismo") is not None:
+            organismo = texto_plano(match.group("organismo"))
+        elif match.group("url") is not None:
+            titulo = texto_plano(match.group("titulo"))
+            tramite = texto_plano(match.group("tramite") or "")
+            municipio = organismo if sector and sector.startswith("Entidades locales") else None
+            ofertas.append(nueva_convocatoria(
+                match.group("url"), titulo,
+                municipio or organismo or tipo or sector or "Generalitat Valenciana",
+                urllib.parse.urljoin("https://sede.gva.es", match.group("url")), "gva",
+                fecha=fecha,
+                ubicacion=f"{municipio}, {tipo}" if municipio else None,
+                descripcion=" ".join(p for p in (sector, tipo, tramite) if p),
+            ))
+    return ofertas
+
+
+def csic_parse(html: str) -> list[dict]:
+    ofertas = []
+    patron = re.compile(
+        r'views-field-field-fecha-publicacion"><div class="field-content">(?P<fecha>[\d/]+)</div>.*?'
+        r'views-field-title"><span class="field-content"><a href="(?P<url>[^"]+)"[^>]*>(?P<titulo>.*?)</a>',
+        re.S,
+    )
+    for match in patron.finditer(html):
+        try:
+            fecha = datetime.strptime(match.group("fecha"), "%d/%m/%Y").strftime("%Y-%m-%d")
+        except ValueError:
+            fecha = None
+        ofertas.append(nueva_convocatoria(
+            match.group("url").rstrip("/").rsplit("/", 1)[-1],
+            texto_plano(match.group("titulo")),
+            "CSIC",
+            urllib.parse.urljoin("https://sede.csic.gob.es", match.group("url")), "csic",
+            fecha=fecha,
+        ))
+    return ofertas
+
+
+def convocatoria_texto(html: str, tope: int = 4000) -> str:
+    """Cuerpo de una ficha de convocatoria como texto, sin la navegacion del sitio."""
+    html = re.sub(r"<(script|style|head)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+    html = re.sub(r"<!--.*?-->", " ", html, flags=re.S)
+    cuerpo = re.search(r"<body[^>]*>(.*)</body>", html, re.S | re.I)
+    return texto_plano(cuerpo.group(1) if cuerpo else html)[:tope]
+
+
+def publico_detalle(ofertas: list[dict], limite: int, usar_cache: bool, ttl_horas: float) -> int:
+    """Hidrata la ficha enlazada de las convocatorias sin descripcion (max. `limite` por fuente).
+
+    Los titulos de UV y CSIC solo dicen grupo y escala («Pruebas selectivas de
+    acceso al grupo A…»); el area real esta dentro del enlace, y sin ese cuerpo
+    el filtro de claves no puede juzgarlas. La GVA ya va con descripcion y la
+    UPV se sirve en ISO-8859-1.
+    """
+    hidratadas = 0
+    intentos: dict[str, int] = {}
+    for oferta in ofertas:
+        if oferta.get("descripcion") or not oferta.get("convocatoria"):
+            continue
+        if intentos.get(oferta["fuente"], 0) >= limite:
+            continue
+        intentos[oferta["fuente"]] = intentos.get(oferta["fuente"], 0) + 1
+        encoding = "iso-8859-1" if oferta["fuente"] == "upv" else None
+        cuerpo = http_get(oferta["url"], usar_cache, ttl_horas, encoding=encoding)
+        if not cuerpo:
+            continue
+        texto = convocatoria_texto(cuerpo)
+        if texto:
+            oferta["descripcion"] = texto
+            hidratadas += 1
+    return hidratadas
+
+
+def gva_descargar(url: str, usar_cache: bool, ttl_horas: float) -> str | None:
+    """Descarga de la Sede GVA, inmune a su mantenimiento.
+
+    El portal responde 200 con un HTML de "Aplicacion fuera de servicio"; si ese
+    error entrara en la cache, los proximos 6 h solo se veria el error en vez
+    de reintentar, asi que se purga y se trata como ausencia de datos.
+    """
+    cuerpo = http_get(url, usar_cache, ttl_horas)
+    if cuerpo and "<title>Aplicación fuera de servicio</title>" in cuerpo:
+        cache_path(url).unlink(missing_ok=True)
+        print(f"[aviso] {url} -> aplicacion de la Sede GVA fuera de servicio", file=sys.stderr)
+        return None
+    return cuerpo
+
+
+def gva_search(dias: int, usar_cache: bool, ttl_horas: float) -> list[dict]:
+    """Recoge el dia actual y cada dia anterior de la ventana `--dias`.
+
+    La pagina solo ofrece los ultimos ~10 dias en sus botones; sin parametro
+    `fecha` pinta el dia de hoy.
+    """
+    hoy = datetime.now(timezone.utc).date()
+    cuerpo = gva_descargar(GVA_NOVEDADES, usar_cache, ttl_horas)
+    if cuerpo is None:
+        return []
+    ofertas = gva_parse(cuerpo, hoy.isoformat())
+    botones = re.findall(r'<button id="(\d{2}/\d{2}/\d{4})"', cuerpo)
+    for dia in botones:
+        try:
+            fecha = datetime.strptime(dia, "%d/%m/%Y").date()
+        except ValueError:
+            continue
+        antiguedad = (hoy - fecha).days
+        if fecha == hoy or antiguedad > dias:
+            continue
+        url = f"{GVA_NOVEDADES}?{urllib.parse.urlencode({'fecha': dia})}"
+        cuerpo = gva_descargar(url, usar_cache, ttl_horas)
+        if cuerpo is None:
+            break  # portal caido: no tiene sentido seguir castigandolo
+        ofertas.extend(gva_parse(cuerpo, fecha.isoformat()))
+    return ofertas
+
+
+def csic_search(dias: int, paginas: int, usar_cache: bool, ttl_horas: float) -> list[dict]:
+    ofertas: list[dict] = []
+    hoy = datetime.now(timezone.utc).date()
+    for pagina in range(max(paginas, 1)):
+        url = CSIC_CONVOCATORIAS if pagina == 0 else f"{CSIC_CONVOCATORIAS}?page={pagina}"
+        cuerpo = http_get(url, usar_cache, ttl_horas)
+        if cuerpo is None:
+            break
+        lote = csic_parse(cuerpo)
+        if not lote:
+            break
+        ofertas.extend(lote)
+        ultima = min((o["fecha"] for o in lote if o["fecha"]), default=None)
+        if ultima and (hoy - datetime.strptime(ultima, "%Y-%m-%d").date()).days > dias:
+            break
+    return ofertas
+
+
+def publico_search(fuentes: list[str], dias: int, paginas: int,
+                   usar_cache: bool, ttl_horas: float) -> list[dict]:
+    ofertas: list[dict] = []
+    if "upv" in fuentes:
+        cuerpo = http_get(UPV_CONVOCATORIAS, usar_cache, ttl_horas, encoding="iso-8859-1")
+        if cuerpo:
+            ofertas.extend(upv_parse(cuerpo))
+    if "uv" in fuentes:
+        cuerpo = http_get(UV_TURNO_LIBRE, usar_cache, ttl_horas)
+        if cuerpo:
+            ofertas.extend(uv_parse(cuerpo))
+    if "gva" in fuentes:
+        ofertas.extend(gva_search(dias, usar_cache, ttl_horas))
+    if "csic" in fuentes:
+        ofertas.extend(csic_search(dias, paginas, usar_cache, ttl_horas))
+    return ofertas
+
+
 def deduplicar(ofertas: list[dict]) -> list[dict]:
     vistas: set[str] = set()
     unicas = []
@@ -408,11 +654,12 @@ def puntuar(oferta: dict, criterios: dict, hoy: datetime) -> tuple[int, list[str
         puntos -= 25
         desglose.append(f"-25 idioma no habitual: {oferta['idioma']}")
 
-    nivel = oferta.get("seniority") or inferir_seniority(oferta["titulo"])
-    oferta["seniority"] = nivel
-    if nivel not in criterios["seniority"]:
-        puntos -= 15
-        desglose.append(f"-15 nivel fuera de la banda buscada: {nivel}")
+    if not oferta.get("convocatoria"):
+        nivel = oferta.get("seniority") or inferir_seniority(oferta["titulo"])
+        oferta["seniority"] = nivel
+        if nivel not in criterios["seniority"]:
+            puntos -= 15
+            desglose.append(f"-15 nivel fuera de la banda buscada: {nivel}")
 
     if oferta.get("comercial"):
         puntos -= 25
@@ -487,14 +734,20 @@ def construir_criterios(args: argparse.Namespace) -> dict:
 
 
 def preparar(oferta: dict, hoy: datetime) -> dict:
-    if oferta.get("seniority") is None:
-        oferta["seniority"] = inferir_seniority(oferta["titulo"])
-    if oferta.get("consultora") is None:
-        oferta["consultora"] = es_consultora(oferta["empresa"])
-    if oferta.get("comercial") is None:
-        oferta["comercial"] = es_comercial(oferta["titulo"])
-    if oferta.get("idioma") is None:
-        oferta["idioma"] = inferir_idioma(oferta.get("descripcion") or "")
+    if oferta.get("convocatoria"):
+        # Una convocatoria no es vacante privada: no se infiere seniority ni
+        # idioma, y el organismo publico no es consultora ni perfil comercial.
+        oferta["consultora"] = False
+        oferta["comercial"] = False
+    else:
+        if oferta.get("seniority") is None:
+            oferta["seniority"] = inferir_seniority(oferta["titulo"])
+        if oferta.get("consultora") is None:
+            oferta["consultora"] = es_consultora(oferta["empresa"])
+        if oferta.get("comercial") is None:
+            oferta["comercial"] = es_comercial(oferta["titulo"])
+        if oferta.get("idioma") is None:
+            oferta["idioma"] = inferir_idioma(oferta.get("descripcion") or "")
     if "antiguedad_dias" not in oferta:
         oferta["antiguedad_dias"] = antiguedad_dias(oferta.get("fecha"), hoy)
     return oferta
@@ -526,6 +779,14 @@ def tabla_markdown(resultado: dict) -> str:
                 f"{celda(oferta.get('motivo_descarte', ''))} |"
             )
     return "\n".join(lineas)
+
+
+def emitir(resultado: dict, formato: str) -> int:
+    if formato == "markdown":
+        print(tabla_markdown(resultado))
+    else:
+        print(json.dumps(resultado, ensure_ascii=False, indent=2))
+    return 0
 
 
 def cmd_buscar(args: argparse.Namespace) -> int:
@@ -579,12 +840,7 @@ def cmd_buscar(args: argparse.Namespace) -> int:
         "descartadas": len(descartadas),
         "con_descripcion": sum(1 for o in resultado["ofertas"] if o.get("descripcion")),
     }
-
-    if args.formato == "markdown":
-        print(tabla_markdown(resultado))
-    else:
-        print(json.dumps(resultado, ensure_ascii=False, indent=2))
-    return 0
+    return emitir(resultado, args.formato)
 
 
 def cmd_remoto(args: argparse.Namespace) -> int:
@@ -615,11 +871,39 @@ def cmd_remoto(args: argparse.Namespace) -> int:
         "descartadas": descartadas,
         "resumen": {"ofertas_validas": len(validas), "descartadas": len(descartadas)},
     }
-    if args.formato == "markdown":
-        print(tabla_markdown(resultado))
-    else:
-        print(json.dumps(resultado, ensure_ascii=False, indent=2))
-    return 0
+    return emitir(resultado, args.formato)
+
+
+def cmd_publico(args: argparse.Namespace) -> int:
+    hoy = datetime.now(timezone.utc)
+    criterios = construir_criterios(args)
+    fuentes = parsear_lista(args.fuentes)
+    desconocidas = [f for f in fuentes if f not in FUENTES_PUBLICO]
+    if desconocidas:
+        print(f"[error] fuentes desconocidas: {', '.join(desconocidas)} "
+              f"(admitidas: {', '.join(FUENTES_PUBLICO)})", file=sys.stderr)
+        return 2
+    print(f"[publico] fuentes={','.join(fuentes)} dias={args.dias}", file=sys.stderr)
+
+    ofertas = publico_search(fuentes, args.dias, args.paginas, not args.sin_cache, args.ttl_horas)
+    ofertas = [preparar(o, hoy) for o in deduplicar(ofertas)]
+    if args.detalle > 0:
+        n = publico_detalle(ofertas, args.detalle, not args.sin_cache, args.ttl_horas)
+        print(f"[publico] detalle: {n} convocatorias hidratadas", file=sys.stderr)
+    validas, descartadas = evaluar(ofertas, criterios, hoy, args.minimo)
+
+    resultado = {
+        "generado": datetime.now().astimezone().strftime("%Y-%m-%d %H:%M"),
+        "consulta": {"fuentes": fuentes, "dias": args.dias, "paginas": args.paginas,
+                     "detalle": args.detalle, "empleo_publico": True},
+        "criterios": criterios,
+        "recogidas": len(ofertas),
+        "ofertas": validas[: args.limite],
+        "descartadas": descartadas,
+        "resumen": {"ofertas_validas": len(validas), "descartadas": len(descartadas),
+                    "con_descripcion": sum(1 for o in ofertas if o.get("descripcion"))},
+    }
+    return emitir(resultado, args.formato)
 
 
 def cmd_detalle(args: argparse.Namespace) -> int:
@@ -648,11 +932,12 @@ def cmd_detalle(args: argparse.Namespace) -> int:
     return 0
 
 
-def argumentos_comunes(parser: argparse.ArgumentParser) -> None:
+def argumentos_comunes(parser: argparse.ArgumentParser, vacantes: bool = True) -> None:
     parser.add_argument("--clave", help="palabras clave positivas, separadas por comas")
     parser.add_argument("--descartar", help="palabras que restan encaje, separadas por comas")
-    parser.add_argument("--seniority", help="niveles admitidos: junior,mid,senior,lead")
-    parser.add_argument("--idioma-ok", help="idiomas admitidos (por defecto es,en)")
+    if vacantes:
+        parser.add_argument("--seniority", help="niveles admitidos: junior,mid,senior,lead")
+        parser.add_argument("--idioma-ok", help="idiomas admitidos (por defecto es,en)")
     parser.add_argument("--ubicacion", help="ubicaciones objetivo, separadas por comas")
     parser.add_argument("--dias", type=int, default=14, help="antiguedad maxima en dias (14)")
     parser.add_argument("--limite", type=int, default=50)
@@ -687,6 +972,18 @@ def main() -> int:
     remoto.add_argument("--paginas", type=int, default=1)
     remoto.set_defaults(func=cmd_remoto)
     argumentos_comunes(remoto)
+
+    publico = sub.add_parser(
+        "publico",
+        help="buscar convocatorias de empleo publico (oposiciones, PAS, personal investigador)",
+    )
+    publico.add_argument("--fuentes", default=",".join(FUENTES_PUBLICO),
+                         help=f"fuentes a consultar, separadas por comas ({', '.join(FUENTES_PUBLICO)})")
+    publico.add_argument("--paginas", type=int, default=2, help="paginas de CSIC (8 convocatorias por pagina)")
+    publico.add_argument("--detalle", type=int, default=15,
+                         help="convocatorias por fuente a hidratar con su ficha (0 para no hidratar)")
+    publico.set_defaults(func=cmd_publico)
+    argumentos_comunes(publico, vacantes=False)
 
     detalle = sub.add_parser("detalle", help="descripcion completa de una oferta")
     detalle.add_argument("identificador", help="id de la oferta o URL completa")

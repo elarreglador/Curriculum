@@ -18,7 +18,7 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 - **Estándar:** `ofertas/YYYYMMDD/lista-HHMM.md` con los **criterios usados en la cabecera** (términos, palabras clave, descartes, banda de seniority, geografía, antigüedad máxima), la lista corta con su encaje, el detalle de las mejores —argumento, qué cubre del CV y **qué no cubre**— y las descartadas con su motivo. Sin la cabecera de criterios el resultado no es reconstruible.
 - El criterio de búsqueda **no está en ningún fichero**: el agente lo deriva de `sources/curriculum-base.md` en cada ejecución y se lo pasa al script como banderas (`--clave`, `--descartar`, `--ubicacion`, `--seniority`).
 - Reparto de responsabilidades: el script `ofertas.py` recoge, deduplica, filtra y puntúa (0-100, reproducible); el agente juzga el encaje y escribe la justificación. La puntuación ordena, no decide.
-- Comandos: `ofertas.py buscar <términos> --geo <lugar> [--clave ...] [--formato json]`, `ofertas.py remoto <términos> --ubicacion <países>`, `ofertas.py detalle <id|url>`.
+- Comandos: `ofertas.py buscar <términos> --geo <lugar> [--clave ...] [--formato json]`, `ofertas.py remoto <términos> --ubicacion <países>`, `ofertas.py publico [--fuentes upv,uv,gva,csic] [--dias N]` (convocatorias de empleo público), `ofertas.py detalle <id|url>`.
 - Fuente principal: el endpoint **público de invitado** de LinkedIn, en solo lectura y a 1 petición por segundo, con caché de 6 h en `cache/` (ignorada por git). No se rellena ni se envía ninguna candidatura: eso es del usuario y en su navegador.
 - Skill: `.opencode/skills/job-search/` (ver spec 03)
 

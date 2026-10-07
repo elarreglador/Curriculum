@@ -197,6 +197,8 @@ python3 $S buscar "IoT" --geo "Valencia, Spain" --dias 21 --minimo 30 \
   --clave "iot,zigbee,embedded,firmware,kubernetes,python" \
   --ubicacion "valencia,valencian" --formato json
 python3 $S remoto "backend python" --ubicacion "spain,worldwide,europe"
+# convocatorias de empleo público (UPV, UV, GVA, CSIC)
+python3 $S publico --clave "informatica,sistemas,desarrollo" --dias 14
 
 # 2. Descripción completa de una oferta concreta
 python3 $S detalle 4441123182

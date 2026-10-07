@@ -28,6 +28,7 @@ encaje perfecto y "Senior Cloud Architect" no, aunque ambas contengan `iot` y
 |---|---|---|
 | LinkedIn (endpoint público de invitado) | **La principal.** Ofertas de España con título, empresa, fecha y descripción completa | Es un endpoint no oficial aunque público y anónimo; ritmo limitado. `f_WT` (filtro de remoto) **no lo respeta**: el remoto se detecta por el texto de la ubicación |
 | Remotive, Himalayas | Complemento de **remoto Europa** | Cobertura de España casi nula: filtrar siempre por `--ubicacion` |
+| UPV, UV, GVA, CSIC (`publico`) | **Convocatorias de empleo público**: oposiciones, PAS, personal investigador | Ver apartado [Convocatorias](#convocatorias-empleo-público) |
 | InfoJobs, Indeed, el propio LinkedIn con sesión | No se usan | Bloquean o exigen login. Si hacen falta, `websearch` |
 | Web oficial de una empresa (web de empleo) | Para ofertas concretas que no salen en portales | `webfetch` sobre la URL de la empresa |
 
@@ -48,6 +49,10 @@ python3 $S buscar "backend developer" --geo "Spain" --seniority "mid,senior" --d
 python3 $S remoto "backend python kubernetes" --dias 45 \
   --ubicacion "spain,worldwide,europe,emea,united kingdom,netherland"
 
+# convocatorias de empleo público (sin --geo ni --seniority)
+python3 $S publico --clave "informatica,sistemas,desarrollo" --dias 14 --formato json
+python3 $S publico --fuentes gva,csic --clave "administracion,gestion"
+
 # descripción completa de una oferta concreta
 python3 $S detalle 4441123182
 python3 $S detalle "https://es.linkedin.com/jobs/view/...-4441123182" --formato json
@@ -62,6 +67,9 @@ Opciones que importan:
 | `--clave` | Palabras del perfil que suman. Se casan **por palabra completa**: `go` no casa dentro de `algorithm` |
 | `--descartar` | Palabras o empresas que restan 20. Penalizan, **no descartan** |
 | `--seniority` | Banda admitida: `junior,mid,senior,lead`. Fuera de banda: −15 |
+| `--fuentes` | (`publico`) Fuentes a consultar, separadas por comas. Por defecto, todas: `upv,uv,gva,csic` |
+| `--dias` | Antigüedad máxima en días (por defecto 14). En `publico` además define la ventana de días de la GVA |
+| `--detalle` | (`publico`) Convocatorias **por fuente** a hidratar con su ficha (por defecto 15; `0` para no hidratar) |
 | `--minimo` | Descarta por debajo de esa puntuación (por defecto 1) |
 | `--permitir-sin-clave` | Desactiva el descarte de ofertas sin ni una palabra del perfil |
 | `--detalle N` | Cuántas ofertas hidratar con su descripción (por defecto 10). `0` para no hidratar |
@@ -93,6 +101,35 @@ título ni descripción.
 
 La puntuación ordena; **no decide**. Un 81 y un 45 pueden ser ambos
 interesantes, y uno puede ser irrelevante.
+
+## Convocatorias (empleo público)
+
+El subcomando `publico` recoge convocatorias de las sedes oficiales. Mismo
+criterio de puntuación, con tres salvedades por ser organismos públicos y no
+vacantes privadas (bandera `convocatoria` en el JSON):
+
+- **No infiere `seniority` ni `idioma`** (la convocatoria fija el grupo y el
+  idioma legal es castellano), así que no hay castigos de −15 ni −25.
+- **No aplica el descarte de consultora ni de perfil comercial** (+25 base limpio).
+- **Sí se puntúan** `--clave`, `--descartar`, `--ubicacion` (salvo GVA, cuya
+  ficha no lleva ciudad) y la antigüedad (`--dias`), si la fuente trae fecha.
+- **Las convocatorias sin descripción se hidratan solas** (`--detalle`, por
+  defecto 15 por fuente): baja la ficha enlazada y puntúa con su cuerpo. Con
+  `--detalle 0` solo se ve el título. Cuesta ~1 petición por segundo por ficha.
+- Añade **`informatica`** a `--clave` en esta ruta: es la palabra con la que las
+  sedes públicas nombran los puestos de TI (sin ella, UV/CSIC salen a 0).
+
+| Fuente (`--fuentes`) | Qué trae | Particularidades |
+|---|---|---|
+| `upv` | Convocatorias de acceso libre de la UPV | Sin fecha (no penaliza antigüedad). Trae algún documento auxiliar (p. ej. «Hojas de autobaremación») que `--clave` descarta solo |
+| `uv` | Solo **turno libre** del PAS de la UV | Sin fecha. Excluye promoción interna y personal laboral a propósito. El título solo dice grupo y escala: el área está en la ficha, que `--detalle` hidrata |
+| `gva` | Novedades de empleo público de la sede GVA (hoy + `--dias` hacia atrás, máx. ~10 días) | Sin ciudad en la ficha. El portal a veces contesta «Aplicación fuera de servicio»: el script lo avisa y no lo cachea |
+| `csic` | Convocatorias de acceso del CSIC, con fecha | Paginación de 8 en 8 (`--paginas`, por defecto 2); corta al superar `--dias`. Muchas son tesis y libre designación: la ficha hidratada es lo que permite descartarlas con criterio |
+
+El mismo flujo de los pasos 1-4 aplica: criterios del CV, `--clave` del perfil,
+lista corta justificada. Un `recogidas: 0` con `--clave` muy estrecho es
+normal; un `0` de una sola fuente con `--fuentes gva` casi siempre es el
+portal caído (habrá un `[aviso]` en stderr).
 
 ## Flujo de interacción
 
