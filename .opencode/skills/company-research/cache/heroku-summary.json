@@ -1,0 +1,6 @@
+{
+  "titulo": "Heroku",
+  "resumen": "Heroku es una plataforma como servicio (PaaS) que admite varios lenguajes de programación. Una de las primeras plataformas en la nube, Heroku ha estado en desarrollo desde junio de 2007, cuando solo admitía el lenguaje de programación Ruby, pero ahora admite Java, Node.js, Scala, Clojure, Python, PHP y Go. Por esta razón, se dice que Heroku es una plataforma políglota, ya que tiene características para que un desarrollador cree, ejecute y escale aplicaciones de manera similar en la mayoría de los idiomas. Heroku fue adquirida por Salesforce en 2010 por 212 millones de dólares.",
+  "url": "https://es.wikipedia.org/wiki/Heroku",
+  "wikidata_id": "Q2350702"
+}

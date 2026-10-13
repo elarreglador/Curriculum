@@ -27,6 +27,10 @@ SKILL_DIR = Path(__file__).resolve().parent.parent
 CACHE_DIR = SKILL_DIR / "cache"
 CACHE_DIR.mkdir(exist_ok=True)
 
+# Directorio raiz del proyecto (donde esta sources/, ofertas/, etc.)
+PROJECT_ROOT = SKILL_DIR.parent.parent.parent
+OFERTAS_DIR = PROJECT_ROOT / "ofertas"
+
 USER_AGENT = "job-search-skill/1.0 (+https://github.com/elarreglador/Curriculum)"
 REQUEST_TIMEOUT = 20
 MIN_INTERVAL_SECONDS = 1.0
@@ -159,6 +163,28 @@ def http_get(url: str, usar_cache: bool, ttl_horas: float, accept: str = "text/h
 def normalizar(texto: str) -> str:
     plano = unicodedata.normalize("NFKD", texto.lower())
     return "".join(c for c in plano if not unicodedata.combining(c)).strip()
+
+
+def cargar_ids_vistos() -> set[str]:
+    """Carga los IDs de ofertas ya registradas en ofertas/YYYYMMDD/lista-*.md."""
+    ids: set[str] = set()
+    if not OFERTAS_DIR.exists():
+        return ids
+    for carpeta in OFERTAS_DIR.iterdir():
+        if not carpeta.is_dir():
+            continue
+        for lista in carpeta.glob("lista-*.md"):
+            try:
+                contenido = lista.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            # Busca IDs de LinkedIn en las URLs: jobs/view/...-ID o urn:li:jobPosting:ID
+            for match in re.finditer(r"(?:jobs/view/.*?-|urn:li:jobPosting:)(\d{6,})", contenido):
+                ids.add(match.group(1))
+            # Busca IDs de Remotive/Himalayas en URLs
+            for match in re.finditer(r"(?:remotive\.com/remote-jobs/|himalayas\.app/companies/)[^/]+/jobs/([^/\s]+)", contenido):
+                ids.add(match.group(1))
+    return ids
 
 
 def texto_plano(fragmento: str) -> str:
@@ -609,6 +635,20 @@ def deduplicar(ofertas: list[dict]) -> list[dict]:
     return unicas
 
 
+def filtrar_vistas(ofertas: list[dict], ids_vistos: set[str]) -> tuple[list[dict], list[dict]]:
+    """Separa ofertas ya vistas en búsquedas anteriores."""
+    nuevas, vistas = [], []
+    for oferta in ofertas:
+        oid = oferta.get("id", "")
+        # Normaliza ID para comparar
+        oid_norm = normalizar(oid)
+        if oid_norm in ids_vistos:
+            vistas.append(oferta)
+        else:
+            nuevas.append(oferta)
+    return nuevas, vistas
+
+
 def puntuar(oferta: dict, criterios: dict, hoy: datetime) -> tuple[int, list[str]]:
     desglose: list[str] = []
     puntos = BASE_VITALIDAD
@@ -805,6 +845,15 @@ def cmd_buscar(args: argparse.Namespace) -> int:
         ofertas = himalayas_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
 
     ofertas = [preparar(o, hoy) for o in deduplicar(ofertas)]
+
+    # Filtrar ofertas ya vistas en búsquedas anteriores
+    if not getattr(args, "sin_vistas", False):
+        ids_vistos = cargar_ids_vistos()
+        if ids_vistos:
+            ofertas, vistas = filtrar_vistas(ofertas, ids_vistos)
+            if vistas:
+                print(f"[buscar] {len(vistas)} ofertas ya vistas en ofertas/ (filtradas)", file=sys.stderr)
+
     validas, descartadas = evaluar(ofertas, criterios, hoy, args.minimo)
 
     if args.detalle:
@@ -851,6 +900,15 @@ def cmd_remoto(args: argparse.Namespace) -> int:
     ofertas = remotive_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
     ofertas += himalayas_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
     ofertas = [preparar(o, hoy) for o in deduplicar(ofertas)]
+
+    # Filtrar ofertas ya vistas en búsquedas anteriores
+    if not getattr(args, "sin_vistas", False):
+        ids_vistos = cargar_ids_vistos()
+        if ids_vistos:
+            ofertas, vistas = filtrar_vistas(ofertas, ids_vistos)
+            if vistas:
+                print(f"[remoto] {len(vistas)} ofertas ya vistas en ofertas/ (filtradas)", file=sys.stderr)
+
     objetivos = criterios["ubicacion"]
     if objetivos:
         dentro, fuera = [], []
@@ -887,6 +945,15 @@ def cmd_publico(args: argparse.Namespace) -> int:
 
     ofertas = publico_search(fuentes, args.dias, args.paginas, not args.sin_cache, args.ttl_horas)
     ofertas = [preparar(o, hoy) for o in deduplicar(ofertas)]
+
+    # Filtrar ofertas ya vistas en búsquedas anteriores
+    if not getattr(args, "sin_vistas", False):
+        ids_vistos = cargar_ids_vistos()
+        if ids_vistos:
+            ofertas, vistas = filtrar_vistas(ofertas, ids_vistos)
+            if vistas:
+                print(f"[publico] {len(vistas)} ofertas ya vistas en ofertas/ (filtradas)", file=sys.stderr)
+
     if args.detalle > 0:
         n = publico_detalle(ofertas, args.detalle, not args.sin_cache, args.ttl_horas)
         print(f"[publico] detalle: {n} convocatorias hidratadas", file=sys.stderr)
@@ -944,6 +1011,8 @@ def argumentos_comunes(parser: argparse.ArgumentParser, vacantes: bool = True) -
     parser.add_argument("--minimo", type=int, default=1, help="descartar por debajo de esta puntuacion")
     parser.add_argument("--permitir-sin-clave", action="store_true",
                         help="no descartar ofertas sin palabras clave del perfil")
+    parser.add_argument("--sin-vistas", action="store_true",
+                        help="no filtrar ofertas ya vistas en ofertas/ (por defecto se filtran)")
     parser.add_argument("--formato", choices=["json", "markdown"], default="json")
     parser.add_argument("--sin-cache", action="store_true")
     parser.add_argument("--ttl-horas", type=float, default=float(os.environ.get("CACHE_TTL_HOURS", DEFAULT_TTL_HOURS)))

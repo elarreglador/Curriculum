@@ -1,0 +1,26 @@
+[
+  {
+    "qid": "Q2350702",
+    "nombre": "Heroku",
+    "nombre_en": "Heroku",
+    "descripcion": "cloud platform as a service",
+    "url": "https://www.wikidata.org/wiki/Q2350702",
+    "wikidata_url": "https://www.wikidata.org/wiki/Q2350702",
+    "consulta_resuelta": "Heroku Inc.",
+    "puntuacion": 40
+  },
+  [
+    {
+      "qid": "Q2350702",
+      "label": "Heroku",
+      "description": "cloud platform as a service",
+      "matches": "Heroku Inc."
+    }
+  ],
+  [
+    {
+      "consulta": "Heroku Inc.",
+      "resultados": 1
+    }
+  ]
+]

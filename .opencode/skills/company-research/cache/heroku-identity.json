@@ -1,0 +1,32 @@
+[
+  {
+    "qid": "Q2350702",
+    "nombre": "Heroku",
+    "nombre_en": "Heroku",
+    "descripcion": "cloud platform as a service",
+    "url": "https://www.wikidata.org/wiki/Q2350702",
+    "wikidata_url": "https://www.wikidata.org/wiki/Q2350702",
+    "consulta_resuelta": "Heroku",
+    "puntuacion": 140
+  },
+  [
+    {
+      "qid": "Q2350702",
+      "label": "Heroku",
+      "description": "cloud platform as a service",
+      "matches": "Heroku"
+    },
+    {
+      "qid": "Q107385349",
+      "label": "heroku3",
+      "description": "Python library",
+      "matches": "heroku3"
+    }
+  ],
+  [
+    {
+      "consulta": "Heroku",
+      "resultados": 2
+    }
+  ]
+]
