@@ -21,6 +21,7 @@ encaje perfecto y "Senior Cloud Architect" no, aunque ambas contengan `iot` y
 - El usuario quiere buscar ofertas de trabajo
 - Para comprobar qué se le está escapando (suelen ser las empresas pequeñas o
   las que no publican en portales grandes).
+- **Búsqueda exhaustiva multi-pasada** con hidratación y filtro de consultoras por campo `Sectores` para obtener solo ofertas >70 pts.
 
 ## Fuentes
 
@@ -28,6 +29,10 @@ encaje perfecto y "Senior Cloud Architect" no, aunque ambas contengan `iot` y
 |---|---|---|
 | LinkedIn (endpoint público de invitado) | **La principal.** Ofertas de España con título, empresa, fecha y descripción completa | Es un endpoint no oficial aunque público y anónimo; ritmo limitado. `f_WT` (filtro de remoto) **no lo respeta**: el remoto se detecta por el texto de la ubicación |
 | Remotive, Himalayas | Complemento de **remoto Europa** | Cobertura de España casi nula: filtrar siempre por `--ubicacion` |
+| Remote OK | Agregador remoto global, sin auth | API pública `https://remoteok.com/api`, 1 req/s, caché 6 h |
+| We Work Remotely | Tablero remoto premium, requiere API key | Gratis previa solicitud a `hello@weworkremotely.com`, token en `WWR_TOKEN` |
+| Adzuna | Agregador multi-país (ES, UK, FR, DE, IT...) | Requiere `ADZUNA_APP_ID` + `ADZUNA_KEY` (gratis en developer.adzuna.com) |
+| Jooble | Agregador global, busca por keyword+location | Requiere `JOOBLE_KEY` (gratis en jooble.org) |
 | UPV, UV, GVA, CSIC (`publico`) | **Convocatorias de empleo público**: oposiciones, PAS, personal investigador | Ver apartado [Convocatorias](#convocatorias-empleo-público) |
 | InfoJobs, Indeed, el propio LinkedIn con sesión | No se usan | Bloquean o exigen login. Si hacen falta, `websearch` |
 | Web oficial de una empresa (web de empleo) | Para ofertas concretas que no salen en portales | `webfetch` sobre la URL de la empresa |
@@ -49,6 +54,16 @@ python3 $S buscar "backend developer" --geo "Spain" --seniority "mid,senior" --d
 python3 $S remoto "backend python kubernetes" --dias 45 \
   --ubicacion "spain,worldwide,europe,emea,united kingdom,netherland"
 
+# nuevas fuentes remotas (sin --geo, son inherentemente remotas)
+python3 $S buscar "python kubernetes" --fuente remoteok --dias 30 --minimo 20
+python3 $S buscar "python kubernetes" --fuente weworkremotely --dias 30 --minimo 20
+
+# Adzuna (requiere ADZUNA_APP_ID + ADZUNA_KEY en .env, --geo = código país ISO)
+python3 $S buscar "backend python" --fuente adzuna --geo es --dias 14 --minimo 20
+
+# Jooble (requiere JOOBLE_KEY en .env, --geo = código país ISO)
+python3 $S buscar "backend python" --fuente jooble --geo es --dias 14 --minimo 20
+
 # convocatorias de empleo público (sin --geo ni --seniority)
 python3 $S publico --clave "informatica,sistemas,desarrollo" --dias 14 --formato json
 python3 $S publico --fuentes gva,csic --clave "administracion,gestion"
@@ -56,6 +71,17 @@ python3 $S publico --fuentes gva,csic --clave "administracion,gestion"
 # descripción completa de una oferta concreta
 python3 $S detalle 4441123182
 python3 $S detalle "https://es.linkedin.com/jobs/view/...-4441123182" --formato json
+
+# BÚSQUEDA EXHAUSTIVA MULTI-PASADA (nuevo)
+# Ejecuta las 4 pasadas, hidrata descripciones, filtra consultoras por campo Sectores,
+# y devuelve SOLO ofertas con puntuación >= 70 (sin cambiar el algoritmo de puntuación)
+python3 $S buscar-todo "backend iot embedded firmware kubernetes python" \
+  --dias 21 --paginas 2 --minimo 70 \
+  --clave "backend,iot,embedded,firmware,kubernetes,python,java,nodejs,zigbee,mqtt,esp32,linux,docker,git,mysql,rest,api,cloud,aws,azure,gcp" \
+  --descartar "sap,scrum master,unity,.net,comercial,teleoperador,telemarketing,lemon.io,ateam" \
+  --ubicacion "valencia,valencian,madrid,barcelona,sevilla,vigo,spain,españa,worldwide,europe,emea,united kingdom,netherlands,germany,france,ireland" \
+  --seniority "mid,senior,lead" \
+  --formato json
 ```
 
 Opciones que importan:
@@ -74,6 +100,9 @@ Opciones que importan:
 | `--permitir-sin-clave` | Desactiva el descarte de ofertas sin ni una palabra del perfil |
 | `--detalle N` | Cuántas ofertas hidratar con su descripción (por defecto 10). `0` para no hidratar |
 | `--sin-cache` | Ignora la caché (TTL 6 h) |
+| `WWR_TOKEN` | (env) Token de We Work Remotely (solicitar a hello@weworkremotely.com) |
+| `ADZUNA_APP_ID` + `ADZUNA_KEY` | (env) Credenciales de Adzuna (gratis en developer.adzuna.com) |
+| `JOOBLE_KEY` | (env) API key de Jooble (gratis en jooble.org) |
 
 ## Puntuación
 
@@ -101,6 +130,54 @@ título ni descripción.
 
 La puntuación ordena; **no decide**. Un 81 y un 45 pueden ser ambos
 interesantes, y uno puede ser irrelevante.
+
+## Búsqueda exhaustiva multi-pasada (`buscar-todo`)
+
+### Objetivo
+Obtener **solo ofertas con puntuación ≥ 70** sin modificar el algoritmo de puntuación,
+combinando 4 pasadas complementarias, hidratación masiva de descripciones y filtro
+definitivo de consultoras por el campo `Sectores` de la oferta hidratada.
+
+### Por qué 4 pasadas
+Cada fuente/pasada encuentra ofertas que las otras no ven:
+1. **Local** (`--geo "Valencia, Spain"`): ofertas presenciales/hibridas en tu zona.
+2. **Nacional** (`--geo "Spain"`): ofertas en Madrid, Barcelona, Sevilla, Vigo, etc.
+3. **Remoto Europa** (`remoto`): Remotive + Himalayas + Remote OK + We Work Remotely, filtrado por `--ubicacion`.
+4. **Agregadores globales** (`--fuente adzuna|jooble --geo es`): cobertura multi-país de España.
+
+### Flujo automatizado de `buscar-todo`
+
+1. **Deriva criterios** del CV (Paso 1) y construye las 4 consultas con los mismos `--clave`, `--descartar`, `--ubicacion`, `--seniority`.
+2. **Ejecuta las 4 búsquedas** en serie (LinkedIn local, LinkedIn nacional, remoto, adzuna/jooble si hay credenciales).
+3. **Deduplicación global** por ID y por firma `empresa|título` normalizada.
+4. **Hidratación masiva**: `--detalle 20` por pasada (máx. 80 ofertas hidratadas) para obtener descripción completa, criterios, sector, seniority real.
+5. **Filtro de consultoras por campo `Sectores`**: tras hidratar, descarta cualquier oferta donde `Sectores` contenga "Servicios y consultoría de TI" (o equivalentes), **además** de la heurística por nombre. Este es el filtro definitivo: una oferta hidratada con sector "Desarrollo de software" no es consultora aunque el nombre lo sugiera.
+6. **Re-puntuación** con datos completos (descripción, sector real, seniority inferido de la hidratación).
+7. **Filtro final `--minimo`** (por defecto 70 en este modo): solo ofertas ≥ umbral salen en el JSON.
+8. **Genera `ofertas/YYYYMMDD/lista-HHMM.md`** con la lista corta ya cualificada (Pasos 3-4 del flujo estándar).
+
+### Opciones específicas de `buscar-todo`
+
+| Opción | Defecto | Descripción |
+|---|---|---|
+| `--minimo` | 70 | Umbral final de puntuación (más alto que en búsquedas simples) |
+| `--detalle` | 20 | Ofertas a hidratar **por pasada** (total máx. ~80) |
+| `--paginas` | 2 | Páginas por pasada en LinkedIn |
+| `--sin-consultoras-sector` | false | Desactiva el filtro por campo `Sectores` (solo heurística por nombre) |
+
+### Ejemplo de uso típico
+
+```bash
+python3 $S buscar-todo "backend iot embedded firmware kubernetes python zigbee mqtt esp32" \
+  --dias 21 --paginas 2 --minimo 70 \
+  --clave "backend,iot,embedded,firmware,kubernetes,python,java,nodejs,zigbee,mqtt,esp32,linux,docker,git,mysql,rest,api,cloud,aws,azure,gcp" \
+  --descartar "sap,scrum master,unity,.net,comercial,teleoperador,telemarketing,lemon.io,ateam" \
+  --ubicacion "valencia,valencian,madrid,barcelona,sevilla,vigo,spain,españa,worldwide,europe,emea,united kingdom,netherlands,germany,france,ireland" \
+  --seniority "mid,senior,lead" \
+  --formato json
+```
+
+**Salida**: JSON con `ofertas` (solo ≥70), `descartadas` (con motivo), `resumen`, y archivo `ofertas/YYYYMMDD/lista-HHMM.md` listo para revisar.
 
 ## Convocatorias (empleo público)
 
@@ -151,12 +228,13 @@ preguntes lo que ya ha dicho.
 
 ### Paso 2 — Buscar en varias pasadas
 
-Tres búsquedas como mínimo, porque cada una encuentra lo que las otras no:
+Cuatro búsquedas como mínimo, porque cada una encuentra lo que las otras no:
 
 1. **Local** (`--geo "Valencia, Spain"`): lo que se puede ir sin mudanza.
 2. **Nacional** (`--geo "Spain"`): lo que ya se vio en candidaturas anteriores (Pozuelo,
    Sevilla, Vigo).
-3. **Remoto Europa** (`remoto`): solo tiene sentido con `--ubicacion`.
+3. **Remoto Europa** (`remoto`): agrega Remotive + Himalayas + Remote OK + We Work Remotely; solo tiene sentido con `--ubicacion`.
+4. **Agregadores globales** (`--fuente adzuna|jooble --geo es`): para cubrir España con fuentes multi-país.
 
 Añade `--paginas 2` y `--detalle 10` en todas. Guarda el JSON de cada una.
 
@@ -295,3 +373,7 @@ No los vuelvas a descubrir a costa de una petición:
   asistentes, IA genérica) y plataformas de *staffing* sin filtrar (`lemon.io`,
   `A.Team`). Sube `--minimo`, añádelas a `--descartar`, y **espera que la lista
   remota salga vacía**: es un resultado legítimo, no un fallo.
+- **Remote OK**: devuelve array JSON donde el primer elemento es metadatos; las ofertas empiezan en índice 1. Incluye `tags` (tecnologías) útiles para filtrado previo.
+- **We Work Remotely**: requiere token Bearer; la respuesta agrupa por categoría (`jobs.{categoria}[]`). El campo `region` indica geografía (ej. `Worldwide`, `Europe`, `Spain`).
+- **Adzuna**: usa código de país ISO en la URL (`/es/`, `/gb/`, `/fr/`). El campo `redirect_url` lleva a la oferta original; `contract_type` indica `permanent`, `contract`, etc.
+- **Jooble**: endpoint POST con JSON `{"keywords": "...", "location": "..."}`. Devuelve `jobs[]` con `link` a la oferta original. El campo `type` indica `full-time`, `part-time`, `remote`.
