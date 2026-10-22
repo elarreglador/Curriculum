@@ -44,10 +44,6 @@ LINKEDIN_SEARCH = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostin
 LINKEDIN_DETAIL = "https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{}"
 REMOTIVE_SEARCH = "https://remotive.com/api/remote-jobs"
 HIMALAYAS_SEARCH = "https://himalayas.app/jobs/api/search"
-REMOTEOK_SEARCH = "https://remoteok.com/api"
-WEWORKREMOTELY_SEARCH = "https://weworkremotely.com/api/v1/remote-jobs"
-ADZUNA_SEARCH = "https://api.adzuna.com/v1/api/jobs"
-JOOBLE_SEARCH = "https://api.jooble.org/searchjobs"
 
 # Convocatorias de empleo publico (oposiciones, PAS, personal investigador)
 UPV_CONVOCATORIAS = "https://www.upv.es/entidades/SRH/pas/676960normalc.html"
@@ -187,18 +183,6 @@ def cargar_ids_vistos() -> set[str]:
                 ids.add(match.group(1))
             # Busca IDs de Remotive/Himalayas en URLs
             for match in re.finditer(r"(?:remotive\.com/remote-jobs/|himalayas\.app/companies/)[^/]+/jobs/([^/\s]+)", contenido):
-                ids.add(match.group(1))
-            # Busca IDs de Remote OK en URLs
-            for match in re.finditer(r"remoteok\.com/remote-jobs/([^/\s]+)", contenido):
-                ids.add(match.group(1))
-            # Busca IDs de We Work Remotely en URLs
-            for match in re.finditer(r"weworkremotely\.com/remote-jobs/([^/\s]+)", contenido):
-                ids.add(match.group(1))
-            # Busca IDs de Adzuna en URLs
-            for match in re.finditer(r"adzuna\.com.*/jobs/(\d+)", contenido):
-                ids.add(match.group(1))
-            # Busca IDs de Jooble en URLs
-            for match in re.finditer(r"jooble\.org.*/job/(\d+)", contenido):
                 ids.add(match.group(1))
     return ids
 
@@ -398,217 +382,6 @@ def himalayas_search(terminos: str, limite: int, usar_cache: bool, ttl_horas: fl
             "consultora": None,
             "comercial": None,
             "fuente": "himalayas",
-        })
-    return ofertas
-
-
-def remoteok_search(terminos: str, limite: int, usar_cache: bool, ttl_horas: float) -> list[dict]:
-    """Busca en Remote OK (https://remoteok.com/api).
-    API publica sin autenticacion, devuelve lista de objetos con id, position, company, location, date, url, description, tags, etc.
-    """
-    url = REMOTEOK_SEARCH
-    cuerpo = http_get(url, usar_cache, ttl_horas, accept="application/json")
-    if cuerpo is None:
-        return []
-    try:
-        datos = json.loads(cuerpo)
-    except json.JSONDecodeError:
-        return []
-    # La primera entrada es metadatos, las siguientes son ofertas
-    ofertas = []
-    for oferta in datos[1:]:
-        if not isinstance(oferta, dict):
-            continue
-        # Filtrar por terminos en titulo o tags
-        titulo = oferta.get("position", "") or ""
-        tags = " ".join(oferta.get("tags", []) or [])
-        descripcion = oferta.get("description", "") or ""
-        texto_busqueda = f"{titulo} {tags} {descripcion}".lower()
-        if terminos.lower() not in texto_busqueda:
-            continue
-        publicada = oferta.get("date", "")[:10] if oferta.get("date") else None
-        ofertas.append({
-            "id": str(oferta.get("id", "")),
-            "titulo": titulo,
-            "empresa": oferta.get("company", ""),
-            "ubicacion": oferta.get("location", ""),
-            "remoto": True,
-            "fecha": publicada,
-            "url": oferta.get("url", ""),
-            "beneficios": ", ".join(oferta.get("tags", []) or []),
-            "descripcion": re.sub(r"<[^>]+>", " ", descripcion) or None,
-            "idioma": None,
-            "seniority": None,
-            "consultora": None,
-            "comercial": None,
-            "fuente": "remoteok",
-        })
-        if len(ofertas) >= limite:
-            break
-    return ofertas
-
-
-def weworkremotely_search(terminos: str, limite: int, usar_cache: bool, ttl_horas: float) -> list[dict]:
-    """Busca en We Work Remotely (https://weworkremotely.com/api/v1/remote-jobs).
-    Requiere API key (gratis, solicitar a hello@weworkremotely.com).
-    """
-    token = os.environ.get("WWR_TOKEN")
-    if not token:
-        print("[aviso] WWR_TOKEN no configurado en .env, saltando We Work Remotely", file=sys.stderr)
-        return []
-    url = f"{WEWORKREMOTELY_SEARCH}?{urllib.parse.urlencode({'search': terminos, 'page': 1})}"
-    headers = {"User-Agent": USER_AGENT, "Accept": "application/json", "Authorization": f"Bearer {token}"}
-    # Usar http_get personalizado para incluir header de autorizacion
-    global _last_request_at
-    guardada = cache_read(url, ttl_horas, usar_cache)
-    if guardada is not None:
-        cuerpo = guardada
-    else:
-        espera = MIN_INTERVAL_SECONDS - (time.monotonic() - _last_request_at)
-        if espera > 0:
-            time.sleep(espera)
-        peticion = urllib.request.Request(url, headers=headers)
-        _last_request_at = time.monotonic()
-        try:
-            with urllib.request.urlopen(peticion, timeout=REQUEST_TIMEOUT) as respuesta:
-                cuerpo = respuesta.read().decode("utf-8", errors="replace")
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError) as error:
-            print(f"[aviso] {url} -> {error}", file=sys.stderr)
-            return []
-        cache_write(url, cuerpo)
-    try:
-        datos = json.loads(cuerpo)
-    except json.JSONDecodeError:
-        return []
-    ofertas = []
-    for categoria in datos.get("jobs", {}).values():
-        for oferta in categoria:
-            titulo = oferta.get("title", "") or ""
-            if terminos.lower() not in titulo.lower():
-                continue
-            ofertas.append({
-                "id": str(oferta.get("id", "")),
-                "titulo": titulo,
-                "empresa": oferta.get("company", ""),
-                "ubicacion": oferta.get("region", "") or "Worldwide",
-                "remoto": True,
-                "fecha": oferta.get("date", "")[:10] if oferta.get("date") else None,
-                "url": oferta.get("url", ""),
-                "beneficios": oferta.get("type", ""),
-                "descripcion": re.sub(r"<[^>]+>", " ", oferta.get("description", "")) or None,
-                "idioma": None,
-                "seniority": None,
-                "consultora": None,
-                "comercial": None,
-                "fuente": "weworkremotely",
-            })
-            if len(ofertas) >= limite:
-                break
-        if len(ofertas) >= limite:
-            break
-    return ofertas
-
-
-def adzuna_search(terminos: str, limite: int, usar_cache: bool, ttl_horas: float, pais: str = "es") -> list[dict]:
-    """Busca en Adzuna (https://api.adzuna.com).
-    Requiere App ID y Key (gratis en https://developer.adzuna.com).
-    pais: codigo de pais ISO (es, gb, fr, de, it, etc.)
-    """
-    app_id = os.environ.get("ADZUNA_APP_ID")
-    app_key = os.environ.get("ADZUNA_KEY")
-    if not app_id or not app_key:
-        print("[aviso] ADZUNA_APP_ID/ADZUNA_KEY no configurados en .env, saltando Adzuna", file=sys.stderr)
-        return []
-    url = f"{ADZUNA_SEARCH}/{pais}/search/1"
-    params = {
-        "app_id": app_id,
-        "app_key": app_key,
-        "what": terminos,
-        "results_per_page": min(limite, 50),
-        "content-type": "application/json",
-    }
-    url = f"{url}?{urllib.parse.urlencode(params)}"
-    cuerpo = http_get(url, usar_cache, ttl_horas, accept="application/json")
-    if cuerpo is None:
-        return []
-    try:
-        datos = json.loads(cuerpo)
-    except json.JSONDecodeError:
-        return []
-    ofertas = []
-    for oferta in datos.get("results", []):
-        ofertas.append({
-            "id": str(oferta.get("id", "")),
-            "titulo": oferta.get("title", ""),
-            "empresa": oferta.get("company", {}).get("display_name", "") if isinstance(oferta.get("company"), dict) else str(oferta.get("company", "")),
-            "ubicacion": oferta.get("location", {}).get("display_name", "") if isinstance(oferta.get("location"), dict) else str(oferta.get("location", "")),
-            "remoto": "remote" in (oferta.get("contract_type", "") or "").lower() or "teletrabajo" in (oferta.get("description", "") or "").lower(),
-            "fecha": oferta.get("created", "")[:10] if oferta.get("created") else None,
-            "url": oferta.get("redirect_url", ""),
-            "beneficios": oferta.get("contract_type", ""),
-            "descripcion": re.sub(r"<[^>]+>", " ", oferta.get("description", "")) or None,
-            "idioma": None,
-            "seniority": None,
-            "consultora": None,
-            "comercial": None,
-            "fuente": "adzuna",
-        })
-    return ofertas
-
-
-def jooble_search(terminos: str, limite: int, usar_cache: bool, ttl_horas: float, pais: str = "es") -> list[dict]:
-    """Busca en Jooble (https://api.jooble.org).
-    Requiere API key (gratis, registrarse en jooble.org).
-    """
-    api_key = os.environ.get("JOOBLE_KEY")
-    if not api_key:
-        print("[aviso] JOOBLE_KEY no configurado en .env, saltando Jooble", file=sys.stderr)
-        return []
-    url = JOOBLE_SEARCH
-    payload = json.dumps({"keywords": terminos, "location": pais}).encode("utf-8")
-    global _last_request_at
-    guardada = cache_read(url, ttl_horas, usar_cache)
-    if guardada is not None:
-        cuerpo = guardada
-    else:
-        espera = MIN_INTERVAL_SECONDS - (time.monotonic() - _last_request_at)
-        if espera > 0:
-            time.sleep(espera)
-        peticion = urllib.request.Request(
-            url,
-            data=payload,
-            headers={"User-Agent": USER_AGENT, "Accept": "application/json", "Content-Type": "application/json", "Authorization": f"Bearer {api_key}"},
-            method="POST",
-        )
-        _last_request_at = time.monotonic()
-        try:
-            with urllib.request.urlopen(peticion, timeout=REQUEST_TIMEOUT) as respuesta:
-                cuerpo = respuesta.read().decode("utf-8", errors="replace")
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError) as error:
-            print(f"[aviso] {url} -> {error}", file=sys.stderr)
-            return []
-        cache_write(url, cuerpo)
-    try:
-        datos = json.loads(cuerpo)
-    except json.JSONDecodeError:
-        return []
-    ofertas = []
-    for oferta in datos.get("jobs", [])[:limite]:
-        ofertas.append({
-            "id": str(oferta.get("id", "")),
-            "titulo": oferta.get("title", ""),
-            "empresa": oferta.get("company", ""),
-            "ubicacion": oferta.get("location", ""),
-            "remoto": "remote" in (oferta.get("type", "") or "").lower() or "remoto" in (oferta.get("description", "") or "").lower(),
-            "fecha": oferta.get("date", "")[:10] if oferta.get("date") else None,
-            "url": oferta.get("link", ""),
-            "beneficios": oferta.get("type", ""),
-            "descripcion": re.sub(r"<[^>]+>", " ", oferta.get("description", "")) or None,
-            "idioma": None,
-            "seniority": None,
-            "consultora": None,
-            "comercial": None,
-            "fuente": "jooble",
         })
     return ofertas
 
@@ -1068,16 +841,6 @@ def cmd_buscar(args: argparse.Namespace) -> int:
                                   not args.sin_cache, args.ttl_horas)
     elif args.fuente == "remotive":
         ofertas = remotive_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
-    elif args.fuente == "himalayas":
-        ofertas = himalayas_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
-    elif args.fuente == "remoteok":
-        ofertas = remoteok_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
-    elif args.fuente == "weworkremotely":
-        ofertas = weworkremotely_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
-    elif args.fuente == "adzuna":
-        ofertas = adzuna_search(terminos, args.limite, not args.sin_cache, args.ttl_horas, args.geo or "es")
-    elif args.fuente == "jooble":
-        ofertas = jooble_search(terminos, args.limite, not args.sin_cache, args.ttl_horas, args.geo or "es")
     else:
         ofertas = himalayas_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
 
@@ -1136,8 +899,6 @@ def cmd_remoto(args: argparse.Namespace) -> int:
     print(f"[remoto] '{terminos}'", file=sys.stderr)
     ofertas = remotive_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
     ofertas += himalayas_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
-    ofertas += remoteok_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
-    ofertas += weworkremotely_search(terminos, args.limite, not args.sin_cache, args.ttl_horas)
     ofertas = [preparar(o, hoy) for o in deduplicar(ofertas)]
 
     # Filtrar ofertas ya vistas en búsquedas anteriores
@@ -1212,174 +973,6 @@ def cmd_publico(args: argparse.Namespace) -> int:
     return emitir(resultado, args.formato)
 
 
-def cmd_buscar_todo(args: argparse.Namespace) -> int:
-    """Búsqueda exhaustiva multi-pasada: 4 pasadas + hidratación + filtro Sectores + umbral >=70."""
-    hoy = datetime.now(timezone.utc)
-    terminos = " ".join(args.terminos)
-    criterios = construir_criterios(args)
-    # Forzar minimo alto para este modo
-    if args.minimo < 70:
-        print(f"[buscar-todo] ajustando --minimo de {args.minimo} a 70", file=sys.stderr)
-        args.minimo = 70
-    print(f"[buscar-todo] '{terminos}' multi-pasada minimo={args.minimo}", file=sys.stderr)
-
-    todas_ofertas: list[dict] = []
-    pasadas = [
-        ("local", "linkedin", "Valencia, Spain"),
-        ("nacional", "linkedin", "Spain"),
-        ("remoto", "remoto", None),
-        ("adzuna", "adzuna", "es"),
-        ("jooble", "jooble", "es"),
-    ]
-
-    for nombre, fuente, geo in pasadas:
-        print(f"[buscar-todo] pasada {nombre}: fuente={fuente} geo={geo or '-'}", file=sys.stderr)
-        if fuente == "linkedin":
-            lote = linkedin_search(terminos, geo, args.dias,
-                                   min(args.paginas, MAX_PAGES), args.limite * 2,
-                                   not args.sin_cache, args.ttl_horas)
-        elif fuente == "remoto":
-            lote = remotive_search(terminos, args.limite * 2, not args.sin_cache, args.ttl_horas)
-            lote += himalayas_search(terminos, args.limite * 2, not args.sin_cache, args.ttl_horas)
-            lote += remoteok_search(terminos, args.limite * 2, not args.sin_cache, args.ttl_horas)
-            lote += weworkremotely_search(terminos, args.limite * 2, not args.sin_cache, args.ttl_horas)
-        elif fuente == "adzuna":
-            lote = adzuna_search(terminos, args.limite * 2, not args.sin_cache, args.ttl_horas, geo)
-        elif fuente == "jooble":
-            lote = jooble_search(terminos, args.limite * 2, not args.sin_cache, args.ttl_horas, geo)
-        else:
-            lote = []
-        print(f"[buscar-todo]   recogidas: {len(lote)}", file=sys.stderr)
-        todas_ofertas.extend(lote)
-
-    # Deduplicación global
-    todas_ofertas = [preparar(o, hoy) for o in deduplicar(todas_ofertas)]
-    print(f"[buscar-todo] totales tras deduplicar: {len(todas_ofertas)}", file=sys.stderr)
-
-    # Filtrar vistas previas
-    if not getattr(args, "sin_vistas", False):
-        ids_vistos = cargar_ids_vistos()
-        if ids_vistos:
-            todas_ofertas, vistas = filtrar_vistas(todas_ofertas, ids_vistos)
-            if vistas:
-                print(f"[buscar-todo] {len(vistas)} ofertas ya vistas en ofertas/ (filtradas)", file=sys.stderr)
-
-    # Hidratación masiva: hasta --detalle ofertas por pasada (máx 5 pasadas * detalle)
-    max_hidratar = args.detalle * len(pasadas)
-    hidratadas = 0
-    for oferta in todas_ofertas[:max_hidratar]:
-        if oferta["fuente"] == "linkedin" and not oferta.get("descripcion"):
-            detalle = linkedin_detail(oferta["id"], not args.sin_cache, args.ttl_horas)
-            if detalle.get("descripcion"):
-                oferta["descripcion"] = detalle["descripcion"]
-                oferta["criterios"] = detalle.get("criterios", [])
-                oferta["idioma"] = inferir_idioma(oferta["descripcion"])
-                hidratadas += 1
-        elif oferta["fuente"] in ("remotive", "himalayas", "remoteok", "weworkremotely", "adzuna", "jooble") and not oferta.get("descripcion"):
-            # Estas fuentes ya traen descripción en la búsqueda inicial
-            pass
-    print(f"[buscar-todo] {hidratadas} ofertas hidratadas con descripción completa", file=sys.stderr)
-
-    # Re-preparar tras hidratación (actualiza idioma, seniority, etc.)
-    todas_ofertas = [preparar(o, hoy) for o in todas_ofertas]
-
-    # FILTRO DEFINITIVO DE CONSULTORAS por campo Sectores (tras hidratación)
-    descartadas_sector: list[dict] = []
-    if not getattr(args, "sin_consultoras_sector", False):
-        antes = len(todas_ofertas)
-        for oferta in todas_ofertas:
-            criterios_txt = " ".join(oferta.get("criterios") or [])
-            sectores = normalizar(criterios_txt).lower()
-            es_consultora_sector = any(pal in sectores for pal in (
-                "servicios y consultoria de ti", "servicios y consultoría de ti",
-                "consultoria de ti", "consultoría de ti", "it services", "it consulting",
-                "staffing", "recruitment", "seleccion", "selección", "outsourcing",
-                "servicios profesionales", "professional services"
-            ))
-            if es_consultora_sector:
-                oferta["motivo_descarte"] = "consultora (campo Sectores: " + criterios_txt[:120] + ")"
-                descartadas_sector.append(oferta)
-        # Separar
-        nuevas = [o for o in todas_ofertas if "motivo_descarte" not in o]
-        print(f"[buscar-todo] filtro Sectores: {antes - len(nuevas)} consultoras descartadas, {len(nuevas)} restantes", file=sys.stderr)
-        todas_ofertas = nuevas
-
-    # Evaluación final con re-puntuación tras hidratación completa
-    validas, descartadas = evaluar(todas_ofertas, criterios, hoy, args.minimo)
-    # Añadir las descartadas por sector
-    if not getattr(args, "sin_consultoras_sector", False):
-        descartadas.extend(descartadas_sector)
-
-    # Generar archivo lista-HHMM.md en ofertas/YYYYMMDD/
-    ahora = datetime.now()
-    fecha_dir = ahora.strftime("%Y%m%d")
-    hora_str = ahora.strftime("%H%M")
-    ofertas_dir = OFERTAS_DIR / fecha_dir
-    ofertas_dir.mkdir(parents=True, exist_ok=True)
-    lista_path = ofertas_dir / f"lista-{hora_str}.md"
-    # Construir markdown del informe
-    lineas = [
-        f"# Ofertas por encaje — {ahora.strftime('%Y-%m-%d')}",
-        "",
-        "> Búsqueda interna. No se envía a ninguna empresa.",
-        "",
-        "## Criterios usados",
-        "",
-        f"- **Derivados de:** `sources/curriculum-base.md`",
-        f"- **Términos:** {terminos}",
-        f"- **Palabras clave:** {', '.join(criterios['clave'])}",
-        f"- **Descartes:** {', '.join(criterios['descartar'])}",
-        f"- **Banda de seniority:** {', '.join(criterios['seniority'])}",
-        f"- **Geografía:** {', '.join(criterios['ubicacion'])}",
-        f"- **Antigüedad máxima:** {criterios['dias']} días",
-        "",
-        "## Lista corta",
-        "",
-        "Ordenada de mayor a menor encaje (solo ≥70).",
-        "",
-        "| # | Empresa | Puesto | Ubicación | Publicada | Encaje | Enlace |",
-        "|---|---|---|---|---|---|---|",
-    ]
-    for i, oferta in enumerate(validas, 1):
-        dias = oferta["antiguedad_dias"]
-        lineas.append(
-            f"| {i} | {celda(oferta['empresa'])} | {celda(oferta['titulo'])} | "
-            f"{celda(oferta['ubicacion'] or '-')} | {'si' if oferta['remoto'] else 'no'} | "
-            f"{celda(oferta.get('fecha') or '-')} | {dias if dias is not None else '-'} | "
-            f"{oferta['puntuacion']} | {celda(oferta['url'])} |"
-        )
-    if descartadas:
-        lineas += ["", "## Descartadas", "", "| Empresa | Puesto | Motivo |", "| --- | --- | --- |"]
-        for oferta in descartadas:
-            lineas.append(
-                f"| {celda(oferta['empresa'])} | {celda(oferta['titulo'])} | "
-                f"{celda(oferta.get('motivo_descarte', ''))} |"
-            )
-    lineas += ["", "## Fuentes", "", "| Dato | Fuente | Fecha |", "| --- | --- | --- |",
-               f"| Ofertas | LinkedIn, Remotive, Himalayas, RemoteOK, WWR, Adzuna, Jooble | {ahora.strftime('%Y-%m-%d')} |"]
-    lista_path.write_text("\n".join(lineas), encoding="utf-8")
-    print(f"[buscar-todo] informe escrito en {lista_path}", file=sys.stderr)
-
-    resultado = {
-        "generado": ahora.strftime("%Y-%m-%d %H:%M"),
-        "consulta": {
-            "terminos": terminos, "dias": args.dias, "paginas": args.paginas,
-            "detalle": args.detalle, "modo": "buscar-todo", "minimo": args.minimo,
-        },
-        "criterios": criterios,
-        "recogidas": len(todas_ofertas),
-        "ofertas": validas[: args.limite],
-        "descartadas": descartadas,
-        "resumen": {
-            "ofertas_validas": len(validas),
-            "descartadas": len(descartadas),
-            "con_descripcion": sum(1 for o in validas if o.get("descripcion")),
-            "hidratadas": hidratadas,
-        },
-    }
-    return emitir(resultado, args.formato)
-
-
 def cmd_detalle(args: argparse.Namespace) -> int:
     identificador = args.identificador
     if "jobs/view" in identificador:
@@ -1435,7 +1028,7 @@ def main() -> int:
 
     buscar = sub.add_parser("buscar", help="buscar ofertas en una fuente concreta")
     buscar.add_argument("terminos", nargs="+")
-    buscar.add_argument("--fuente", choices=["linkedin", "remotive", "himalayas", "remoteok", "weworkremotely", "adzuna", "jooble"], default="linkedin")
+    buscar.add_argument("--fuente", choices=["linkedin", "remotive", "himalayas"], default="linkedin")
     buscar.add_argument("--geo", help="ubicacion para LinkedIn (texto)")
     buscar.add_argument("--remoto", action="store_true", help="sumar encaje a las ofertas remotas")
     buscar.add_argument("--paginas", type=int, default=2, help="paginas de 25 ofertas")
@@ -1448,18 +1041,6 @@ def main() -> int:
     remoto.add_argument("--paginas", type=int, default=1)
     remoto.set_defaults(func=cmd_remoto)
     argumentos_comunes(remoto)
-
-    buscar_todo = sub.add_parser(
-        "buscar-todo",
-        help="busqueda exhaustiva multi-pasada (local, nacional, remoto, agregadores) con hidratacion y filtro Sectores; solo ofertas >=70"
-    )
-    buscar_todo.add_argument("terminos", nargs="+")
-    buscar_todo.add_argument("--paginas", type=int, default=2, help="paginas por pasada en LinkedIn")
-    buscar_todo.add_argument("--detalle", type=int, default=20, help="ofertas a hidratar por pasada (total max ~80)")
-    buscar_todo.add_argument("--sin-consultoras-sector", action="store_true",
-                             help="desactiva filtro por campo Sectores de la oferta hidratada")
-    buscar_todo.set_defaults(func=cmd_buscar_todo)
-    argumentos_comunes(buscar_todo)
 
     publico = sub.add_parser(
         "publico",

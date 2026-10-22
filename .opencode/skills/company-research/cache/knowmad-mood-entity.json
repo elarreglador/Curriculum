@@ -1,0 +1,249 @@
+{
+  "type": "item",
+  "id": "Q110482111",
+  "labels": {},
+  "descriptions": {
+    "es": {
+      "language": "es",
+      "value": "empresa española de consultoría tecnológica"
+    },
+    "en": {
+      "language": "en",
+      "value": "Spanish tech consultancy"
+    }
+  },
+  "aliases": {},
+  "claims": {
+    "P31": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P31",
+          "hash": "2c2f3db659224c76867f3f883571f7cb4cdbd04f",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 18388277,
+              "id": "Q18388277"
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        },
+        "type": "statement",
+        "id": "Q110482111$dbb0fa65-45f3-4388-2359-d4e80786fb91",
+        "rank": "normal",
+        "references": [
+          {
+            "hash": "0b0debf5a0114c839901c5e0e036c1aa6a0f0f44",
+            "snaks": {
+              "P854": [
+                {
+                  "snaktype": "value",
+                  "property": "P854",
+                  "hash": "a1e281a855abfe2f537b0f2a2c03cf0d8339a662",
+                  "datavalue": {
+                    "value": "https://www.telemadrid.es/programas/madrid-trabaja/perfiles-necesitara-atSistemas-puestos-trabajo-9-2308359169--20210125051359.html",
+                    "type": "string"
+                  },
+                  "datatype": "url"
+                }
+              ]
+            },
+            "snaks-order": [
+              "P854"
+            ]
+          }
+        ]
+      }
+    ],
+    "P159": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P159",
+          "hash": "108beefd1b16ac615a4ea2453209db6816c5fcb3",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 2807,
+              "id": "Q2807"
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        },
+        "type": "statement",
+        "id": "Q110482111$eadb7d02-41a1-1d5b-f7b4-d5ade48f7148",
+        "rank": "normal"
+      }
+    ],
+    "P571": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P571",
+          "hash": "7e44dac4732fc9967ad9a5c86aba5a44fa719093",
+          "datavalue": {
+            "value": {
+              "time": "+1994-00-00T00:00:00Z",
+              "timezone": 0,
+              "before": 0,
+              "after": 0,
+              "precision": 9,
+              "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+            },
+            "type": "time"
+          },
+          "datatype": "time"
+        },
+        "type": "statement",
+        "id": "Q110482111$dd9185db-49f5-4505-f764-f4d5d8855d1a",
+        "rank": "normal",
+        "references": [
+          {
+            "hash": "f8acc0e1271e314021c5f6779d6e05ba115ed662",
+            "snaks": {
+              "P854": [
+                {
+                  "snaktype": "value",
+                  "property": "P854",
+                  "hash": "fd919e17d0000169c56a168997dc6767472fb9c4",
+                  "datavalue": {
+                    "value": "https://www.crunchbase.com/organization/atsistemas",
+                    "type": "string"
+                  },
+                  "datatype": "url"
+                }
+              ]
+            },
+            "snaks-order": [
+              "P854"
+            ]
+          }
+        ]
+      }
+    ],
+    "P452": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P452",
+          "hash": "6ce2281af54e6e69b640c6abe7f6309b8fb5b746",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 21157865,
+              "id": "Q21157865"
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        },
+        "type": "statement",
+        "id": "Q110482111$074f61ae-476b-1272-640a-2f2ea8faac8d",
+        "rank": "normal"
+      },
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P452",
+          "hash": "31161d906d14233702a324eba934b0b5d5ae49d7",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 137797085,
+              "id": "Q137797085"
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        },
+        "type": "statement",
+        "id": "Q110482111$0755efb5-407b-e7e0-20b8-a07441d55e85",
+        "rank": "normal"
+      }
+    ],
+    "P17": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P17",
+          "hash": "69df494d7fa0613c7bd8f047afc1e87bdc03a0f2",
+          "datavalue": {
+            "value": {
+              "entity-type": "item",
+              "numeric-id": 29,
+              "id": "Q29"
+            },
+            "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+        },
+        "type": "statement",
+        "id": "Q110482111$8c3b254a-4eff-9f2b-5e2c-b8b9d3cac4b2",
+        "rank": "normal",
+        "references": [
+          {
+            "hash": "fd63e867e175bf3a88f1a27718408173784e0170",
+            "snaks": {
+              "P854": [
+                {
+                  "snaktype": "value",
+                  "property": "P854",
+                  "hash": "065682278166d4ee8bfacfa1b93367ea682bc26d",
+                  "datavalue": {
+                    "value": "https://www.europapress.es/economia/noticia-atsistemas-ingreso-12-mas-2020-preve-contratar-mas-500-profesionales-2021-20210119095935.html",
+                    "type": "string"
+                  },
+                  "datatype": "url"
+                }
+              ]
+            },
+            "snaks-order": [
+              "P854"
+            ]
+          }
+        ]
+      }
+    ],
+    "P856": [
+      {
+        "mainsnak": {
+          "snaktype": "value",
+          "property": "P856",
+          "hash": "f40928d4fcd29b69c68b5819c40b35bd99aa6a52",
+          "datavalue": {
+            "value": "https://www.knowmadmood.com/es",
+            "type": "string"
+          },
+          "datatype": "url"
+        },
+        "type": "statement",
+        "qualifiers": {
+          "P407": [
+            {
+              "snaktype": "value",
+              "property": "P407",
+              "hash": "ffe70325d10cfc55f0dca807ed80ca0b5b97c472",
+              "datavalue": {
+                "value": {
+                  "entity-type": "item",
+                  "numeric-id": 1321,
+                  "id": "Q1321"
+                },
+                "type": "wikibase-entityid"
+              },
+              "datatype": "wikibase-item"
+            }
+          ]
+        },
+        "qualifiers-order": [
+          "P407"
+        ],
+        "id": "Q110482111$8bd33786-452c-9213-562d-c508b653e378",
+        "rank": "normal"
+      }
+    ]
+  }
+}

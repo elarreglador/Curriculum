@@ -1,0 +1,26 @@
+[
+  {
+    "qid": "Q110482111",
+    "nombre": "knowmad mood",
+    "nombre_en": "knowmad mood",
+    "descripcion": "empresa española de consultoría tecnológica",
+    "url": "https://www.wikidata.org/wiki/Q110482111",
+    "wikidata_url": "https://www.wikidata.org/wiki/Q110482111",
+    "consulta_resuelta": "knowmad mood",
+    "puntuacion": 140
+  },
+  [
+    {
+      "qid": "Q110482111",
+      "label": "knowmad mood",
+      "description": "Spanish tech consultancy",
+      "matches": "knowmad mood"
+    }
+  ],
+  [
+    {
+      "consulta": "knowmad mood",
+      "resultados": 1
+    }
+  ]
+]
