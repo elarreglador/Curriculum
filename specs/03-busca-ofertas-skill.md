@@ -105,7 +105,7 @@ Las ofertas se normalizan a un **esquema único** entre fuentes, con el siguient
 - **Sí:** skill local (`.opencode/skills/`), con el nombre `job-search` en inglés como las existentes.
 - **Sí:** el criterio de búsqueda lo deriva el agente del CV **en cada ejecución**, sin fichero de perfil propio. Es lo que pidió el usuario: el criterio no se queda congelado en un fichero que se queda viejo.
   - **Consecuencia asumida:** el resultado solo es reconstruible si los criterios usados quedan escritos en el informe. De ahí la cabecera obligatoria. Registrar el criterio, no configurarlo.
-- **Sí:** salida en `ofertas/YYYYMMDD/`, versionada en git, como el historial de lo que había disponible cada día.
+- **No:** salida en `ofertas/YYYYMMDD/`, ignorada por git y solo local (sustituida por spec 05).
   - `YYYYMMDD` es la fecha de la búsqueda. Dentro, `lista-HHMM.md` permite varias búsquedas el mismo día.
 - **Sí:** puntuación en dos capas —técnica y determinista en el script, argumental y cualitativa en el agente. Un filtro de palabras no sabe que un puesto de firmware encaja y uno de cloud architect no, aunque ambos contengan las mismas palabras.
 - **No:** script que derive el perfil del CV. Esa parte es criterio, y el criterio es del agente. El script recibe los criterios como banderas.
@@ -129,6 +129,6 @@ Las ofertas se normalizan a un **esquema único** entre fuentes, con el siguient
 
 - Relleno o envío automático de candidaturas.
 - Alertas y suscripciones a boletines de empleo.
-- Seguimiento histórico de qué ofertas se publicaron cada día más allá del informe versionado.
+- Seguimiento histórico de qué ofertas se publicaron cada día más allá del informe local.
 - Traducción de las ofertas.
 - Normalización de objetivos de la búsqueda en un fichero de perfil permanente.

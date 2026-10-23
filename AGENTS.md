@@ -9,8 +9,8 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 - `sources/curriculum-github.md` — fuente de verdad del CV en formato GitHub (con badges del repo `elarreglador/rotulos`).
 - `sources/curriculum-base.md` — **plantilla del CV**: contenido base y estructura de referencia (cabecera con foto, contacto al final). Es lo que copia y adapta `nueva_candidatura.py` en cada candidatura.
 - `templates/curriculum-odt.odt` — plantilla de referencia histórica (no usada por el flujo actual).
-- `output/YYYYMMDD-nombreempresa/` — candidaturas generadas (`pin.png` + `info.md` + CV y carta en `.md`). **Versionado en git**: cada candidatura queda en su propio directorio con la fecha de generación, de modo que se conserva el historial de lo enviado a cada empresa.
-- `ofertas/YYYYMMDD/lista-HHMM.md` — listas de ofertas encontradas por encaje (`pin` de fecha + hora para permitir varias búsquedas el mismo día). **Versionado en git**: guarda qué había disponible cada día. Lo redacta la skill `job-search`.
+- `output/YYYYMMDD-nombreempresa/` — candidaturas generadas (`pin.png` + `info.md` + CV y carta en `.md`). **Ignorado por git**: cada candidatura queda en su propio directorio con la fecha de generación, de modo que se conserva el historial de lo enviado a cada empresa.
+- `ofertas/YYYYMMDD/lista-HHMM.md` — listas de ofertas encontradas por encaje (`pin` de fecha + hora para permitir varias búsquedas el mismo día). **Ignorado por git**: guarda qué había disponible cada día. Lo redacta la skill `job-search`.
 - `assets/pin.png` — foto de la cabecera del CV; `assets/foto.jpg`, `assets/foto2.jpeg` — alternativas.
 - `specs/NN-slug.md` — especificaciones con metadatos (Estado, Depende de, Fecha, Objetivo). Flujo: `spec` → `spec-impl`.
 

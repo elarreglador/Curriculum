@@ -326,9 +326,7 @@ trabajo/
 3. **Adapta, no inventes:** usa solo la información de
    `sources/curriculum-base.md` como base
 4. **Idioma:** castellano para CVs y cartas
-6. **Output:** todo en `output/YYYYMMDD-nombreempresa/`, que **está versionado
-   en git** a propósito: guarda el historial de lo enviado a cada empresa. Aun
-   así, no hacer commit sin que el usuario lo pida expresamente.
+6. **Output:** todo en `output/YYYYMMDD-nombreempresa/`, que **está ignorado por git** y permanece solo en local. No hacer commit sin que el usuario lo pida expresamente.
 7. **Nada de separadores `---`** en el Markdown del CV: se renderizan como
    doble línea. Las cabeceras `##` ya delimitan las secciones.
 8. **Traza de los datos externos:** toda cifra o dato sobre la empresa citado en

@@ -47,7 +47,7 @@ El flujo de generación de candidaturas en `output/YYYYMMDD-nombreempresa/` se l
 
 - **Sí:** Solo Markdown como salida de la skill. Los `.md` son fuentes editables y suficientes para el usuario.
 - **No:** ODT/PDF como entregables automáticos de la skill. El formato de entrega lo decide el usuario fuera del repositorio.
-- **Sí:** Conservar el histórico de `output/` con los `.odt`/`.pdf` ya generados (registro de lo enviado).
+- **Sí:** Conservar los ficheros locales de `output/`; no se versionan en git ni se publican.
 - **No:** Borrar `templates/curriculum-odt.odt`; queda como referencia histórica.
 
 ---

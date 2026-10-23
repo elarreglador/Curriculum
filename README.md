@@ -159,10 +159,10 @@ Repositorio personal de CV y portfolio.
 - [`templates/`](templates/) — Plantillas de referencia
   - `curriculum-odt.odt` — Plantilla de referencia histórica (no usada por el flujo actual).
 - [`output/`](output/) — Candidaturas generadas, una carpeta por empresa con su fecha
-  (`output/YYYYMMDD-nombreempresa/`). Cada una lleva el CV y la carta en `.md`.
+  (`output/YYYYMMDD-nombreempresa/`). Cada una lleva el CV y la carta en `.md`. **Ignoradas por git:** permanecen solo en local.
   Ver `output/20260930-edicom/` como referencia de formato del CV.
 - [`ofertas/`](ofertas/) — Listas de ofertas por encaje, una carpeta por día
-  (`ofertas/YYYYMMDD/lista-HHMM.md`). Guardan qué había disponible en cada búsqueda.
+  (`ofertas/YYYYMMDD/lista-HHMM.md`). Guardan qué había disponible en cada búsqueda. **Ignoradas por git:** permanecen solo en local.
 - [`archive/`](archive/) — Documentos anteriores a 2026
 - [`assets/`](assets/) — Fotografías para el CV (`pin.png` es la de la cabecera)
 - [`specs/`](specs/) — Especificaciones de trabajo

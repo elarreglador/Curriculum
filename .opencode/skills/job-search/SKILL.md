@@ -239,7 +239,7 @@ Reglas del fichero:
 trabajo/
 ├── sources/
 │   └── curriculum-base.md        # de aquí se derivan los criterios
-├── ofertas/                     # listas de búsqueda, versionadas
+├── ofertas/                     # listas de búsqueda, ignoradas por git
 │   └── YYYY-MM-DD/
 │       └── lista-HHMM.md
 └── .opencode/skills/job-search/
