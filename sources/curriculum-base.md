@@ -1,8 +1,8 @@
 <table width="700">
-<!-- Anchos ABSOLUTOS en px a proposito. El importador HTML de LibreOffice no
-     respeta porcentajes al convertir a ODT: con width="100%" la columna del
-     texto se estrecha y el nombre se parte en tres lineas. 700 px es el ancho
-     util de A4 con los margenes por defecto (1,2 cm). -->
+<!-- Anchos ABSOLUTOS en px a proposito. Los conversores HTML a ofimatica ignoran
+     los porcentajes: con width="100%" la columna del texto se estrecha y el
+     nombre se parte en tres lineas. 700 px es el ancho util de A4 con los
+     margenes por defecto (1,2 cm). -->
 <tr>
 <td width="90" valign="top" align="left"><img src="pin.png" width="90" height="90" alt="David Moreno Bolívar"></td>
 <td width="610" valign="top">

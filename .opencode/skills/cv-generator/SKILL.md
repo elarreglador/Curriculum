@@ -312,8 +312,6 @@ trabajo/
 │   ├── pin.png                     # Foto de la cabecera del CV
 │   ├── foto.jpg
 │   └── foto2.jpeg
-├── templates/
-│   └── curriculum-odt.odt         # Plantilla de referencia
 └── .opencode/skills/cv-generator/
     ├── SKILL.md
     └── scripts/
@@ -339,8 +337,9 @@ trabajo/
    `No consta`, nunca estimado.
 9. **La estructura del CV es fija.** Se adapta el texto de
    `sources/curriculum-base.md`, no se rehace el esqueleto. En particular, el
-   `Contacto` va **al final**, no al principio, y la cabecera conserva su tabla
-   de dos columnas con la foto.
+    `Contacto` va **al final**, no al principio, y la cabecera conserva su tabla
+    de dos columnas con la foto.
+10. **Solo Markdown:** la skill genera únicamente archivos `.md` (info.md, curriculum-*.md, carta-*.md) y pin.png. No generar .odt ni .pdf.
 
 ## Ejemplo de uso
 

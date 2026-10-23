@@ -1,6 +1,6 @@
 # SPEC 02 — Skill local: Generador de CV + Carta de Presentación
 
-> **Estado:** Aprobado
+> **Estado:** Sustituida por spec 04
 
 > **Depende de:** 01-curriculum-odt
 

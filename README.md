@@ -157,9 +157,9 @@ Repositorio personal de CV y portfolio.
     referencia (cabecera con foto, contacto al final). Es lo que se copia y adapta
     en cada candidatura.
 - [`templates/`](templates/) — Plantillas de referencia
-  - `curriculum-odt.odt` — Última versión ODT generada como referencia.
+  - `curriculum-odt.odt` — Plantilla de referencia histórica (no usada por el flujo actual).
 - [`output/`](output/) — Candidaturas generadas, una carpeta por empresa con su fecha
-  (`output/YYYYMMDD-nombreempresa/`). Cada una lleva el CV y la carta en `.md`, `.odt` y `.pdf`.
+  (`output/YYYYMMDD-nombreempresa/`). Cada una lleva el CV y la carta en `.md`.
   Ver `output/20260930-edicom/` como referencia de formato del CV.
 - [`ofertas/`](ofertas/) — Listas de ofertas por encaje, una carpeta por día
   (`ofertas/YYYYMMDD/lista-HHMM.md`). Guardan qué había disponible en cada búsqueda.

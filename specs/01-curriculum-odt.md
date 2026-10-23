@@ -1,6 +1,6 @@
 # SPEC 01 — Currículum Vitae en formato ODT
 
-> **Estado:** Aprobado
+> **Estado:** Sustituida por spec 04
 
 > **Depende de:** Ninguna
 
