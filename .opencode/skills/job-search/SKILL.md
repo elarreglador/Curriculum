@@ -1,8 +1,9 @@
 # job-search
 
 Skill de búsqueda de ofertas de empleo. Encuentra ofertas vivas, las puntúa por
-encaje con el perfil de `sources/curriculum-base.md` y deja una lista corta
-justificada en `ofertas/YYYYMMDD/`. 
+encaje con el perfil de `sources/curriculum-base.md` —banda y geografía según
+`sources/criterios-busqueda.md`— y deja una lista corta justificada en
+`ofertas/YYYYMMDD/`. 
 
 ## Principio de diseño
 
@@ -39,11 +40,13 @@ S=.opencode/skills/job-search/scripts/ofertas.py
 
 # búsqueda principal: término + geografía de búsqueda
 python3 $S buscar "IoT" --geo "Valencia, Spain" --dias 21 --paginas 2 --minimo 30 \
+  --seniority "junior,mid" \
   --clave "iot,zigbee,embedded,firmware,kubernetes,python,linux" \
-  --ubicacion "valencia,valencian" --formato json
+  --ubicacion "valencia,valencian,barcelona,madrid" --formato json
 
-# todas las de España, banda mid/senior
-python3 $S buscar "backend developer" --geo "Spain" --seniority "mid,senior" --dias 14
+# misma búsqueda en Barcelona o Madrid (desplazable)
+python3 $S buscar "backend developer" --geo "Barcelona, Spain" --seniority "junior,mid" --dias 14
+python3 $S buscar "backend developer" --geo "Madrid, Spain" --seniority "junior,mid" --dias 14
 
 # remoto Europa (obligatorio filtrar por geografía aquí)
 python3 $S remoto "backend python kubernetes" --dias 45 \
@@ -133,32 +136,39 @@ portal caído (habrá un `[aviso]` en stderr).
 
 ## Flujo de interacción
 
-### Paso 1 — Derivar los criterios del CV
+### Paso 1 — Derivar los criterios
 
-Lee `sources/curriculum-base.md` y decide, cada vez:
+1. Lee `sources/criterios-busqueda.md`: ahí están fijados la **banda de
+   seniority** (`junior,mid`; `senior`/`lead` descartados), la **geografía**
+   (Valencia base, Barcelona y Madrid desplazable; resto de España descartado
+   **solo en presencial e híbrido** — el remoto se rige por su propia línea y
+   admite cualquier sede de España o Europa) y la política de **remoto**. Son
+   criterios permanentes; no los rederives ni los contradigas.
+2. Lee `sources/curriculum-base.md` y decide, cada vez:
 
 - **Roles objetivo** (los 3-5 términos de búsqueda más determinantes)
 - **Palabras clave**: sinónimos reales del CV en español **e inglés**
   (del `embedded` al `embebido`, `firmware`, `Zigbee`, `Kubernetes`…). Include
   las palabras que usaría la empresa, no las del CV.
 - **Palabras de descarte**: lo que de verdad no es suyo (`SAP`, `scrum master`,
-  `Unity`, `.NET` si no lo tiene).
-- **Banda de seniority**: qué busca ahora mismo.
-- **Geografía**: qué cuenta como destino.
+  `Unity`, `.NET` si no lo tiene). Añade siempre `senior,lead`: refuerza el
+  castigo de banda con −20 extra.
 
 Si el usuario ya ha dicho "buscarme ofertas de X", usa sus criterios y no le
 preguntes lo que ya ha dicho.
 
 ### Paso 2 — Buscar en varias pasadas
 
-Tres búsquedas como mínimo, porque cada una encuentra lo que las otras no:
+Cuatro pasadas como mínimo, porque cada una encuentra lo que las otras no:
 
 1. **Local** (`--geo "Valencia, Spain"`): lo que se puede ir sin mudanza.
-2. **Nacional** (`--geo "Spain"`): lo que ya se vio en candidaturas anteriores (Pozuelo,
-   Sevilla, Vigo).
-3. **Remoto Europa** (`remoto`): solo tiene sentido con `--ubicacion`.
+2. **Barcelona** (`--geo "Barcelona, Spain"`): desplazable varias veces por semana.
+3. **Madrid** (`--geo "Madrid, Spain"`): idem (cubre Pozuelo y el resto del área metropolitana).
+4. **Remoto Europa** (`remoto`): solo tiene sentido con `--ubicacion`.
 
-Añade `--paginas 2` y `--detalle 10` en todas. Guarda el JSON de cada una.
+En las tres de España: `--seniority "junior,mid"` y
+`--ubicacion "valencia,valencian,barcelona,madrid"`. Añade `--paginas 2` y
+`--detalle 10` en todas. Guarda el JSON de cada una.
 
 ### Paso 3 — Cualificar
 
@@ -186,7 +196,7 @@ IMPORTANTE: Este paso no es opcional, el usuario espera este documento.
 
 ## Criterios usados
 
-- **Derivados de:** `sources/curriculum-base.md`
+- **Derivados de:** `sources/curriculum-base.md` (términos y palabras clave) y `sources/criterios-busqueda.md` (banda y geografía)
 - **Términos:** [los mismos de la consulta]
 - **Palabras clave:** [la lista completa]
 - **Descartes:** [la lista]
@@ -238,7 +248,8 @@ Reglas del fichero:
 ```
 trabajo/
 ├── sources/
-│   └── curriculum-base.md        # de aquí se derivan los criterios
+│   ├── criterios-busqueda.md     # banda de seniority, geografía y remoto (fijo)
+│   └── curriculum-base.md        # de aquí se derivan el resto de criterios
 ├── ofertas/                     # listas de búsqueda, ignoradas por git
 │   └── YYYY-MM-DD/
 │       └── lista-HHMM.md

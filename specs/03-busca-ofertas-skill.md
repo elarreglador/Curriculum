@@ -105,6 +105,7 @@ Las ofertas se normalizan a un **esquema único** entre fuentes, con el siguient
 - **Sí:** skill local (`.opencode/skills/`), con el nombre `job-search` en inglés como las existentes.
 - **Sí:** el criterio de búsqueda lo deriva el agente del CV **en cada ejecución**, sin fichero de perfil propio. Es lo que pidió el usuario: el criterio no se queda congelado en un fichero que se queda viejo.
   - **Consecuencia asumida:** el resultado solo es reconstruible si los criterios usados quedan escritos en el informe. De ahí la cabecera obligatoria. Registrar el criterio, no configurarlo.
+  - **Enmienda (2026-10-27):** el usuario pidió fijar tres criterios permanentes (banda `junior,mid`, geografía Valencia/Barcelona/Madrid, remoto). Ahora viven en `sources/criterios-busqueda.md`; el resto (términos, palabras clave, descartes) sigue derivándose del CV en cada ejecución.
 - **No:** salida en `ofertas/YYYYMMDD/`, ignorada por git y solo local (sustituida por spec 05).
   - `YYYYMMDD` es la fecha de la búsqueda. Dentro, `lista-HHMM.md` permite varias búsquedas el mismo día.
 - **Sí:** puntuación en dos capas —técnica y determinista en el script, argumental y cualitativa en el agente. Un filtro de palabras no sabe que un puesto de firmware encaja y uno de cloud architect no, aunque ambos contengan las mismas palabras.
@@ -131,4 +132,4 @@ Las ofertas se normalizan a un **esquema único** entre fuentes, con el siguient
 - Alertas y suscripciones a boletines de empleo.
 - Seguimiento histórico de qué ofertas se publicaron cada día más allá del informe local.
 - Traducción de las ofertas.
-- Normalización de objetivos de la búsqueda en un fichero de perfil permanente.
+- Normalización de objetivos de la búsqueda en un fichero de perfil permanente (añadido después por enmienda de 2026-10-27: `sources/criterios-busqueda.md`).

@@ -8,6 +8,7 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 ## Estructura
 - `sources/curriculum-github.md` — fuente de verdad del CV en formato GitHub (con badges del repo `elarreglador/rotulos`).
 - `sources/curriculum-base.md` — **plantilla del CV**: contenido base y estructura de referencia (cabecera con foto, contacto al final). Es lo que copia y adapta `nueva_candidatura.py` en cada candidatura.
+- `sources/criterios-busqueda.md` — **criterios permanentes de búsqueda** de ofertas: banda de seniority (`junior,mid`), geografía (Valencia base; Barcelona y Madrid desplazable; resto de España descartado en presencial/híbrido, el remoto admite cualquier sede de España o Europa) y remoto. Interno, no va en el CV. Única fuente de esos tres criterios para la skill `job-search`.
 - `templates/curriculum-odt.odt` — plantilla de referencia histórica (no usada por el flujo actual).
 - `output/YYYYMMDD-nombreempresa/` — candidaturas generadas (`pin.png` + `info.md` + CV y carta en `.md`). **Ignorado por git**: cada candidatura queda en su propio directorio con la fecha de generación, de modo que se conserva el historial de lo enviado a cada empresa.
 - `ofertas/YYYYMMDD/lista-HHMM.md` — listas de ofertas encontradas por encaje (`pin` de fecha + hora para permitir varias búsquedas el mismo día). **Ignorado por git**: guarda qué había disponible cada día. Lo redacta la skill `job-search`.
@@ -16,7 +17,7 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 
 ## Búsqueda de ofertas por encaje
 - **Estándar:** `ofertas/YYYYMMDD/lista-HHMM.md` con los **criterios usados en la cabecera** (términos, palabras clave, descartes, banda de seniority, geografía, antigüedad máxima), la lista corta con su encaje, el detalle de las mejores —argumento, qué cubre del CV y **qué no cubre**— y las descartadas con su motivo. Sin la cabecera de criterios el resultado no es reconstruible.
-- El criterio de búsqueda **no está en ningún fichero**: el agente lo deriva de `sources/curriculum-base.md` en cada ejecución y se lo pasa al script como banderas (`--clave`, `--descartar`, `--ubicacion`, `--seniority`).
+- El criterio de búsqueda tiene dos fuentes: `sources/criterios-busqueda.md` fija **banda de seniority, geografía y remoto** (permanente); el resto (términos, `--clave`, `--descartar`) lo deriva el agente de `sources/curriculum-base.md` en cada ejecución. Se pasan al script como banderas (`--clave`, `--descartar`, `--ubicacion`, `--seniority`).
 - Reparto de responsabilidades: el script `ofertas.py` recoge, deduplica, filtra y puntúa (0-100, reproducible); el agente juzga el encaje y escribe la justificación. La puntuación ordena, no decide.
 - Comandos: `ofertas.py buscar <términos> --geo <lugar> [--clave ...] [--formato json]`, `ofertas.py remoto <términos> --ubicacion <países>`, `ofertas.py publico [--fuentes upv,uv,gva,csic] [--dias N]` (convocatorias de empleo público), `ofertas.py detalle <id|url>`.
 - Fuente principal: el endpoint **público de invitado** de LinkedIn, en solo lectura y a 1 petición por segundo, con caché de 6 h en `cache/` (ignorada por git). No se rellena ni se envía ninguna candidatura: eso es del usuario y en su navegador.

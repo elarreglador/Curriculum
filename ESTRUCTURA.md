@@ -9,6 +9,10 @@ Repositorio personal de CV y portfolio de David Moreno Bolívar.
   - `curriculum-base.md` — **Plantilla del CV**: contenido base y estructura de
     referencia (cabecera con foto, contacto al final). Es lo que se copia y adapta
     en cada candidatura.
+  - `criterios-busqueda.md` — **Criterios permanentes de búsqueda** de ofertas
+    (banda de seniority, geografía, remoto). Interno; no va en el CV. El resto
+    de España se descarta en presencial/híbrido; el remoto admite cualquier
+    sede.
 - [`templates/`](templates/) — Plantillas de referencia
   - `curriculum-odt.odt` — Plantilla de referencia histórica (no usada por el flujo actual).
 - [`output/`](output/) — Candidaturas generadas, una carpeta por empresa con su fecha
@@ -45,10 +49,12 @@ de la empresa.
 ```bash
 S=.opencode/skills/job-search/scripts/ofertas.py
 
-# 1. Buscar (el criterio lo deriva el agente del CV)
+# 1. Buscar (banda y geografía en sources/criterios-busqueda.md; términos y
+#    palabras clave los deriva el agente del CV)
 python3 $S buscar "IoT" --geo "Valencia, Spain" --dias 21 --minimo 30 \
+  --seniority "junior,mid" \
   --clave "iot,zigbee,embedded,firmware,kubernetes,python" \
-  --ubicacion "valencia,valencian" --formato json
+  --ubicacion "valencia,valencian,barcelona,madrid" --formato json
 python3 $S remoto "backend python" --ubicacion "spain,worldwide,europe"
 # convocatorias de empleo público (UPV, UV, GVA, CSIC)
 python3 $S publico --clave "informatica,sistemas,desarrollo" --dias 14
@@ -57,7 +63,8 @@ python3 $S publico --clave "informatica,sistemas,desarrollo" --dias 14
 python3 $S detalle 4441123182
 ```
 
-El agente deriva del CV los términos y las palabras clave, puntúa cada oferta y
+El agente lee `sources/criterios-busqueda.md` (banda y geografía), deriva del CV
+los términos y las palabras clave, puntúa cada oferta y
 escribe la lista corta en `ofertas/YYYYMMDD/lista-HHMM.md` con la justificación y
 **los requisitos que no cubres**. Ver `ofertas/20261001/` como referencia.
 
