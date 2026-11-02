@@ -1,3 +1,8 @@
+---
+name: job-search
+description: Busca ofertas de empleo adecuadas al CV del usuario (David Moreno Bolívar). Filtra por seniority, geografía y palabras clave del perfil, puntúa el encaje y genera un informe en ofertas/YYYYMMDD/lista-HHMM.md. Úsala cuando el usuario pida buscar ofertas de trabajo.
+---
+
 # job-search
 
 Skill de búsqueda de ofertas de empleo. Encuentra ofertas vivas, las puntúa por
