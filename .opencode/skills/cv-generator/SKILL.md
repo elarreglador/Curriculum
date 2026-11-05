@@ -27,6 +27,8 @@ Cada candidatura vive en su propio directorio:
 output/YYYYMMDD-nombreempresa/
 ├── info.md                    # datos de empresa y oferta (uso interno)
 ├── pin.png                    # foto de la cabecera del CV
+├── linkedin16x16.png          # icono de contacto (copiado automaticamente)
+├── github16x16.png            # icono de contacto (copiado automaticamente)
 ├── curriculum-EMPRESA.md      # fuente editable
 └── carta-EMPRESA.md           # fuente editable
 ```
@@ -66,7 +68,10 @@ python3 .opencode/skills/cv-generator/scripts/nueva_candidatura.py "EDICOM" --si
 ```
 
 El script **no sobrescribe** ni la foto ni el CV si ya existen: reejecutarlo tras
-retocar el `.md` no tira el trabajo.
+retocar el `.md` no tira el trabajo. Tampoco sobrescribe los assets referenciados
+por el CV (iconos de LinkedIn, GitHub, etc.): los copia desde `assets/` si no
+están ya en el directorio de la candidatura, para que las imágenes del bloque
+`Contacto` se rendericen correctamente.
 
 ## Flujo de interacción
 
@@ -337,7 +342,9 @@ trabajo/
    `sources/curriculum-base.md`, no se rehace el esqueleto. En particular, el
     `Contacto` va **al final**, no al principio, y la cabecera conserva su tabla
     de dos columnas con la foto.
-10. **Solo Markdown:** la skill genera únicamente archivos `.md` (info.md, curriculum-*.md, carta-*.md) y pin.png. No generar .odt ni .pdf.
+10. **Solo Markdown y assets referenciados:** la skill genera archivos `.md`
+    (info.md, curriculum-*.md, carta-*.md), `pin.png` y las imágenes referenciadas
+    por el CV (iconos de contacto). No generar .odt ni .pdf.
 
 ## Ejemplo de uso
 

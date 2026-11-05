@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Prepara el andamiaje de una candidatura: output/YYYYMMDD-nombreempresa.
 
-Deja el directorio con la foto de la cabecera y una copia del CV base, ya con el
-nombre de la empresa. El agente adapta esa copia en lugar de escribir el CV desde
-cero: asi la estructura (cabecera con foto, contacto al final) es siempre la misma
-y lo unico que cambia de una candidatura a otra son las palabras.
+Deja el directorio con la foto de la cabecera, los assets referenciados por el
+CV (iconos de LinkedIn/GitHub, etc.) y una copia del CV base, ya con el nombre
+de la empresa. El agente adapta esa copia en lugar de escribir el CV desde
+cero: asi la estructura (cabecera con foto, contacto al final) es siempre la
+misma y lo unico que cambia de una candidatura a otra son las palabras.
 
-Si el directorio ya existe no falla: lo reutiliza y no sobrescribe ni la foto ni
-el CV, de modo que reejecutar la skill tras revisar el .md no pierde el trabajo.
+Si el directorio ya existe no falla: lo reutiliza y no sobrescribe ni la foto
+ni el CV, de modo que reejecutar la skill tras revisar el .md no pierde el
+trabajo.
 
     python3 nueva_candidatura.py "CityPrive"            # -> output/20260929-cityprive
     python3 nueva_candidatura.py "Banco Santander"      # -> output/20260929-banco-santander
@@ -18,6 +20,7 @@ el CV, de modo que reejecutar la skill tras revisar el .md no pierde el trabajo.
 import argparse
 import datetime as dt
 import pathlib
+import re
 import shutil
 import sys
 import unicodedata
@@ -67,6 +70,36 @@ def copiar(origen: pathlib.Path, destino: pathlib.Path) -> bool:
     return True
 
 
+def copiar_assets_referenciados(base: pathlib.Path, destino: pathlib.Path, dir_assets: pathlib.Path, excluir: set[str] | None = None) -> None:
+    """Copia al directorio de salida las imagenes referenciadas por el CV base.
+
+    El CV base referencia imagenes con rutas relativas (pin.png,
+    linkedin16x16.png, github16x16.png, ...). Si no se copian, el CV renderizado
+    en el directorio de la candidatura muestra iconos rotos. Copia cada una que
+    exista en `dir_assets`, sin sobrescribir si ya esta.
+    """
+    if not base.is_file():
+        return
+    excluir = excluir or set()
+    texto = base.read_text(encoding="utf-8")
+    refs = set(re.findall(r'src=["\']([^"\']+)["\']', texto))
+    for ref in sorted(refs):
+        nombre = pathlib.PurePosixPath(ref).name
+        if not nombre or nombre in excluir:
+            continue
+        origen = dir_assets / nombre
+        if not origen.is_file():
+            origen = base.parent / ref
+            if not origen.is_file():
+                continue
+        destino_archivo = destino / nombre
+        if destino_archivo.exists():
+            print(f"  {nombre}  ya estaba, se conserva")
+            continue
+        shutil.copy2(origen, destino_archivo)
+        print(f"  {nombre}  (asset referenciado por el CV, desde {origen})")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Prepara output/YYYYMMDD-nombreempresa")
     ap.add_argument("empresa", help='Nombre comercial, p. ej. "CityPrive"')
@@ -92,6 +125,12 @@ def main() -> int:
         "--sin-foto",
         action="store_true",
         help="No copiar la imagen de la cabecera",
+    )
+    ap.add_argument(
+        "--assets",
+        type=pathlib.Path,
+        default=pathlib.Path("assets"),
+        help="Directorio con las imagenes referenciadas por el CV (por defecto: assets)",
     )
     ap.add_argument(
         "--dry-run",
@@ -123,6 +162,8 @@ def main() -> int:
         print(f"  {curriculum.name}  (copia de {args.base}: adaptar, no reescribir)")
     else:
         print(f"  {curriculum.name}  ya estaba, se conserva")
+
+    copiar_assets_referenciados(args.base, destino, args.assets, excluir={args.foto.name})
 
     print(f"  {carta.name}  pendiente de redactar")
     return 0
