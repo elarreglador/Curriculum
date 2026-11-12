@@ -726,6 +726,91 @@ def build_report(company, sections, bundle, lang="es"):
     return "\n".join(lines)
 
 
+def _first_value(profile, *keys):
+    for key in keys:
+        value = profile.get(key)
+        if value is None:
+            continue
+        if isinstance(value, list):
+            value = value[0] if value else None
+        if value not in (None, ""):
+            return value
+    return None
+
+
+def build_empresa_registro(bundle, company):
+    """Borrador de registro para ofertas/empresas.json (el agente lo revisa)."""
+    identity = bundle.get("identity") or {}
+    profile = bundle.get("profile") or {}
+    summary = bundle.get("summary") or {}
+    fundamentals = bundle.get("fundamentals") or {}
+    registry = bundle.get("registry") or {}
+    sec = bundle.get("sec") or {}
+
+    nombre = identity.get("nombre") or summary.get("titulo") or company
+
+    sede = _first_value(
+        profile, "Sede", "Headquarters", "sede", "city"
+    )
+    if sede is None:
+        sede = fundamentals.get("sede") or fundamentals.get("city")
+    pais = _first_value(profile, "País", "Country", "pais", "country")
+    if pais is None:
+        pais = fundamentals.get("pais") or fundamentals.get("country")
+    def _clean_entity_text(value):
+        if value is None:
+            return None
+        text = str(value)
+        # Wikidata devuelve "Etiqueta (Q123)"; nos quedamos con la etiqueta.
+        text = re.sub(r"\s*\(Q\d+\)", "", text).strip()
+        return text or None
+
+    sede = _clean_entity_text(sede)
+    pais = _clean_entity_text(pais)
+    ubicacion = sede
+    if ubicacion and pais and str(pais).lower() not in str(ubicacion).lower():
+        ubicacion = f"{ubicacion}, {pais}"
+
+    actividad = identity.get("descripcion")
+    if not actividad and summary.get("resumen"):
+        actividad = str(summary["resumen"])[:400]
+    if not actividad:
+        actividad = fundamentals.get("descripcion") or fundamentals.get("longBusinessSummary")
+    if not actividad:
+        actividad = _first_value(profile, "Sector", "Industry", "sector", "industria")
+    if not actividad:
+        actividad = fundamentals.get("industria") or fundamentals.get("sector")
+
+    web = _first_value(profile, "Web oficial", "Website", "web_oficial", "website")
+    if not web:
+        web = fundamentals.get("web_oficial") or fundamentals.get("website")
+
+    sources = []
+    if identity.get("url"):
+        sources.append(identity["url"])
+    if summary.get("url"):
+        sources.append(summary["url"])
+    if fundamentals.get("url"):
+        sources.append(fundamentals["url"])
+    for record in registry.get("registros", []) or []:
+        if record.get("url"):
+            sources.append(record["url"])
+    if sec.get("url"):
+        sources.append(sec["url"])
+    sources = list(dict.fromkeys(s for s in sources if s))
+
+    return {
+        "nombre": nombre,
+        "ubicacion": ubicacion,
+        "actividad": actividad,
+        "web": web,
+        "url_empleo": None,
+        "ultima_revision": None,
+        "ultimas_ofertas_vistas": [],
+        "fuentes": sources,
+    }
+
+
 def main():
     load_env()
     parser = argparse.ArgumentParser(
@@ -816,6 +901,7 @@ def main():
 
     bundle["sections"] = sections
     bundle["consultas_pendientes"] = build_agenda(company, year)
+    bundle["empresa_registro"] = build_empresa_registro(bundle, company)
 
     if args.format == "json":
         print(json.dumps(bundle, ensure_ascii=False, indent=2))

@@ -147,6 +147,35 @@ Si no hay link ni detalles, pregunta:
 
 Con esto se tiene todo lo necesario para el Paso 5.
 
+### Paso 4b — Revisar directorio `output`
+
+Antes de redactar nada, comprueba si ya existe una candidatura para la misma
+empresa (y, si se conoce, para el mismo puesto):
+
+```bash
+python3 .opencode/skills/cv-generator/scripts/revisar_output.py "EMPRESA" --puesto "PUESTO"
+```
+
+Interpreta el resultado:
+
+- **Coincidencia de puesto** (alguna candidatura previa con el mismo puesto): informa
+  al usuario y pregunta antes de seguir:
+  ```
+  Ya te presentaste a [puesto] en [empresa] el [fecha]
+  (directorio [output/YYYYMMDD-empresa]).
+  ¿Quieres actualizar esa candidatura o crear una nueva?
+  ```
+  - Si elige **actualizar**: edita directamente los archivos del directorio existente;
+    **no** ejecutes `nueva_candidatura.py` (evitaría crear un directorio nuevo con
+    fecha de hoy).
+  - Si elige **crear nueva**: continúa con el flujo normal.
+- **Candidaturas previas, pero de otro puesto**: lista los puestos anteriores y continúa
+  creando la nueva candidatura.
+- **Sin coincidencias**: continúa sin avisos.
+
+> Esta revisión es obligatoria: evita duplicar envíos y permite reutilizar el trabajo
+> ya hecho para la misma empresa.
+
 ### Paso 5 — Redactar `info.md`
 
 Consolida en `output/YYYYMMDD-nombreempresa/info.md` todo lo recogido en los
@@ -217,9 +246,11 @@ Reglas del fichero:
 
 ### Paso 6 — Generar CV adaptado
 
-1. Crea el directorio con `nueva_candidatura.py` (ver "Convención de salida"). Ya
-   deja `pin.png` y una copia de `sources/curriculum-base.md` como
-   `curriculum-EMPRESA.md`.
+1. Si en el Paso 4b se decidió **crear nueva**, crea el directorio con
+   `nueva_candidatura.py` (ver "Convención de salida"). Ya deja `pin.png` y una
+   copia de `sources/curriculum-base.md` como `curriculum-EMPRESA.md`. Si se
+   decidió **actualizar** una candidatura existente, omite este paso y edita los
+   archivos del directorio ya existente.
 2. **Edita esa copia**, conservando su estructura. La estructura es fija:
    cabecera con foto, `Perfil Profesional`, `Experiencia Laboral`, `Experiencia
    Anterior`, `Proyecto Destacado`, `Tecnologías`, `Formación`, `Contacto` al final.
@@ -325,6 +356,9 @@ trabajo/
 
 ## Reglas importantes
 
+0. **Revisa `output/` antes de generar** con `revisar_output.py`: si ya existe una
+   candidatura para el mismo puesto, informa al usuario y pregunta si actualiza o
+   crea una nueva.
 1. **Siempre confirma la empresa con el usuario** antes de generar archivos
    (evita homónimas)
 2. **Tono formal** en la carta de presentación (estándar en España)
@@ -356,6 +390,7 @@ Skill:
   2. [Busca info de Inditex en web]
   3. Confirma: "He encontrado Inditex, sector retail/textil, ¿es correcto?"
   4. [Si hay link, webfetch; si no, pregunta detalles]
+  4b. revisar_output.py "Inditex" --puesto "..."  ->  detecta candidaturas previas
   5. nueva_candidatura.py "Inditex"  ->  output/20260930-inditex/
                                       (copia pin.png y curriculum-base.md)
   6. Escribe output/20260930-inditex/info.md (empresa + oferta + fuentes)

@@ -34,9 +34,9 @@ encaje perfecto y "Senior Cloud Architect" no, aunque ambas contengan `iot` y
 |---|---|---|
 | LinkedIn (endpoint público de invitado) | **La principal.** Ofertas de España con título, empresa, fecha y descripción completa | Es un endpoint no oficial aunque público y anónimo; ritmo limitado. `f_WT` (filtro de remoto) **no lo respeta**: el remoto se detecta por el texto de la ubicación |
 | Remotive, Himalayas | Complemento de **remoto Europa** | Cobertura de España casi nula: filtrar siempre por `--ubicacion` |
-| UPV, UV, GVA, CSIC (`publico`) | **Convocatorias de empleo público**: oposiciones, PAS, personal investigador | Ver apartado [Convocatorias](#convocatorias-empleo-público) |
 | InfoJobs, Indeed, el propio LinkedIn con sesión | No se usan | Bloquean o exigen login. Si hacen falta, `websearch` |
 | Web oficial de una empresa (web de empleo) | Para ofertas concretas que no salen en portales | `webfetch` sobre la URL de la empresa |
+| Web de empleo de empresas registradas (`ofertas/empresas.json`) | **Empresas conocidas** (pequeñas o que no publican en portales grandes) | `webfetch` sobre `url_empleo` de cada registro; se anota la revisión en `empresas.json` |
 
 ## Comandos
 
@@ -44,7 +44,7 @@ encaje perfecto y "Senior Cloud Architect" no, aunque ambas contengan `iot` y
 S=.opencode/skills/job-search/scripts/ofertas.py
 
 # búsqueda principal: término + geografía de búsqueda
-python3 $S buscar "IoT" --geo "Valencia, Spain" --dias 21 --paginas 2 --minimo 30 \
+python3 $S buscar "IoT" --geo "Valencia, Spain" --dias 14 --paginas 1 --minimo 55 \
   --seniority "junior,mid" \
   --clave "iot,zigbee,embedded,firmware,kubernetes,python,linux" \
   --ubicacion "valencia,valencian,barcelona,madrid" --formato json
@@ -57,13 +57,16 @@ python3 $S buscar "backend developer" --geo "Madrid, Spain" --seniority "junior,
 python3 $S remoto "backend python kubernetes" --dias 45 \
   --ubicacion "spain,worldwide,europe,emea,united kingdom,netherland"
 
-# convocatorias de empleo público (sin --geo ni --seniority)
-python3 $S publico --clave "informatica,sistemas,desarrollo" --dias 14 --formato json
-python3 $S publico --fuentes gva,csic --clave "administracion,gestion"
-
 # descripción completa de una oferta concreta
 python3 $S detalle 4441123182
 python3 $S detalle "https://es.linkedin.com/jobs/view/...-4441123182" --formato json
+
+# puntuar ofertas recogidas de la web de empleo de empresas registradas
+python3 $S puntuar --ofertas-file ofertas-empresas.json --clave "iot,zigbee,embedded" \
+  --ubicacion "valencia,valencian,barcelona,madrid" --dias 14 --formato json
+
+# extraer empresas unicas de una pasada de ofertas (solo las de ofertas >= 75 puntos)
+python3 $S empresas --ofertas-file ofertas-pasada.json --minimo 75
 ```
 
 Opciones que importan:
@@ -75,12 +78,10 @@ Opciones que importan:
 | `--clave` | Palabras del perfil que suman. Se casan **por palabra completa**: `go` no casa dentro de `algorithm` |
 | `--descartar` | Palabras o empresas que restan 20. Penalizan, **no descartan** |
 | `--seniority` | Banda admitida: `junior,mid,senior,lead`. Fuera de banda: −15 |
-| `--fuentes` | (`publico`) Fuentes a consultar, separadas por comas. Por defecto, todas: `upv,uv,gva,csic` |
-| `--dias` | Antigüedad máxima en días (por defecto 14). En `publico` además define la ventana de días de la GVA |
-| `--detalle` | (`publico`) Convocatorias **por fuente** a hidratar con su ficha (por defecto 15; `0` para no hidratar) |
-| `--minimo` | Descarta por debajo de esa puntuación (por defecto 1) |
-| `--permitir-sin-clave` | Desactiva el descarte de ofertas sin ni una palabra del perfil |
+| `--dias` | Antigüedad máxima en días (por defecto 14) |
 | `--detalle N` | Cuántas ofertas hidratar con su descripción (por defecto 10). `0` para no hidratar |
+| `--minimo` | Descarta por debajo de esa puntuación (por defecto 55) |
+| `--permitir-sin-clave` | Desactiva el descarte de ofertas sin ni una palabra del perfil |
 | `--sin-cache` | Ignora la caché (TTL 6 h) |
 
 ## Puntuación
@@ -109,35 +110,6 @@ título ni descripción.
 
 La puntuación ordena; **no decide**. Un 81 y un 45 pueden ser ambos
 interesantes, y uno puede ser irrelevante.
-
-## Convocatorias (empleo público)
-
-El subcomando `publico` recoge convocatorias de las sedes oficiales. Mismo
-criterio de puntuación, con tres salvedades por ser organismos públicos y no
-vacantes privadas (bandera `convocatoria` en el JSON):
-
-- **No infiere `seniority` ni `idioma`** (la convocatoria fija el grupo y el
-  idioma legal es castellano), así que no hay castigos de −15 ni −25.
-- **No aplica el descarte de consultora ni de perfil comercial** (+25 base limpio).
-- **Sí se puntúan** `--clave`, `--descartar`, `--ubicacion` (salvo GVA, cuya
-  ficha no lleva ciudad) y la antigüedad (`--dias`), si la fuente trae fecha.
-- **Las convocatorias sin descripción se hidratan solas** (`--detalle`, por
-  defecto 15 por fuente): baja la ficha enlazada y puntúa con su cuerpo. Con
-  `--detalle 0` solo se ve el título. Cuesta ~1 petición por segundo por ficha.
-- Añade **`informatica`** a `--clave` en esta ruta: es la palabra con la que las
-  sedes públicas nombran los puestos de TI (sin ella, UV/CSIC salen a 0).
-
-| Fuente (`--fuentes`) | Qué trae | Particularidades |
-|---|---|---|
-| `upv` | Convocatorias de acceso libre de la UPV | Sin fecha (no penaliza antigüedad). Trae algún documento auxiliar (p. ej. «Hojas de autobaremación») que `--clave` descarta solo |
-| `uv` | Solo **turno libre** del PAS de la UV | Sin fecha. Excluye promoción interna y personal laboral a propósito. El título solo dice grupo y escala: el área está en la ficha, que `--detalle` hidrata |
-| `gva` | Novedades de empleo público de la sede GVA (hoy + `--dias` hacia atrás, máx. ~10 días) | Sin ciudad en la ficha. El portal a veces contesta «Aplicación fuera de servicio»: el script lo avisa y no lo cachea |
-| `csic` | Convocatorias de acceso del CSIC, con fecha | Paginación de 8 en 8 (`--paginas`, por defecto 2); corta al superar `--dias`. Muchas son tesis y libre designación: la ficha hidratada es lo que permite descartarlas con criterio |
-
-El mismo flujo de los pasos 1-4 aplica: criterios del CV, `--clave` del perfil,
-lista corta justificada. Un `recogidas: 0` con `--clave` muy estrecho es
-normal; un `0` de una sola fuente con `--fuentes gva` casi siempre es el
-portal caído (habrá un `[aviso]` en stderr).
 
 ## Flujo de interacción
 
@@ -172,8 +144,85 @@ Cuatro pasadas como mínimo, porque cada una encuentra lo que las otras no:
 4. **Remoto Europa** (`remoto`): solo tiene sentido con `--ubicacion`.
 
 En las tres de España: `--seniority "junior,mid"` y
-`--ubicacion "valencia,valencian,barcelona,madrid"`. Añade `--paginas 2` y
+`--ubicacion "valencia,valencian,barcelona,madrid"`. Añade `--paginas 1` y
 `--detalle 10` en todas. Guarda el JSON de cada una.
+
+### Paso 2b — Integración con `company-research` (`ofertas/empresas.json`)
+
+Las empresas registradas (pequeñas o que no publican en portales grandes) no salen
+en LinkedIn. Este paso hace crecer y completar `empresas.json` trabajando junto con
+la skill `company-research`. Se hace **de forma incremental y oportunista**: no se
+revisan todas las empresas en una sola búsqueda.
+
+0. **Registrar empresas nuevas** encontradas en las ofertas de esta búsqueda, pero
+   solo las de ofertas con puntuación **superior a 75**:
+   ```bash
+   S=.opencode/skills/job-search/scripts/ofertas.py
+   E=.opencode/skills/company-research/scripts/empresas.py
+   # Extraer empresas unicas de las ofertas recogidas (stdin o --ofertas-file)
+   python3 $S empresas --ofertas-file ofertas-pasada.json --minimo 75
+   # Registrar cada una con los datos minimos:
+   python3 $E upsert --nombre "EMPRESA" --ubicacion "UBICACION" --fuentes "ofertas/YYYYMMDD/lista-HHMM.md"
+   ```
+   (`url_empleo`, `web` y `actividad` quedan `null`: se completan en el punto 1.)
+
+1. **Investigar como máximo 3 empresas pendientes** (sin `url_empleo`):
+   ```bash
+   python3 $E pendientes --limite 3 --formato json
+   ```
+   Para cada una, invocar `company-research` (script `company_research.py`) para
+   obtener `web`, `actividad` y `ubicacion`, y buscar la URL de empleo
+   (careers/empleo) en la web oficial con `webfetch`.
+   - Si se encuentra `url_empleo`: `upsert` con `web`, `actividad`, `url_empleo`
+     (y, si se revisó la web, `ultima_revision` + `ultimas_ofertas_vistas`).
+   - Si **no se encuentra**:
+     - Si la empresa ya tenía `ultima_revision` (intento previo fallido): **eliminarla**
+       del registro (`python3 $E eliminar "NOMBRE"`) y anotarla en la sección
+       "Descartadas" del informe con motivo "sin URL de empleo tras 2 intentos".
+     - Si no tenía `ultima_revision` (primer intento): `upsert` con
+       `ultima_revision = hoy` y `ultimas_ofertas_vistas: []`, dejándola pendiente
+       para la siguiente búsqueda.
+   El resto de pendientes se dejan para la siguiente búsqueda.
+
+   Listar el registro completo (referencia):
+   ```bash
+   python3 $E listar --formato json
+   ```
+2. **Revisar las empresas con `url_empleo`** que no se han visto en los últimos
+   15 días (`ultima_revision` anterior a hace 15 días, o `null`):
+   - Hacer `webfetch` sobre `url_empleo` y extraer las ofertas visibles (título,
+     ubicación, URL, fecha de publicación si consta).
+3. Normalizar cada oferta al esquema único (`titulo`, `empresa`, `ubicacion`,
+   `remoto`, `fecha`, `url`, `descripcion` si la web la trae, `fuente` =
+   `empresa`) y puntuarlas con el mismo filtro:
+   ```bash
+   S=.opencode/skills/job-search/scripts/ofertas.py
+   # ofertas en ofertas-empresas.json (lista JSON)
+   python3 $S puntuar --ofertas-file ofertas-empresas.json \
+     --clave "..." --descartar "..." --ubicacion "..." --dias 14 --formato json
+   ```
+4. **Anotar la revisión en `empresas.json`** para cada empresa revisada, aunque no
+   se hayan encontrado ofertas:
+   ```bash
+   python3 $E upsert --nombre "EMPRESA" --ultima-revision YYYY-MM-DD \
+     --ofertas-json '[{"titulo":"...","url":"...","ubicacion":"...","publicada":"YYYY-MM-DD"}]'
+   ```
+   (`ultimas_ofertas_vistas` se reemplaza por la lista encontrada; `[]` si no hubo.)
+   Solo se actualizan `ultima_revision` y `ultimas_ofertas_vistas`; no se tocan los
+   demás campos ni `fuentes`.
+5. Incorporar las ofertas encontradas a la lista de candidatas del informe final,
+   con fuente "web de empleo de la empresa", junto a las de LinkedIn y remotos.
+
+Reglas de este paso:
+- **No re-revisar** empresas con `url_empleo` revisadas en los últimos 15 días.
+- **Anotar la fecha de revisión siempre**, incluso si no se encontraron ofertas.
+- Las empresas sin `url_empleo`: primer intento fallido queda **pendiente** (se
+  anota `ultima_revision`); segundo intento fallido se **elimina** del registro y
+  se anota en "Descartadas".
+- Solo se registran empresas nuevas cuya oferta tenga puntuación **superior a 75**.
+- Se investigan como máximo **3 empresas pendientes por búsqueda**.
+- Las ofertas de empresa se cualifican igual que el resto (argumento, qué cubre,
+  qué no cubre, antigüedad).
 
 ### Paso 3 — Cualificar
 
@@ -186,6 +235,12 @@ Para las 5-10 mejores de cada pasada, lee la descripción
 - **Qué NO cubre**: los requisitos que no puede cumplir. Esto es lo más útil de
   la lista: decide si salga la candidatura antes de escribir el CV.
 - **Antigüedad**: una oferta de 20 días puede tenerla cerrada.
+- **Posibilidades (0-100 o `No consta`)**: estimación de las posibilidades
+  reales de obtener el puesto, más allá del encaje técnico. Tiene en cuenta la
+  accesibilidad (seniority, idioma, certificaciones, competencia, antigüedad de
+  la oferta, tamaño de la empresa). Si no hay base para estimar, escribe
+  `No consta`. Para convocatorias públicas (si se reintrodujeran) se escribiría
+  `N/A`.
 
 Muestra la lista al usuario **antes** de escribir nada.
 
@@ -208,13 +263,17 @@ IMPORTANTE: Este paso no es opcional, el usuario espera este documento.
 - **Banda de seniority:** [...]
 - **Geografía:** [qué se buscó]
 - **Antigüedad máxima:** N días
+- **Encaje mínimo para lista corta:** 55
+- **Orden:** Posibilidades descendente (tras filtro de encaje ≥ 55)
 
 ## Lista corta
 
-Ordenada de mayor a menor encaje.
+Filtro: encaje mínimo de 55. Ordenada por Posibilidades (descendente).
 
-| # | Empresa | Puesto | Ubicación | Publicada | Encaje | Enlace |
-|---|---|---|---|---|---|---|
+| # | Empresa | Puesto | Ubicación | Publicada | Encaje | Posibilidades | Enlace |
+|---|---|---|---|---|---|---|---|
+
+> Los valores de la columna **Posibilidades** se escriben con el signo `%` (por ejemplo, `70 %`). La columna **Encaje** no lleva signo.
 
 ## Detalle
 
@@ -236,6 +295,7 @@ Ordenada de mayor a menor encaje.
 | Dato | Fuente | Fecha |
 |---|---|---|
 | Ofertas | LinkedIn, endpoint público de invitado | YYYY-MM-DD |
+| Ofertas | Web de empleo de empresas registradas (`ofertas/empresas.json`) | YYYY-MM-DD |
 ```
 
 Reglas del fichero:
@@ -262,7 +322,10 @@ trabajo/
     ├── SKILL.md
     ├── .gitignore               # cache/ y __pycache__/
     └── scripts/
-        └── ofertas.py
+        └── ofertas.py            # incluye subcomando `puntuar`
+└── .opencode/skills/company-research/
+    └── scripts/
+        └── empresas.py           # gestión de ofertas/empresas.json (upsert, listar, mostrar, eliminar)
 ```
 
 ## Reglas importantes
@@ -286,6 +349,7 @@ trabajo/
 8. **Sin commits** sin que el usuario lo pida. `ofertas/` sí se versiona: guarda
    qué había disponible cada día.
 9. **ofertas/YYYYMMDD/lista-HHMM.md**: El documento en el directorio ofertas debe existir
+10. **Empresas conocidas**: revisarlas cada 15 días como mínimo; anotar siempre la fecha de revisión en `ofertas/empresas.json`, incluso sin ofertas. Las que no tengan `url_empleo`: primer intento queda pendiente, segundo intento se elimina.
 
 ## Detalles de la fuente que ya están comprobados
 

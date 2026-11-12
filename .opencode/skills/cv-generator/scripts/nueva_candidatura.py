@@ -143,6 +143,25 @@ def main() -> int:
     curriculum = destino / f"curriculum-{etiqueta(args.empresa)}.md"
     carta = destino / f"carta-{etiqueta(args.empresa)}.md"
 
+    # Aviso si ya hay candidaturas previas para la misma empresa.
+    company_slug = slug(args.empresa)
+    if args.raiz.is_dir():
+        previas = []
+        for d in sorted(args.raiz.iterdir()):
+            if not d.is_dir():
+                continue
+            m = re.match(r"^\d{8}-(.+)$", d.name)
+            if not m:
+                continue
+            suffix_slug = slug(m.group(1))
+            if suffix_slug == company_slug or suffix_slug.startswith(company_slug + "-"):
+                previas.append(d)
+        if previas:
+            print(f"AVISO: ya existen candidaturas previas para {args.empresa}:")
+            for d in previas:
+                print(f"  - {d}")
+            print("  Revisa output/ antes de duplicar (ver Paso 4b de la skill).")
+
     if args.dry_run:
         print(destino)
         return 0

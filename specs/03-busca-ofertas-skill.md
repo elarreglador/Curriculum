@@ -111,6 +111,7 @@ Las ofertas se normalizan a un **esquema único** entre fuentes, con el siguient
 - **Sí:** puntuación en dos capas —técnica y determinista en el script, argumental y cualitativa en el agente. Un filtro de palabras no sabe que un puesto de firmware encaja y uno de cloud architect no, aunque ambos contengan las mismas palabras.
 - **No:** script que derive el perfil del CV. Esa parte es criterio, y el criterio es del agente. El script recibe los criterios como banderas.
 - **No:** relleno automático de candidaturas. La búsqueda produce material; el envío es manual.
+- **Enmienda (2026-11-05):** la búsqueda también revisa las ofertas publicadas en la web de empleo de las empresas registradas en `ofertas/empresas.json` (gestionado por `company-research`). Empresas sin `url_empleo` se resuelven buscando ese enlace en su web oficial; el primer intento fallido queda **pendiente** (se anota `ultima_revision`), el segundo intento fallido elimina la empresa del registro. La revisión se anota en `empresas.json` (`ultima_revision` + `ultimas_ofertas_vistas`) cada 15 días como mínimo. Las ofertas encontradas se puntúan con el subcomando `puntuar` y se incorporan al informe final junto a las de otras fuentes. Se añade el subcomando `puntuar` a `ofertas.py` y `eliminar` a `empresas.py`.
 
 ---
 

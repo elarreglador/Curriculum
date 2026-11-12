@@ -56,11 +56,12 @@ python3 $S buscar "IoT" --geo "Valencia, Spain" --dias 21 --minimo 30 \
   --clave "iot,zigbee,embedded,firmware,kubernetes,python" \
   --ubicacion "valencia,valencian,barcelona,madrid" --formato json
 python3 $S remoto "backend python" --ubicacion "spain,worldwide,europe"
-# convocatorias de empleo público (UPV, UV, GVA, CSIC)
-python3 $S publico --clave "informatica,sistemas,desarrollo" --dias 14
-
 # 2. Descripción completa de una oferta concreta
 python3 $S detalle 4441123182
+
+# 3. Puntuar ofertas recogidas de la web de empleo de empresas registradas
+python3 $S puntuar --ofertas-file ofertas-empresas.json --clave "iot,zigbee,embedded" \
+  --ubicacion "valencia,valencian,barcelona,madrid" --dias 14 --formato json
 ```
 
 El agente lee `sources/criterios-busqueda.md` (banda y geografía), deriva del CV

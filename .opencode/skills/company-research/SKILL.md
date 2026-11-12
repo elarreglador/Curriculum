@@ -62,6 +62,54 @@ Secciones: `identity`, `profile`, `financials`, `registry`, `all`.
 5. **Sintetizar.** Redactar con fuentes citadas. Si un dato no aparece en ninguna fuente,
    decirlo explícitamente en lugar de estimarlo.
 
+   5.1 **Actualizar el registro de empresas.** Tras sintetizar, generar o actualizar la
+   entrada de la empresa en `ofertas/empresas.json` (relativo a la raíz del proyecto)
+   usando el helper `scripts/empresas.py`. El bloque `empresa_registro` del JSON de salida
+   del script es un borrador: revíselo y complétalo antes de guardarlo (en especial
+   `ubicacion` a nivel de provincia, `actividad`, `url_empleo` y las ofertas vistas si
+   se ha revisado la web de empleo de la empresa).
+
+    Al completar el borrador, **busca activamente la URL de empleo** (`url_empleo`)
+    en la web oficial (sección careers/empleo/trabaja con nosotros) usando
+    `webfetch` sobre `web`. Si la encuentras, anota también `ultima_revision` y
+    `ultimas_ofertas_vistas` (lista de ofertas visibles, o `[]` si no hay). Si no
+    la encuentras, deja `url_empleo` como `null` y anota `ultima_revision = hoy`
+    (primer intento, queda pendiente). Si ya tenía `ultima_revision` (segundo
+    intento fallido), elimina la empresa del registro (`empresas.py eliminar`).
+
+   ```bash
+   S=.opencode/skills/company-research/scripts
+   python3 $S/empresas.py upsert --stdin <<'JSON'
+   {
+     "nombre": "...",
+     "ubicacion": "...",
+     "actividad": "...",
+     "web": "...",
+     "url_empleo": "...",
+     "ultima_revision": "YYYY-MM-DD",
+     "ultimas_ofertas_vistas": [
+       {"titulo": "...", "url": "...", "ubicacion": "...", "publicada": "YYYY-MM-DD"}
+     ],
+     "fuentes": ["https://..."]
+   }
+   JSON
+   ```
+
+   Reglas del registro:
+   - **Upsert por slug**: si la empresa ya existe, solo se sobrescriben los campos
+     presentes y no vacíos; no se borra información previa.
+   - `ultima_revision` es la fecha en que se revisaron las ofertas de empleo de la
+     empresa. Solo actualízala si se revisó su web de empleo; en caso contrario,
+     omítela para conservar la anterior.
+   - `ultimas_ofertas_vistas` se reemplaza solo si se pasa la lista (puede ser `[]`
+     si la revisión no encontró ofertas).
+   - Un dato que no se pueda verificar se deja como `null` y se anota como
+     `No consta` en el informe, nunca estimado.
+   - Si `ofertas/` no existe, el helper la crea. El directorio ya está ignorado por git.
+- `eliminar` borra el registro por nombre o slug. Con la política actual, una
+  empresa sin `url_empleo` se elimina solo tras dos intentos fallidos (o si el
+  usuario lo pide explícitamente).
+
 ## Caché
 
 Ficheros JSON en `cache/`, TTL por `CACHE_TTL_HOURS` (24 h por defecto). Los datos
@@ -77,6 +125,38 @@ cp .opencode/skills/company-research/.env.example .env
 |---|---|---|
 | `OPENCORPORATES_API_KEY` | No | Levanta el límite de peticiones del registro mercantil |
 | `CACHE_TTL_HOURS` | No | Vigencia de la caché (24) |
+
+## Registro de empresas (`ofertas/empresas.json`)
+
+Fichero JSON (lista de registros) con la información de las empresas investigadas,
+usado como libreta de contactos/empleo. Se gestiona con `scripts/empresas.py`.
+
+Campos de cada registro:
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `slug` | string | Clave de deduplicación (generada del nombre) |
+| `nombre` | string | Nombre de la empresa |
+| `ubicacion` | string | Provincia / sede principal |
+| `actividad` | string | A qué se dedica la empresa |
+| `web` | string | Web oficial |
+| `url_empleo` | string | URL donde publican ofertas |
+| `ultima_revision` | string (ISO) | Fecha de la última revisión de ofertas de empleo |
+| `ultimas_ofertas_vistas` | array | Ofertas vistas en la última revisión (`titulo`, `url`, `ubicacion`, `publicada`) |
+| `actualizado_en` | string (ISO) | Cuándo se tocó el registro |
+| `fuentes` | array | URLs usadas para verificar los datos |
+
+Comandos del helper:
+
+```bash
+E=.opencode/skills/company-research/scripts/empresas.py
+python3 $E listar                       # JSON completo
+python3 $E listar --formato tabla       # resumen
+python3 $E mostrar "Inditex"            # un registro
+python3 $E upsert --stdin               # añadir/actualizar (JSON por stdin)
+python3 $E eliminar "Inditex"           # eliminar un registro (por nombre o slug)
+python3 $E pendientes --limite 3        # empresas sin url_empleo (pendientes de investigacion)
+```
 
 ## Reglas de verificación
 
