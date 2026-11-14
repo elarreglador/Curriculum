@@ -120,7 +120,9 @@ def upsert_one(incoming):
             "ultimas_ofertas_vistas": ofertas_norm if ofertas_norm is not None else [],
             "actualizado_en": incoming.get("actualizado_en") or now,
             "fuentes": incoming.get("fuentes") or [],
-        }
+            "modo_consulta": incoming.get("modo_consulta"),
+            "instrucciones_agente": incoming.get("instrucciones_agente"),
+        },
         if record["ultima_revision"] is None and ofertas_provided:
             record["ultima_revision"] = today
         records.append(record)
@@ -140,6 +142,11 @@ def upsert_one(incoming):
         record["actualizado_en"] = incoming.get("actualizado_en") or now
         if incoming.get("fuentes"):
             record["fuentes"] = _merge_fuentes(record.get("fuentes"), incoming["fuentes"])
+        # Persistir modo_consulta e instrucciones_agente si se proporcionan
+        for key in ("modo_consulta", "instrucciones_agente"):
+            val = incoming.get(key)
+            if val not in (None, "", []):
+                record[key] = val
         records[idx] = record
 
     save_records(records)
