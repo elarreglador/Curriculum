@@ -1,2 +1,12 @@
 /output/
 /ofertas/
+
+# Caché de respuestas a APIs externas (generado, no versionar)
+.opencode/skills/*/cache/
+
+# Artefactos del navegador (playwright-mcp)
+.playwright-mcp/
+
+# Bytecode de Python
+__pycache__/
+*.pyc
