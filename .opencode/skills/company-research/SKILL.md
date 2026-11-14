@@ -143,6 +143,7 @@ Campos de cada registro:
 | `url_empleo` | string | URL donde publican ofertas |
 | `ultima_revision` | string (ISO) | Fecha de la última revisión de ofertas de empleo |
 | `ultimas_ofertas_vistas` | array | Ofertas vistas en la última revisión (`titulo`, `url`, `ubicacion`, `publicada`) |
+| `instrucciones_agente` | string o null | Cómo revisar las vacantes de esa web de la forma más eficiente (URL exacta, API/JSON, selectores, paginación, filtros, avisos). `null` si aún no se ha revisado |
 | `actualizado_en` | string (ISO) | Cuándo se tocó el registro |
 | `fuentes` | array | URLs usadas para verificar los datos |
 

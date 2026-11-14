@@ -21,7 +21,7 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 - Reparto de responsabilidades: el script `ofertas.py` recoge, deduplica, filtra y puntúa (0-100, reproducible); el agente juzga el encaje y escribe la justificación. La puntuación ordena, no decide.
 - Comandos: `ofertas.py buscar <términos> --geo <lugar> [--clave ...] [--formato json]`, `ofertas.py remoto <términos> --ubicacion <países>`, `ofertas.py detalle <id|url>`.
 - Fuente principal: el endpoint **público de invitado** de LinkedIn, en solo lectura y a 1 petición por segundo, con caché de 6 h en `cache/` (ignorada por git). No se rellena ni se envía ninguna candidatura: eso es del usuario y en su navegador.
-- Además, la skill revisa la **web de empleo de las empresas registradas** en `ofertas/empresas.json` (solo las no vistas en los últimos 15 días): busca `url_empleo` si falta, la anota o elimina la empresa si no existe, y anota la revisión (`ultima_revision` + `ultimas_ofertas_vistas`) en ese mismo fichero. Las ofertas encontradas se agregan al informe junto a las de otras fuentes.
+- Además, la skill **delega** la revisión de la **web de empleo de las empresas registradas** en `ofertas/empresas.json` a la skill `company-jobs` (spec 07): busca `url_empleo` si falta, la anota o elimina la empresa si no existe, anota la revisión (`ultima_revision` + `ultimas_ofertas_vistas` + `instrucciones_agente`) y genera su propio informe en `ofertas/YYYYMMDD/empresas-HHMM.md`. Las ofertas encontradas se agregan al informe de `job-search` junto a las de otras fuentes.
 - Skill: `.opencode/skills/job-search/` (ver spec 03)
 
 ## Generación de candidaturas por empresa

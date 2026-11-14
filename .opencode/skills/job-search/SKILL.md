@@ -147,7 +147,7 @@ En las tres de España: `--seniority "junior,mid"` y
 `--ubicacion "valencia,valencian,barcelona,madrid"`. Añade `--paginas 1` y
 `--detalle 10` en todas. Guarda el JSON de cada una.
 
-### Paso 2b — Integración con `company-research` (`ofertas/empresas.json`)
+### Paso 2b — Integración con `company-jobs` (`ofertas/empresas.json`)
 
 Las empresas registradas (pequeñas o que no publican en portales grandes) no salen
 en LinkedIn. Este paso hace crecer y completar `empresas.json` trabajando junto con
@@ -166,52 +166,31 @@ revisan todas las empresas en una sola búsqueda.
    ```
    (`url_empleo`, `web` y `actividad` quedan `null`: se completan en el punto 1.)
 
-1. **Investigar como máximo 3 empresas pendientes** (sin `url_empleo`):
-   ```bash
-   python3 $E pendientes --limite 3 --formato json
-   ```
-   Para cada una, invocar `company-research` (script `company_research.py`) para
-   obtener `web`, `actividad` y `ubicacion`, y buscar la URL de empleo
-   (careers/empleo) en la web oficial con `webfetch`.
-   - Si se encuentra `url_empleo`: `upsert` con `web`, `actividad`, `url_empleo`
-     (y, si se revisó la web, `ultima_revision` + `ultimas_ofertas_vistas`).
-   - Si **no se encuentra**:
-     - Si la empresa ya tenía `ultima_revision` (intento previo fallido): **eliminarla**
-       del registro (`python3 $E eliminar "NOMBRE"`) y anotarla en la sección
-       "Descartadas" del informe con motivo "sin URL de empleo tras 2 intentos".
-     - Si no tenía `ultima_revision` (primer intento): `upsert` con
-       `ultima_revision = hoy` y `ultimas_ofertas_vistas: []`, dejándola pendiente
-       para la siguiente búsqueda.
-   El resto de pendientes se dejan para la siguiente búsqueda.
+1. **Delegar la revisión en la skill `company-jobs`.** Desde la spec 07, la
+   revisión de empresas registradas (completar `web`/`url_empleo`, revisar
+   `url_empleo`, anotar `ultima_revision`/`ultimas_ofertas_vistas`/
+   `instrucciones_agente` y eliminar las que no tengan apartado de vacantes) la
+   hace la skill `company-jobs`, cuyo origen exclusivo es `empresas.json`:
+   - Invocar `company-jobs` (o pedir al usuario que la ejecute) para procesar el
+     lote de empresas pendientes.
+   - `company-jobs` genera su propio informe en
+     `ofertas/YYYYMMDD/empresas-HHMM.md` y actualiza `empresas.json`.
+   - Las ofertas encontradas por `company-jobs` se incorporan a la lista de
+     candidatas de este informe (Paso 4) con fuente "web de empleo de la empresa",
+     junto a las de LinkedIn y remotos. Para puntuarlas, usar el subcomando
+     `puntuar` como se indica arriba.
+   - Si `company-jobs` no se ejecuta en esta búsqueda, se deja el lote de
+     empresas pendientes para la siguiente ejecución (no se bloquea la búsqueda
+     de LinkedIn).
 
-   Listar el registro completo (referencia):
+   Comandos de referencia (los mismos que usa `company-jobs`):
    ```bash
-   python3 $E listar --formato json
-   ```
-2. **Revisar las empresas con `url_empleo`** que no se han visto en los últimos
-   15 días (`ultima_revision` anterior a hace 15 días, o `null`):
-   - Hacer `webfetch` sobre `url_empleo` y extraer las ofertas visibles (título,
-     ubicación, URL, fecha de publicación si consta).
-3. Normalizar cada oferta al esquema único (`titulo`, `empresa`, `ubicacion`,
-   `remoto`, `fecha`, `url`, `descripcion` si la web la trae, `fuente` =
-   `empresa`) y puntuarlas con el mismo filtro:
-   ```bash
+   E=.opencode/skills/company-research/scripts/empresas.py
    S=.opencode/skills/job-search/scripts/ofertas.py
-   # ofertas en ofertas-empresas.json (lista JSON)
+   python3 $E pendientes --limite 10 --formato json
    python3 $S puntuar --ofertas-file ofertas-empresas.json \
      --clave "..." --descartar "..." --ubicacion "..." --dias 14 --formato json
    ```
-4. **Anotar la revisión en `empresas.json`** para cada empresa revisada, aunque no
-   se hayan encontrado ofertas:
-   ```bash
-   python3 $E upsert --nombre "EMPRESA" --ultima-revision YYYY-MM-DD \
-     --ofertas-json '[{"titulo":"...","url":"...","ubicacion":"...","publicada":"YYYY-MM-DD"}]'
-   ```
-   (`ultimas_ofertas_vistas` se reemplaza por la lista encontrada; `[]` si no hubo.)
-   Solo se actualizan `ultima_revision` y `ultimas_ofertas_vistas`; no se tocan los
-   demás campos ni `fuentes`.
-5. Incorporar las ofertas encontradas a la lista de candidatas del informe final,
-   con fuente "web de empleo de la empresa", junto a las de LinkedIn y remotos.
 
 Reglas de este paso:
 - **No re-revisar** empresas con `url_empleo` revisadas en los últimos 15 días.
@@ -220,7 +199,7 @@ Reglas de este paso:
   anota `ultima_revision`); segundo intento fallido se **elimina** del registro y
   se anota en "Descartadas".
 - Solo se registran empresas nuevas cuya oferta tenga puntuación **superior a 75**.
-- Se investigan como máximo **3 empresas pendientes por búsqueda**.
+- La revisión de empresas registradas se **delega en `company-jobs`** (spec 07); `job-search` solo incorpora sus ofertas al informe final.
 - Las ofertas de empresa se cualifican igual que el resto (argumento, qué cubre,
   qué no cubre, antigüedad).
 
@@ -326,6 +305,8 @@ trabajo/
 └── .opencode/skills/company-research/
     └── scripts/
         └── empresas.py           # gestión de ofertas/empresas.json (upsert, listar, mostrar, eliminar)
+└── .opencode/skills/company-jobs/
+    └── SKILL.md                 # revisión de ofertas en webs de empresas registradas
 ```
 
 ## Reglas importantes
