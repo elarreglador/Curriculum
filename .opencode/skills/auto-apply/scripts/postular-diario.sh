@@ -5,6 +5,17 @@ set -euo pipefail
 export HOME="/home/elarreglador"
 export PATH="/home/elarreglador/.opencode/bin:/usr/local/bin:/usr/bin:/bin"
 
+# cron no hereda la sesión gráfica: derivar el entorno para el navegador headed.
+export DISPLAY="${DISPLAY:-:0}"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+if [[ -z "${XAUTHORITY:-}" ]]; then
+  XAUTHORITY="$(ls -1t "$XDG_RUNTIME_DIR"/.mutter-Xwaylandauth.* 2>/dev/null | head -1 || true)"
+  [[ -z "$XAUTHORITY" && -r "$HOME/.Xauthority" ]] && XAUTHORITY="$HOME/.Xauthority"
+  [[ -n "$XAUTHORITY" ]] && export XAUTHORITY
+fi
+
 REPO="/home/elarreglador/Documentos/trabajo"
 cd "$REPO"
 
