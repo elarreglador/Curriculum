@@ -13,13 +13,21 @@ Repositorio personal de CV y portfolio de David Moreno Bolívar.
     (banda de seniority, geografía, remoto). Interno; no va en el CV. El resto
     de España se descarta en presencial/híbrido; el remoto admite cualquier
     sede.
+  - `datos-candidatura.md` — **Respuestas permanentes a formularios** (años de
+    experiencia, salario, disponibilidad, permiso de trabajo, idioma). La skill
+    `auto-apply` no inventa ningún dato que no esté aquí.
 - [`templates/`](templates/) — Plantillas de referencia
   - `curriculum-odt.odt` — Plantilla de referencia histórica (no usada por el flujo actual).
 - [`output/`](output/) — Candidaturas generadas, una carpeta por empresa con su fecha
-  (`output/YYYYMMDD-nombreempresa/`). Cada una lleva el CV y la carta en `.md`. **Ignoradas por git:** permanecen solo en local.
+  (`output/YYYYMMDD-nombreempresa/`). Cada una lleva el CV y la carta en `.md`, sus
+  PDF y `envio-EMPRESA.md` si se intentó el envío. **Ignoradas por git:** permanecen solo en local.
   Ver `output/20260930-edicom/` como referencia de formato del CV.
 - [`ofertas/`](ofertas/) — Listas de ofertas por encaje, una carpeta por día
-  (`ofertas/YYYYMMDD/lista-HHMM.md`). Guardan qué había disponible en cada búsqueda. **Ignoradas por git:** permanecen solo en local.
+  (`ofertas/YYYYMMDD/lista-HHMM.md`) y el informe diario de envíos
+  (`ofertas/YYYYMMDD/postulacion-HHMM.md`). `ofertas/envios.json` es el índice de
+  candidaturas ya enviadas. **Ignorado por git:** permanece solo en local.
+- [`SENSIBLE/`](SENSIBLE/) — Perfil persistente del navegador y temporales de
+  conversión. **Ignorado por git.**
 - [`archive/`](archive/) — Documentos anteriores a 2026
 - [`assets/`](assets/) — Fotografías para el CV (`pin.png` es la de la cabecera)
 - [`specs/`](specs/) — Especificaciones de trabajo
@@ -68,6 +76,30 @@ El agente lee `sources/criterios-busqueda.md` (banda y geografía), deriva del C
 los términos y las palabras clave, puntúa cada oferta y
 escribe la lista corta en `ofertas/YYYYMMDD/lista-HHMM.md` con la justificación y
 **los requisitos que no cubres**. Ver `ofertas/20261001/` como referencia.
+
+## Presentarse de forma automática
+
+```bash
+A=.opencode/skills/auto-apply/scripts
+
+# Lanzador diario (el crontab no se instala desde el repositorio)
+$A/postular-diario.sh             # envío real
+$A/postular-diario.sh --dry-run   # prueba sin pulsar «Enviar»
+
+# Gestión del índice de envíos
+python3 $A/registrar_envio.py contar
+python3 $A/registrar_envio.py registrar --empresa "X" --puesto "Y" \
+  --url "https://..." --estado bloqueada --directorio output/YYYYMMDD-x
+```
+
+El estado `enviada` solo lo escribe la skill después de ver la pantalla de
+confirmación del formulario; no se usa en ejemplos manuales.
+
+La skill `auto-apply` (spec 08) toma las ofertas de los informes de `job-search`
+y `company-jobs`, comprueba los filtros eliminatorios del formulario y envía como
+máximo cuatro candidaturas al día. Toda respuesta procede de
+`sources/datos-candidatura.md`; lo preguntado y lo entregado se conserva en
+`output/YYYYMMDD-nombreempresa/envio-EMPRESA.md`.
 
 ## Perfil
 

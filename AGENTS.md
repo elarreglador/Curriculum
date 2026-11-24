@@ -9,10 +9,14 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 - `sources/curriculum-github.md` — fuente de verdad del CV en formato GitHub (con badges del repo `elarreglador/rotulos`).
 - `sources/curriculum-base.md` — **plantilla del CV**: contenido base y estructura de referencia (cabecera con foto, contacto al final). Es lo que copia y adapta `nueva_candidatura.py` en cada candidatura.
 - `sources/criterios-busqueda.md` — **criterios permanentes de búsqueda** de ofertas: banda de seniority (`junior,mid`), geografía (Valencia base; Barcelona y Madrid desplazable; resto de España descartado en presencial/híbrido, el remoto admite cualquier sede de España o Europa) y remoto. Interno, no va en el CV. Única fuente de esos tres criterios para la skill `job-search`.
+- `sources/datos-candidatura.md` — **respuestas permanentes a formularios** (experiencia, salario, disponibilidad, permiso de trabajo, idioma). Única fuente de datos para la skill `auto-apply`; un dato ausente no se inventa.
 - `templates/curriculum-odt.odt` — plantilla de referencia histórica (no usada por el flujo actual).
-- `output/YYYYMMDD-nombreempresa/` — candidaturas generadas (`pin.png` + `info.md` + CV y carta en `.md`). **Ignorado por git**: cada candidatura queda en su propio directorio con la fecha de generación, de modo que se conserva el historial de lo enviado a cada empresa.
+- `output/YYYYMMDD-nombreempresa/` — candidaturas generadas (`pin.png` + `info.md` + CV y carta en `.md`, más `envio-EMPRESA.md` si se ha intentado el envío). **Ignorado por git**: cada candidatura queda en su propio directorio con la fecha de generación, de modo que se conserva el historial de lo enviado a cada empresa.
 - `ofertas/YYYYMMDD/lista-HHMM.md` — listas de ofertas encontradas por encaje (`pin` de fecha + hora para permitir varias búsquedas el mismo día). **Ignorado por git**: guarda qué había disponible cada día. Lo redacta la skill `job-search`.
+- `ofertas/YYYYMMDD/postulacion-HHMM.md` — informe diario de envíos: seleccionadas, enviadas, bloqueadas y descartadas. Lo redacta la skill `auto-apply`.
+- `ofertas/envios.json` — índice local de envíos por URL (o empresa + puesto). **Ignorado por git**: evita repetir candidaturas y aplica el tope diario.
 - `assets/pin.png` — foto de la cabecera del CV; `assets/foto.jpg`, `assets/foto2.jpeg` — alternativas.
+- `SENSIBLE/` — perfil persistente del navegador (`playwright-profile/`) y temporales de conversión. **Ignorado por git**: nunca contiene credenciales en texto ni se documenta su contenido.
 - `specs/NN-slug.md` — especificaciones con metadatos (Estado, Depende de, Fecha, Objetivo). Flujo: `spec` → `spec-impl`.
 
 ## Búsqueda de ofertas por encaje
@@ -32,6 +36,15 @@ Repositorio personal de CV/portfolio (David Moreno Bolívar). No es un proyecto 
 
 - La cabecera del CV es una tabla HTML de dos columnas con la foto. Sus anchos van en **píxeles absolutos** (`700` = `90` + `610`) a propósito: el importador HTML de LibreOffice ignora los porcentajes y con `width="100%"` el nombre se parte en tres líneas.
 - Skill automatizada: `.opencode/skills/cv-generator/` (ver spec 02)
+
+## Postulación automática diaria
+- **Estándar:** la skill `auto-apply` (spec 08) toma los informes de `job-search` y `company-jobs`, comprueba los filtros eliminatorios del formulario, envía como máximo cuatro candidaturas al día y escribe `ofertas/YYYYMMDD/postulacion-HHMM.md` con seleccionadas, enviadas, bloqueadas y descartadas.
+- Las respuestas salen **solo** de `sources/datos-candidatura.md`. Una pregunta obligatoria sin valor se registra como `sin-responder` y no se envía nada. Los estados son `enviada`, `descartada-por-filtro`, `bloqueada`, `sin-responder` y `error`.
+- Cada intento deja `output/YYYYMMDD-nombreempresa/envio-EMPRESA.md` con la pregunta del contratador, la respuesta entregada y su origen. El índice `ofertas/envios.json` evita duplicados y aplica el tope diario.
+- Los adjuntos PDF se generan desde el Markdown con `generar_adjuntos.py` (HTML intermedio + LibreOffice headless). LibreOffice directo sobre `.md` produce texto plano: no usarlo. `cv-generator` sigue generando solo `.md`.
+- El lanzador es `.opencode/skills/auto-apply/scripts/postular-diario.sh`: ejecuta `opencode run --auto` y redirige a `postulacion-HHMM.log`. La línea de crontab (`0 9 * * * …`) está documentada en la skill, **no instalada**.
+- Pruebas: `postular-diario.sh --dry-run` recorre el flujo sin pulsar «Enviar». Ningún registro queda con estado `enviada` en una prueba.
+- Skill: `.opencode/skills/auto-apply/` (ver spec 08)
 
 ## Git
 - Repositorio git inicializado. Remote: `https://github.com/elarreglador/Curriculum`.
