@@ -63,6 +63,7 @@ repositorio.
 | `ofertas/envios.json` | índice de deduplicación y tope diario |
 | `output/YYYYMMDD-nombreempresa/` | candidatura y registro de envío |
 | `ofertas/YYYYMMDD/postulacion-HHMM.md` | informe del lote |
+| `.opencode/skills/auto-apply/scripts/notificar_telegram.py` | helper que avisa por Telegram de cada oferta enviada |
 
 ## Comandos
 
@@ -91,11 +92,23 @@ python3 $A/registrar_envio.py registrar \
   --empresa "EMPRESA" --puesto "PUESTO" --url "URL" \
   --estado enviada --directorio output/YYYYMMDD-nombreempresa \
   --maximo <tope diario>
+
+# 6. Avisar por Telegram de la oferta enviada (best-effort)
+python3 $A/notificar_telegram.py oferta \
+  --empresa "EMPRESA" --puesto "PUESTO" --canal "LinkedIn Easy Apply" \
+  --url "URL" --fecha "YYYY-MM-DDTHH:MM:SS+01:00" \
+  --directorio output/YYYYMMDD-nombreempresa
 ```
 
 `registrar` devuelve JSON. `registrado: false` con `motivo: tope_diario` (código
 de salida 2) significa que el lote debe parar. Un `url` repetido no crea una
 entrada nueva: actualiza la existente.
+
+`notificar_telegram.py` imprime JSON con `ok: true` o `ok: false` y **siempre
+termina con código 0**: si falla, se anota en el informe y el lote continúa.
+Añade `--sonda` para ver el mensaje sin enviarlo. Lee el token y el chat ID de
+las variables de entorno o, si no están, de
+`/home/elarreglador/D-Lab/info_sensible/telegram.env` (opción `--env`).
 
 ## Flujo de interacción
 
@@ -201,7 +214,8 @@ entrada nueva: actualiza la existente.
    eliminatorias siguen siendo las del fichero de datos y los archivos están
    adjuntos.
 2. **Si es modo seco:** detente aquí. Fija el estado `bloqueada` con motivo
-   «Ejecución en modo seco: no se pulsó enviar» y pasa a la siguiente.
+   «Ejecución en modo seco: no se pulsó enviar» y pasa a la siguiente. No se
+   envía ningún aviso a Telegram.
 3. Si no es modo seco, pulsa «Enviar» una sola vez y espera la pantalla de
    confirmación. Sin confirmación visible, registra `error`.
 4. Con confirmación, fija el estado `enviada` y anota la fecha y hora reales.
@@ -213,7 +227,10 @@ entrada nueva: actualiza la existente.
    `enviada`, el **motivo** es obligatorio.
 2. Llama a `registrar_envio.py registrar` con el estado final y el tope diario.
    Si devuelve `tope_diario`, termina el lote y anótalo en el informe.
-3. Repite desde el Paso 3 con la siguiente oferta de la cola hasta agotar el
+3. Si el estado final es `enviada`, llama a `notificar_telegram.py oferta` con
+   los mismos datos del registro y su fecha real. Si devuelve `ok: false`,
+   anota `telegram: error` en el informe y continúa. En `--dry-run` no se llama.
+4. Repite desde el Paso 3 con la siguiente oferta de la cola hasta agotar el
    hueco disponible o la cola.
 
 ### Paso 10 — Escribir el informe diario
@@ -242,6 +259,10 @@ entrada nueva: actualiza la existente.
 ## Enviadas
 
 - [empresa, puesto, hora y directorio, o «Ninguna»]
+
+## Avisos Telegram con error
+
+- [empresa, puesto y motivo devuelto por el helper, o «Ninguno»]
 
 ## Descartadas por filtro
 
@@ -345,6 +366,9 @@ Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
 9. **Castellano** para CV, carta, registros e informe.
 10. **Ritmo pausado** entre formularios: el objetivo es pasar desapercibido, no
     ganar una carrera.
+11. **Aviso por oferta enviada.** El helper lee las credenciales en tiempo de
+    ejecución (entorno o fichero de D-Lab); nunca las copia al repo, a `output/`
+    ni al informe. Un fallo de Telegram se anota y no detiene el lote.
 
 ## Estructura de archivos
 
@@ -375,5 +399,6 @@ trabajo/
     └── scripts/
         ├── generar_adjuntos.py
         ├── registrar_envio.py
+        ├── notificar_telegram.py
         └── postular-diario.sh
 ```
