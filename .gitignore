@@ -1,6 +1,9 @@
 /output/
 /ofertas/
 
+# Perfil del navegador y temporales de conversión (sesión y datos locales)
+/SENSIBLE/
+
 # Caché de respuestas a APIs externas (generado, no versionar)
 .opencode/skills/*/cache/
 
