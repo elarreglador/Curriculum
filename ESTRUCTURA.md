@@ -96,11 +96,11 @@ El estado `enviada` solo lo escribe la skill después de ver la pantalla de
 confirmación del formulario; no se usa en ejemplos manuales.
 
 La skill `auto-apply` (spec 08) toma las ofertas de los informes de `job-search`
-y `company-jobs`, comprueba los filtros eliminatorios del formulario y prioriza
-al menos 15 candidaturas por ejecución, ordenadas por encaje con pisos 55/45/35/25
-y búsqueda ampliada a puestos de informática y de técnico si faltan ofertas. No
-hay tope diario. Toda respuesta procede de `sources/datos-candidatura.md`; lo
-preguntado y lo entregado se conserva en
+y `company-jobs`, detecta los desajustes de filtro del formulario (no excluyentes)
+y prioriza al menos 15 candidaturas por ejecución, ordenadas por encaje con pisos
+55/45/35/25 y búsqueda ampliada a puestos de informática y de técnico si faltan
+ofertas. No hay tope diario. Toda respuesta procede de `sources/datos-candidatura.md`;
+lo preguntado, lo entregado y los desajustes se conservan en
 `output/YYYYMMDD-nombreempresa/envio-EMPRESA.md`.
 
 ## Perfil

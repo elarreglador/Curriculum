@@ -18,6 +18,7 @@
 | Campo | Valor | Origen |
 | --- | --- | --- |
 | Experiencia como desarrollador | 18 meses | sources/curriculum-base.md |
+| Experiencia con linux (usuario) | desde 1995 | el usuario lo indica 2026-11-25 |
 | Experiencia total en hardware e infraestructura | Más de 20 años | sources/curriculum-base.md |
 | Salario pretendido | 24000-30000 EUR anuales según oferta | Decisión del usuario, 2026-11-24 |
 | Disponibilidad | Inmediata | Decisión del usuario, 2026-11-24 |
@@ -35,6 +36,6 @@
 
 - Nunca rellenar un dato con una estimación del agente.
 - Ante una pregunta no prevista, responder solo si el valor está en este fichero o en el curriculum.
-- Una pregunta **obligatoria** sin valor produce el estado `sin-responder`: se anota literalmente y no se envía la candidatura.
+- Una pregunta **obligatoria** sin valor se deja en blanco o se elige la opción neutra («Prefiero no decirlo», si existe); se anota literalmente en `envio-EMPRESA.md` y se envía la candidatura igual, sin inventar el dato.
 - Una pregunta **opcional** sin valor se deja en blanco o se elige la opción neutra («Prefiero no decirlo», si existe).
 - Las cifras de experiencia se entregan tal cual aparecen aquí, sin redondearlas al alza.

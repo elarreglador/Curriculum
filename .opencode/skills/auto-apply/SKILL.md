@@ -26,11 +26,19 @@ pidió el contratador y de lo que se le entregó.
 > faltan ofertas. Si aun así no llegan a 15, se amplía la búsqueda a puestos de
 > informática afines, **incluidos los de técnico**, hasta completar el objetivo
 > o agotar las fuentes. Solo entonces se deja constancia del faltante. Nunca se
-> inventan ofertas ni se saltan los filtros del formulario.
+> inventan ofertas ni se inventan datos para pasar los filtros del formulario.
 >
 > El 2026-11-25 se eliminaron los topes anteriores (4 y, transitoriamente, 10)
 > por decisión explícita del usuario. La deduplicación sigue activa: una misma
 > oferta no se envía dos veces.
+>
+> El 2026-11-25, también por decisión del usuario, **los filtros del formulario
+> dejaron de ser eliminatorios**: años de experiencia, salario, permiso de
+> trabajo, ubicación, seniority, disponibilidad y nivel de inglés se anotan como
+> desajuste y la candidatura se envía igual con los datos reales. Una pregunta
+> obligatoria sin valor en `sources/datos-candidatura.md` se deja en blanco o con
+> la opción neutra; nunca se inventa un dato para pasar el filtro. El desajuste
+> se registra solo en `envio-EMPRESA.md`.
 >
 > Las cuentas de usuario **no tienen tope**: se deduplican por dominio y viven en
 > `SENSIBLE/cuentas.json`, gestionadas por la skill `account-signup`.
@@ -195,8 +203,9 @@ siguen en su conversación.
    último, `≥ 25`. Cada pasada añade ofertas al final de la cola.
 4. Si tras el último piso faltan ofertas para llegar a 15, pasa al punto 4 del
    Paso 1 (búsqueda ampliada) y vuelve a aplicar este paso sobre lo nuevo.
-5. Compón una **cola** con las resultantes, no solo las primeras: las que fallen
-   un filtro del formulario se sustituyen por la siguiente de la cola.
+5. Compón una **cola** con las resultantes, no solo las primeras: las ofertas
+   que se bloqueen o den error se sustituyen por la siguiente. Un desajuste de
+   filtro no sustituye a nadie: se anota y se envía igual.
 6. No presentes dos candidaturas al mismo puesto de empresa(s) relacionadas
    detectadas en la deduplicación de `job-search`.
 
@@ -214,24 +223,30 @@ siguen en su conversación.
    el estado correspondiente y sigue: **un muro de registro ya no detiene el
    lote**.
 
-### Paso 4 — Comprobar los filtros eliminatorios antes de seguir
+### Paso 4 — Detectar desajustes de filtros (no excluyentes)
 
 Este paso se ejecuta **después** de que `account-signup` haya dejado la sesión
-autenticada, si el portal exigía cuenta.
+autenticada, si el portal exigía cuenta. **Ningún filtro del formulario descarta
+la oferta**: solo se anota lo que no encaja y se sigue con el envío.
 
 1. Lee con `browser_snapshot` / `browser_find` los campos obligatorios y sus
    opciones. Busca especialmente años de experiencia, salario, permiso de
-   trabajo, ubicación, seniority y disponibilidad.
+   trabajo, ubicación, seniority, disponibilidad y nivel de inglés.
 2. Compara cada condición con `sources/datos-candidatura.md`.
-   - Si una condición excluyente no se cumple (por ejemplo, exige más años de
-     experiencia de los declarados), registra `descartada-por-filtro` con la
-     pregunta literal y la respuesta que se habría entregado. Pasa a la
-     siguiente de la cola.
-   - Si una pregunta **obligatoria** no tiene valor en el fichero de datos,
-     registra `sin-responder` con la pregunta literal. Pasa a la siguiente.
+   - Si el formulario exige más de lo declarado (más años de experiencia, un
+     nivel de inglés superior, otro rango salarial, otra ubicación...), **no
+     descartes**: guarda la pregunta literal, lo que exige y la respuesta real
+     que se va a entregar para anotarlo en `envio-EMPRESA.md`.
+   - Si una pregunta **obligatoria** no tiene valor en el fichero de datos, se
+     deja en blanco o se elige la opción neutra («Prefiero no decirlo») si
+     existe. Guarda la pregunta literal para anotarla igualmente en
+     `envio-EMPRESA.md`. Nunca rellenes el dato con una estimación.
    - Si es opcional y no tiene valor, se deja en blanco o se elige la opción
      neutra del formulario, si la hay.
-3. No rellenas ni envías nada de esta oferta hasta que pase este paso.
+3. No rellenas ni envías nada de esta oferta hasta que pase este paso. Si el
+   portal rechaza el formulario por un campo obligatorio sin valor, registra
+   `error` o `bloqueada` con el mensaje literal: se intentó enviar sin inventar
+   el dato, no se cambió la respuesta para forzar el pase.
 
 ### Paso 5 — Preparar la candidatura
 
@@ -273,8 +288,9 @@ autenticada, si el portal exigía cuenta.
 ### Paso 8 — Enviar y confirmar
 
 1. Antes de pulsar el botón final, revisa el `browser_snapshot`: las respuestas
-   eliminatorias siguen siendo las del fichero de datos y los archivos están
-   adjuntos.
+   siguen saliendo del fichero de datos (o están en blanco/neutras cuando no hay
+   valor) y los archivos están adjuntos. Los desajustes detectados en el Paso 4
+   no se han usado para cambiar ninguna respuesta.
 2. **Si es modo seco:** detente aquí. Fija el estado `bloqueada` con motivo
    «Ejecución en modo seco: no se pulsó enviar» y pasa a la siguiente. No se
    envía ningún aviso a Telegram.
@@ -285,9 +301,10 @@ autenticada, si el portal exigía cuenta.
 ### Paso 9 — Registrar
 
 1. Rellena `envio-EMPRESA.md` con todos los campos, incluidas las tripletas
-   pregunta → respuesta → origen recogidas en el Paso 7 y el campo **Cuenta**
-   devuelto por `account-signup`. Si el estado no es `enviada`, el **motivo**
-   es obligatorio.
+   pregunta → respuesta → origen recogidas en el Paso 7, el campo **Cuenta**
+   devuelto por `account-signup` y el apartado «Filtros y preguntas sin dato»
+   del Paso 4 con cada desajuste y cada pregunta sin valor. Si el estado no es
+   `enviada`, el **motivo** es obligatorio.
 2. Llama a `registrar_envio.py registrar` con el estado final (sin tope diario).
    Un `url` ya registrado actualiza la entrada; no envíes dos veces la misma
    oferta.
@@ -337,20 +354,10 @@ autenticada, si el portal exigía cuenta.
 
 - [empresa, puesto y motivo devuelto por el helper, o «Ninguno»]
 
-## Descartadas por filtro
-
-| Empresa | Puesto | Pregunta que excluye | Respuesta que se habría entregado |
-| --- | --- | --- | --- |
-
 ## Bloqueadas y con error
 
 | Empresa | Puesto | Estado | Motivo |
 | --- | --- | --- | --- |
-
-## Sin responder
-
-| Empresa | Puesto | Pregunta literal |
-| --- | --- | --- |
 
 ## Omisiones por duplicado
 
@@ -384,7 +391,7 @@ Plantilla de `output/YYYYMMDD-nombreempresa/envio-EMPRESA.md`:
 - **Puesto:** [nombre del puesto]
 - **Canal:** LinkedIn Easy Apply | web de la empresa
 - **Cuenta:** no requerida | reutilizada | creada | pendiente-verificacion
-- **Estado:** enviada | descartada-por-filtro | bloqueada | sin-responder | error
+- **Estado:** enviada | bloqueada | error (`descartada-por-filtro` y `sin-responder`: solo registros históricos)
 - **Adjuntos entregados:** curriculum-EMPRESA.pdf, carta-EMPRESA.pdf | solo CV | ninguno
 - **Motivo del estado:** [obligatorio si el estado no es «enviada»; una frase]
 
@@ -392,6 +399,17 @@ Plantilla de `output/YYYYMMDD-nombreempresa/envio-EMPRESA.md`:
 
 | Pregunta del formulario | Respuesta entregada | Origen de la respuesta |
 | --- | --- | --- |
+
+## Filtros y preguntas sin dato (no excluyentes)
+
+| Tipo | Pregunta del formulario | Lo que exige o falta | Respuesta entregada | Origen |
+| --- | --- | --- | --- | --- |
+| Desajuste de filtro | [pregunta literal] | [condición exigida] | [dato real] | sources/datos-candidatura.md |
+| Sin dato | [pregunta literal] | [obligatoria, sin valor en el fichero] | [en blanco / opción neutra] | — |
+
+> Si no hay desajustes ni preguntas sin dato, escribe «Ninguno». Este apartado
+> sustituye a los antiguos estados `descartada-por-filtro` y `sin-responder`: la
+> candidatura se envía igual.
 
 ## Archivos generados
 
@@ -405,7 +423,9 @@ Plantilla de `output/YYYYMMDD-nombreempresa/envio-EMPRESA.md`:
 ```
 
 Estados admitidos: `enviada`, `descartada-por-filtro`, `bloqueada`,
-`sin-responder`, `error`.
+`sin-responder`, `error`. Los dos estados de filtro (`descartada-por-filtro` y
+`sin-responder`) son **legacy**: siguen admitidos en `ofertas/envios.json` para
+registros históricos, pero esta skill ya no los produce.
 
 ## Modo seco
 
@@ -427,13 +447,16 @@ Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
 
 ## Reglas importantes
 
-1. **Sin preguntas.** Modo autónomo: duda → omisión con registro.
+1. **Sin preguntas.** Modo autónomo: duda de identidad (empresa homónima, puesto
+   repetido) → omisión con registro. Un desajuste de filtro ya no es una duda:
+   se anota y se envía.
 2. **Sin datos inventados.** Toda respuesta sale de `sources/datos-candidatura.md`;
-   una obligatoria sin valor detiene esa candidatura.
+   una obligatoria sin valor se deja en blanco o con la opción neutra y se envía
+   igual. Nunca se inventa un dato para pasar un filtro.
 3. **Sin tope diario, con pisos.** El objetivo es al menos 15 envíos; se baja
    por pasadas a 45, 35 y 25, y se amplían los términos a informática y puestos
-   de técnico si aún faltan ofertas. No se envía por debajo del último piso ni
-   se eluden los filtros del formulario para alcanzar la cifra.
+   de técnico si aún faltan ofertas. No se envía por debajo del último piso; los
+   filtros del formulario se registran como desajuste, nunca se eluden.
 4. **Sin elusión.** CAPTCHA, 2FA y protecciones anti-bot se registran, no se
    sortean. Un fallo de login detiene el lote.
 5. **Sin secretos.** Nada de credenciales en `output/`, en el informe ni en esta
@@ -454,6 +477,10 @@ Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
     `account-signup`: un muro de registro ya no detiene el lote. Las credenciales
     viven solo en `SENSIBLE/credenciales.env`; 2FA y CAPTCHA se registran, no se
     eluden. Los avisos de cuenta se envían al crear y al verificar.
+13. **Filtros blandos.** Ningún filtro del formulario descarta la oferta:
+    experiencia, salario, permiso de trabajo, ubicación, seniority,
+    disponibilidad y nivel de inglés se anotan como desajuste solo en
+    `envio-EMPRESA.md` y el CV se envía con los datos reales.
 
 ## Estructura de archivos
 
