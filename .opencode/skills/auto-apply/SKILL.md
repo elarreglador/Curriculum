@@ -37,8 +37,12 @@ pidió el contratador y de lo que se le entregó.
 > trabajo, ubicación, seniority, disponibilidad y nivel de inglés se anotan como
 > desajuste y la candidatura se envía igual con los datos reales. Una pregunta
 > obligatoria sin valor en `sources/datos-candidatura.md` se deja en blanco o con
-> la opción neutra; nunca se inventa un dato para pasar el filtro. El desajuste
-> se registra solo en `envio-EMPRESA.md`.
+> la opción neutra, **salvo si es numérica** (años de experiencia con una
+> tecnología): se responde `0` —decisión explícita del usuario de 2026-11-25
+> para que un campo vacío no bloquee el envío— y, en un desplegable, se elige
+> «0 años» o equivalente. `0` declara ausencia de experiencia en esa tecnología:
+> no es un dato inventado. Nunca se inventa un dato para pasar el filtro. El
+> desajuste y la respuesta `0` se registran solo en `envio-EMPRESA.md`.
 >
 > Las cuentas de usuario **no tienen tope**: se deduplican por dominio y viven en
 > `SENSIBLE/cuentas.json`, gestionadas por la skill `account-signup`.
@@ -52,9 +56,10 @@ pregunta y si hay duda. La puntuación de `ofertas.py` ordena; no decide.
 
 Esta skill trabaja **sin supervisión**: no hace preguntas al usuario. Ante
 cualquier duda —empresa homónima, puesto repetido, pregunta sin respuesta— se
-omite la oferta y se registra el motivo. El objetivo de 15 envíos es una
-prioridad, no una licencia para enviar a ciegas: es preferible enviar menos
-candidaturas que enviar una equivocada.
+omite la oferta y se registra el motivo, **salvo en las preguntas numéricas sin
+valor**, que tienen regla permanente (`0`) y no detienen el envío. El objetivo
+de 15 envíos es una prioridad, no una licencia para enviar a ciegas: es
+preferible enviar menos candidaturas que enviar una equivocada.
 
 ## Cuándo usar esta skill
 
@@ -241,12 +246,23 @@ la oferta**: solo se anota lo que no encaja y se sigue con el envío.
      deja en blanco o se elige la opción neutra («Prefiero no decirlo») si
      existe. Guarda la pregunta literal para anotarla igualmente en
      `envio-EMPRESA.md`. Nunca rellenes el dato con una estimación.
+   - **Excepción numérica:** si la pregunta obligatoria sin valor pide años de
+     experiencia con una tecnología —por ejemplo «¿Cuántos años de experiencia
+     profesional tienes gestionando infraestructuras en AWS y GCP?»— responde
+     **`0`** (en un desplegable, «0 años» o «Menos de 1 año»). La regla está en
+     `sources/datos-candidatura.md` y es decisión del usuario (2026-11-25): `0`
+     declara que no se tiene experiencia profesional en esa tecnología, no es
+     una estimación ni un dato inventado, y evita que un campo vacío impida
+     enviar. Anota la pregunta, la respuesta y su origen en `envio-EMPRESA.md`.
+     **No abandones la candidatura por este motivo.**
    - Si es opcional y no tiene valor, se deja en blanco o se elige la opción
      neutra del formulario, si la hay.
 3. No rellenas ni envías nada de esta oferta hasta que pase este paso. Si el
    portal rechaza el formulario por un campo obligatorio sin valor, registra
    `error` o `bloqueada` con el mensaje literal: se intentó enviar sin inventar
-   el dato, no se cambió la respuesta para forzar el pase.
+   el dato, no se cambió la respuesta para forzar el pase. Las preguntas
+   numéricas sin dato ya se han respondido con `0` según la regla anterior y
+   no deberían llegar aquí.
 
 ### Paso 5 — Preparar la candidatura
 
@@ -275,8 +291,10 @@ la oferta**: solo se anota lo que no encaja y se sigue con el envío.
    control no admita relleno directo. Usa `browser_file_upload` para los
    adjuntos.
 2. Cada respuesta debe venir de `sources/datos-candidatura.md` o, si es un
-   texto libre de motivación, del CV adaptado y de la oferta. Guarda en memoria
-   la tripleta **pregunta → respuesta → origen** para el registro.
+   texto libre de motivación, del CV adaptado y de la oferta. Las preguntas
+   numéricas sin valor se rellenan con `0` según la regla de ese fichero; guarda
+   en memoria la tripleta **pregunta → respuesta → origen** para el registro
+   (el origen de esos `0` es la regla de 2026-11-25, no «—»).
 3. Marca la casilla «Seguir a [empresa]» cuando aparezca: es la preferencia
    permanente del usuario. No marques otras casillas de marketing ni
    comunicaciones comerciales.
@@ -289,8 +307,9 @@ la oferta**: solo se anota lo que no encaja y se sigue con el envío.
 
 1. Antes de pulsar el botón final, revisa el `browser_snapshot`: las respuestas
    siguen saliendo del fichero de datos (o están en blanco/neutras cuando no hay
-   valor) y los archivos están adjuntos. Los desajustes detectados en el Paso 4
-   no se han usado para cambiar ninguna respuesta.
+   valor, y son `0` en las preguntas numéricas sin valor) y los archivos están
+   adjuntos. Los desajustes detectados en el Paso 4 no se han usado para cambiar
+   ninguna respuesta; el `0` de las numéricas es la única excepción prevista.
 2. **Si es modo seco:** detente aquí. Fija el estado `bloqueada` con motivo
    «Ejecución en modo seco: no se pulsó enviar» y pasa a la siguiente. No se
    envía ningún aviso a Telegram.
@@ -406,10 +425,13 @@ Plantilla de `output/YYYYMMDD-nombreempresa/envio-EMPRESA.md`:
 | --- | --- | --- | --- | --- |
 | Desajuste de filtro | [pregunta literal] | [condición exigida] | [dato real] | sources/datos-candidatura.md |
 | Sin dato | [pregunta literal] | [obligatoria, sin valor en el fichero] | [en blanco / opción neutra] | — |
+| Sin dato (numérica) | «¿Cuántos años de experiencia profesional tienes gestionando infraestructuras en AWS y GCP?» | obligatoria, sin valor en el fichero | 0 | sources/datos-candidatura.md (regla 2026-11-25) |
 
 > Si no hay desajustes ni preguntas sin dato, escribe «Ninguno». Este apartado
 > sustituye a los antiguos estados `descartada-por-filtro` y `sin-responder`: la
-> candidatura se envía igual.
+> candidatura se envía igual. Un `0` entregado por la regla numérica se anota aquí
+> como «Sin dato (numérica)» y también en «Información solicitada y entregada»;
+> no se trata como dato inventado.
 
 ## Archivos generados
 
@@ -452,7 +474,11 @@ Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
    se anota y se envía.
 2. **Sin datos inventados.** Toda respuesta sale de `sources/datos-candidatura.md`;
    una obligatoria sin valor se deja en blanco o con la opción neutra y se envía
-   igual. Nunca se inventa un dato para pasar un filtro.
+   igual. **Salvo en las numéricas:** un «¿cuántos años de experiencia con X?»
+   sin valor se responde `0` por decisión del usuario (2026-11-25), se anota como
+   «Sin dato (numérica)» y se envía igual. `0` declara ausencia de experiencia en
+   esa tecnología: no es un dato inventado ni una estimación. Nunca se inventa un
+   dato para pasar un filtro.
 3. **Sin tope diario, con pisos.** El objetivo es al menos 15 envíos; se baja
    por pasadas a 45, 35 y 25, y se amplían los términos a informática y puestos
    de técnico si aún faltan ofertas. No se envía por debajo del último piso; los

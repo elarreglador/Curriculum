@@ -31,6 +31,18 @@
 > eliminan. Quedan derogadas las partes del cuerpo que digan lo contrario; en
 > caso de conflicto manda la skill.
 
+> **Enmienda (2026-11-25, preguntas numéricas sin dato):** el usuario decidió
+> que una pregunta obligatoria **numérica** sin valor en
+> `sources/datos-candidatura.md` —por ejemplo «¿Cuántos años de experiencia
+> profesional tienes gestionando infraestructuras en AWS y GCP?»— se responde
+> `0` (o la opción equivalente en un desplegable) en lugar de abandonar la
+> candidatura. `0` declara que no hay experiencia profesional en esa tecnología:
+> no es una estimación ni un dato inventado, y evita que un campo vacío bloquee
+> el envío. Se anota en `envio-EMPRESA.md` como «Sin dato (numérica)» con origen
+> la regla del fichero de datos (2026-11-25). Quedan derogadas las partes del
+> cuerpo que digan que toda pregunta sin valor se deja en blanco; en caso de
+> conflicto manda la skill.
+
 ---
 
 ## Por qué existe esta especificación
