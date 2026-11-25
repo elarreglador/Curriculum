@@ -8,6 +8,16 @@
 
 > **Objetivo:** Crear una skill que, lanzada diariamente por cron a las 09:00, busque ofertas con las skills locales, envíe hasta cuatro candidaturas mediante Playwright MCP y registre en `output/` cada formulario respondido.
 
+> **Enmienda (2026-11-25):** el usuario eliminó el tope diario y fijó como
+> prioridad **al menos 15 candidaturas por ejecución**. `CANDIDATURAS_POR_DIA`
+> se sustituye por `OBJETIVO_ENVÍOS = 15` (mínimo, sin tope); `UMBRAL_ENCAJE`
+> se aplica en pisos sucesivos 55/45/35/25 y `job-search` amplía la búsqueda a
+> empleos de informática afines, incluidos puestos de técnico, si faltan
+> ofertas. `registrar_envio.py` ya no acepta `--maximo` y `contar` es sólo
+> informativo. Las menciones a «cuatro candidaturas», al «tope diario» y a
+> «nunca bajar el umbral» que siguen en el cuerpo quedan **derogadas** por
+> esta enmienda: en caso de conflicto manda la skill.
+
 ---
 
 ## Por qué existe esta especificación

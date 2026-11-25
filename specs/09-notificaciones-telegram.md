@@ -64,14 +64,12 @@ Registro: output/20261124-edicom
 - `canal`, `url` y `directorio` se omiten si están vacíos.
 - El texto se trunca a 4096 caracteres con el marcador `...[truncado]`, límite del API de Telegram.
 
-### 2. Credenciales
+### 2. Credenciales y destino
 
-Orden de resolución, sin persistencia intermedia:
+- **Token:** variable `TELEGRAM_BOT_TOKEN` → `/home/elarreglador/D-Lab/info_sensible/telegram.env` (ruta sustituible con `--env`).
+- **Chat de destino:** variable `TELEGRAM_CHAT_ID` → `SENSIBLE/telegram-postulacion.env` (ruta sustituible con `--destino-env`) → chat privado de D-Lab como último recurso.
 
-1. Variables de entorno del proceso (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`).
-2. Fichero `/home/elarreglador/D-Lab/info_sensible/telegram.env` (ignorado por git en D-Lab), o la ruta que indique `--env`.
-
-El fichero se analiza como pares `CLAVE=VALOR` simples, con comillas opcionales y sin procesar otras claves. Si falta alguno de los dos valores, el helper devuelve `{"ok":false,"motivo":"faltan TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID"}`.
+Los ficheros se analizan como pares `CLAVE=VALOR` simples, con comillas opcionales y sin procesar otras claves. El `.env` de D-Lab **no se modifica**: las alertas del clúster siguen en su conversación privada. Si falta el token o el destino, el helper devuelve `{"ok":false,"motivo":"faltan TELEGRAM_BOT_TOKEN o TELEGRAM_CHAT_ID"}`.
 
 ---
 
@@ -137,3 +135,21 @@ El fichero se analiza como pares `CLAVE=VALOR` simples, con comillas opcionales 
 - Avisos de ofertas encontradas, descartadas o bloqueadas.
 - Reenvíos, seguimiento de candidaturas ni gestión de respuestas de empresas.
 - Credenciales versionadas ni copiadas a `output/`.
+
+---
+
+## Enmienda de 2026-11-24 — destino en un grupo propio
+
+El primer mensaje de prueba llegó a la conversación privada del bot (`type: private`, «El Arreglador»), la misma donde caen las alertas del clúster. El usuario creó después el grupo privado **Busqueda empleo** y añadió al bot `@Dlab_mrbot`. El ID se obtuvo con `getUpdates?offset=-1`: `-5333087186` (`type: group`).
+
+Cambios:
+
+- `SENSIBLE/telegram-postulacion.env` (ignorado por git, modo 600) contiene **solo** `TELEGRAM_CHAT_ID=-5333087186`; nunca el token.
+- El helper resuelve el destino en este orden: variable `TELEGRAM_CHAT_ID` → fichero local (opción `--destino-env`) → chat privado de D-Lab. El token sigue leyéndose del entorno o del `.env` de D-Lab. `postular-diario.sh` no necesita cambios porque hereda el entorno del proceso.
+- `SKILL.md` y `AGENTS.md` documentan el nuevo destino.
+
+Criterios verificados:
+
+- [x] Resolución de credenciales: token leído de D-Lab y `chat_id=-5333087186` desde el fichero local, sin imprimir el token.
+- [x] D-Lab y su `.env` permanecen intactos: las alertas del clúster siguen en su conversación privada.
+- [x] Mensaje de prueba entregado en el grupo: `{"ok": true, "message_id": 5038}` (`verificado 2026-11-24`).

@@ -147,6 +147,14 @@ En las tres de España: `--seniority "junior,mid"` y
 `--ubicacion "valencia,valencian,barcelona,madrid"`. Añade `--paginas 1` y
 `--detalle 10` en todas. Guarda el JSON de cada una.
 
+Además, guarda una **pasada de reserva** de cada una con `--minimo 25` (y el
+mismo resto de opciones). Con la caché de 6 h no son peticiones nuevas: es la
+misma búsqueda con el filtro de encaje bajo. Esa reserva alimenta la sección
+«Reserva para envío escalonado» del informe, que consume `auto-apply` cuando no
+llega a 15 candidaturas con la lista corta. Los descartes duros siguen
+aplicando: no entran en la reserva perfiles comerciales, de telemarketing ni
+ofertas sin ninguna palabra del perfil.
+
 ### Paso 2b — Integración con `company-jobs` (`ofertas/empresas.json`)
 
 Las empresas registradas (pequeñas o que no publican en portales grandes) no salen
@@ -203,6 +211,32 @@ Reglas de este paso:
 - Las ofertas de empresa se cualifican igual que el resto (argumento, qué cubre,
   qué no cubre, antigüedad).
 
+### Paso 2c — Modo ampliado (lo pide `auto-apply`)
+
+Se ejecuta **sólo** cuando `auto-apply` no ha llegado a 15 candidaturas tras
+agotar la lista corta, la reserva y las webs de empresas. Amplía los términos a
+empleos de informática afines, **incluidos los puestos de técnico**, sin
+contradecir los criterios permanentes de `sources/criterios-busqueda.md`: banda
+`junior,mid`, Valencia/Barcelona/Madrid o remoto. Siguen aplicando los descartes
+duros y el encaje mínimo de 25 del último piso.
+
+Grupos de términos, en este orden (uno por ronda):
+
+1. `soporte informático`, `helpdesk`, `técnico de soporte`
+2. `administrador de sistemas`, `sysadmin`, `linux`, `infraestructura`
+3. `técnico informático`, `redes`, `hardware`, `DevOps`
+
+Por cada grupo, cuatro pasadas (Valencia, Barcelona, Madrid y remoto) con
+`--minimo 25`, `--seniority "junior,mid"` y `--detalle 5`. Escribe un informe
+`ofertas/YYYYMMDD/lista-ampliada-HHMM.md` con la estructura del informe normal
+y una cabecera que indique «Búsqueda ampliada», los términos del grupo y el
+encaje mínimo 25. No repitas términos ya usados ni ofertas ya incluidas en el
+informe principal.
+
+La búsqueda ampliada **no envía candidaturas**: sólo entrega ofertas a
+`auto-apply`. Se detiene al completar 15 envíos o al agotar los tres grupos: no
+hay tope diario, pero sí tres rondas como máximo por ejecución.
+
 ### Paso 3 — Cualificar
 
 Para las 5-10 mejores de cada pasada, lee la descripción
@@ -243,11 +277,13 @@ IMPORTANTE: Este paso no es opcional, el usuario espera este documento.
 - **Geografía:** [qué se buscó]
 - **Antigüedad máxima:** N días
 - **Encaje mínimo para lista corta:** 55
-- **Orden:** Posibilidades descendente (tras filtro de encaje ≥ 55)
+- **Encaje mínimo para reserva:** 25 (pasada de reserva; consume `auto-apply`)
+- **Orden:** Encaje descendente; dentro del mismo encaje, Posibilidades descendente
 
 ## Lista corta
 
-Filtro: encaje mínimo de 55. Ordenada por Posibilidades (descendente).
+Filtro: encaje mínimo de 55. Ordenada por encaje y, dentro del mismo encaje,
+por Posibilidades (descendente).
 
 | # | Empresa | Puesto | Ubicación | Publicada | Encaje | Posibilidades | Enlace |
 |---|---|---|---|---|---|---|---|
@@ -263,6 +299,16 @@ Filtro: encaje mínimo de 55. Ordenada por Posibilidades (descendente).
 - **Qué no cubre:** [requisito → por qué]
 - **Verificar antes de postular:** [...]
 - **Siguiente paso:** `nueva_candidatura.py "EMPRESA"`
+
+## Reserva para envío escalonado
+
+Filtro: encaje de 25 a 54, sin duplicar la lista corta. Ordenada por encaje y,
+dentro del mismo encaje, por Posibilidades (descendente). `No consta` va al
+final. La reserva **no se envía desde aquí**: `auto-apply` la consume sólo si
+le faltan ofertas para su objetivo de 15 candidaturas.
+
+| # | Empresa | Puesto | Ubicación | Publicada | Encaje | Posibilidades | Enlace |
+|---|---|---|---|---|---|---|---|
 
 ## Descartadas
 
@@ -285,6 +331,8 @@ Reglas del fichero:
 - Si un dato no aparece en ninguna fuente, escribe `No consta`. No estimes
   salario, ni nivel de idiomas, ni el estado de la oferta.
 - Marca las ofertas de más de 14 días como probablemente cerradas.
+- La reserva sale de la pasada con `--minimo 25`: no contiene ofertas por debajo
+  de 25 y los descartes duros se aplican igual que en la lista corta.
 
 
 ## Estructura de archivos
@@ -331,6 +379,7 @@ trabajo/
    qué había disponible cada día.
 9. **ofertas/YYYYMMDD/lista-HHMM.md**: El documento en el directorio ofertas debe existir
 10. **Empresas conocidas**: revisarlas cada 15 días como mínimo; anotar siempre la fecha de revisión en `ofertas/empresas.json`, incluso sin ofertas. Las que no tengan `url_empleo`: primer intento queda pendiente, segundo intento se elimina.
+11. **Reserva y modo ampliado**: la reserva ≥ 25 y los tres grupos de términos del Paso 2c existen para que `auto-apply` pueda completar 15 envíos. No se envía nada desde aquí y se respetan siempre los criterios permanentes y los descartes duros.
 
 ## Detalles de la fuente que ya están comprobados
 

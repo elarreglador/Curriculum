@@ -45,6 +45,7 @@ sabe extraer y normalizar las ofertas de cada una, y quien puede anotar las
 | `bash` | ejecutar `empresas.py` y `ofertas.py` |
 | `websearch` | buscar la web oficial y la URL de empleo cuando falten |
 | `webfetch` | leer la web oficial y la web de empleo de la empresa |
+| skill `account-signup` | crear o reutilizar cuenta cuando el portal exige login para ver ofertas |
 | `read` | consultar `empresas.json` o el CV si hace falta |
 
 ## Comandos
@@ -165,6 +166,10 @@ Reglas de este paso:
 - Si el `webfetch` falla, anota el error en `instrucciones_agente` (p. ej.
   "webfetch falló: timeout; probar con navegador") y conserva el valor anterior
   si lo había.
+- Si la web exige login para ver ofertas, invoca `account-signup` cuando sea
+  necesario para avanzar. Anota el resultado en el informe (sección «Cuentas»),
+  **nunca** en `empresas.json`. Sin credenciales en el registro: van en
+  `SENSIBLE/credenciales.env`.
 
 ### Paso 4 — Generar `ofertas/YYYYMMDD/empresas-HHMM.md`
 
@@ -227,6 +232,12 @@ Filtro: encaje mínimo de 55. Ordenada por Posibilidades (descendente).
 |---|---|
 | ... | sin revisar (lote completo) |
 
+## Cuentas
+
+| Empresa | Dominio | Estado | Uso |
+|---|---|---|---|
+| [o «Ninguna»] | | | crear \| reutilizar \| pendiente-verificacion |
+
 ## Fuentes
 
 | Dato | Fuente | Fecha |
@@ -240,6 +251,7 @@ Reglas del fichero:
 - **Toda cifra viene del JSON** de la revisión, con su fecha.
 - Si un dato no aparece en ninguna fuente, escribe `No consta`. No estimes.
 - Marca las ofertas de más de 14 días como probablemente cerradas.
+- Nunca escribas credenciales en el informe: van en `SENSIBLE/credenciales.env`.
 
 ---
 
@@ -254,13 +266,19 @@ trabajo/
 │   └── YYYYMMDD/
 │       ├── lista-HHMM.md        # job-search
 │       └── empresas-HHMM.md      # company-jobs
-└── .opencode/skills/
-    ├── company-research/
-    │   └── scripts/empresas.py  # gestión de ofertas/empresas.json
-    ├── company-jobs/
-    │   └── SKILL.md
-    └── job-search/
-        └── scripts/ofertas.py   # subcomando puntuar
+├── .opencode/skills/
+│   ├── account-signup/          # cuentas cuando el portal exige login
+│   │   ├── SKILL.md
+│   │   └── scripts/cuentas.py
+│   ├── company-research/
+│   │   └── scripts/empresas.py  # gestión de ofertas/empresas.json
+│   ├── company-jobs/
+│   │   └── SKILL.md
+│   └── job-search/
+│       └── scripts/ofertas.py   # subcomando puntuar
+└── SENSIBLE/                    # ignorado por git
+    ├── credenciales.env
+    └── cuentas.json
 ```
 
 ---
@@ -286,6 +304,9 @@ trabajo/
 9. **Idioma:** castellano para el informe.
 10. **Sin datos inventados.** Un dato que no se pueda verificar se deja como `null`
     y se anota como `No consta` en el informe.
+11. **Cuentas fuera del registro.** Si hace falta una cuenta para ver ofertas, la
+    crea `account-signup`; el resultado se anota en el informe, jamás en
+    `empresas.json` y nunca con credenciales.
 
 ---
 

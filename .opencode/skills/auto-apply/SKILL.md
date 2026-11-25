@@ -12,12 +12,28 @@ pidió el contratador y de lo que se le entregó.
 
 ## Configuración
 
-> **CANDIDATURAS_POR_DIA = 4**
+> **OBJETIVO_ENVÍOS = 15**
 >
 > **UMBRAL_ENCAJE = 55**
 >
-> Cambia estos dos valores aquí. El resto de la skill habla de «el tope diario»
-> y «el umbral de encaje»: no los repite.
+> **PISOS_ENCAJE = 55, 45, 35, 25**
+>
+> Cambia estos tres valores aquí. El resto de la skill habla de «el objetivo de
+> envíos», «el umbral de encaje» y «los pisos de encaje»: no los repite.
+>
+> **No hay tope diario.** La prioridad es enviar **al menos 15 candidaturas por
+> ejecución**, empezando por las mejores y bajando el listón por pasadas si
+> faltan ofertas. Si aun así no llegan a 15, se amplía la búsqueda a puestos de
+> informática afines, **incluidos los de técnico**, hasta completar el objetivo
+> o agotar las fuentes. Solo entonces se deja constancia del faltante. Nunca se
+> inventan ofertas ni se saltan los filtros del formulario.
+>
+> El 2026-11-25 se eliminaron los topes anteriores (4 y, transitoriamente, 10)
+> por decisión explícita del usuario. La deduplicación sigue activa: una misma
+> oferta no se envía dos veces.
+>
+> Las cuentas de usuario **no tienen tope**: se deduplican por dominio y viven en
+> `SENSIBLE/cuentas.json`, gestionadas por la skill `account-signup`.
 
 ## Principio de diseño
 
@@ -28,8 +44,9 @@ pregunta y si hay duda. La puntuación de `ofertas.py` ordena; no decide.
 
 Esta skill trabaja **sin supervisión**: no hace preguntas al usuario. Ante
 cualquier duda —empresa homónima, puesto repetido, pregunta sin respuesta— se
-omite la oferta y se registra el motivo. Es preferible enviar menos candidaturas
-que enviar una equivocada.
+omite la oferta y se registra el motivo. El objetivo de 15 envíos es una
+prioridad, no una licencia para enviar a ciegas: es preferible enviar menos
+candidaturas que enviar una equivocada.
 
 ## Cuándo usar esta skill
 
@@ -42,6 +59,7 @@ que enviar una equivocada.
 | Herramienta | Uso |
 | --- | --- |
 | `bash` | ejecutar los scripts y las skills locales |
+| skill `account-signup` | crear, reutilizar y verificar cuentas cuando el portal lo exige |
 | MCP `playwright` | navegar, leer el formulario, rellenarlo, adjuntar archivos y enviar |
 | `read` | consultar datos del candidato, informes y registros |
 | `webfetch` | completar `info.md` con datos de la empresa y de la oferta |
@@ -58,12 +76,17 @@ repositorio.
 | `sources/curriculum-base.md` | plantilla que se adapta, nunca se reescribe |
 | `sources/criterios-busqueda.md` | banda y geografía permanentes |
 | `sources/datos-candidatura.md` | **única** fuente de respuestas de formularios |
-| `ofertas/YYYYMMDD/lista-HHMM.md` | salida de `job-search` |
+| `ofertas/YYYYMMDD/lista-HHMM.md` | salida de `job-search` (lista corta y reserva ≥ 25) |
+| `ofertas/YYYYMMDD/lista-ampliada-HHMM.md` | salida del modo ampliado de `job-search` |
 | `ofertas/YYYYMMDD/empresas-HHMM.md` | salida de `company-jobs` |
-| `ofertas/envios.json` | índice de deduplicación y tope diario |
+| `ofertas/envios.json` | índice de deduplicación (sin tope diario) |
 | `output/YYYYMMDD-nombreempresa/` | candidatura y registro de envío |
 | `ofertas/YYYYMMDD/postulacion-HHMM.md` | informe del lote |
 | `.opencode/skills/auto-apply/scripts/notificar_telegram.py` | helper que avisa por Telegram de cada oferta enviada |
+| `SENSIBLE/telegram-postulacion.env` | chat ID de destino de los avisos, ignorado por git |
+| `SENSIBLE/credenciales.env` | credenciales de `account-signup`, ignorado por git |
+| `SENSIBLE/cuentas.json` | índice de cuentas por dominio, sin contraseñas |
+| `.opencode/skills/account-signup/` | skill invocada cuando el portal exige cuenta |
 
 ## Comandos
 
@@ -73,8 +96,8 @@ C=.opencode/skills/cv-generator/scripts
 R=.opencode/skills/company-research/scripts/empresas.py
 S=.opencode/skills/job-search/scripts/ofertas.py
 
-# 1. ¿Cuántas candidaturas caben hoy?
-python3 $A/registrar_envio.py contar --maximo <tope diario>
+# 1. Envíos de hoy (solo informativo: no limita el lote)
+python3 $A/registrar_envio.py contar
 
 # 2. Comprobar duplicados antes de preparar nada
 python3 $C/revisar_output.py "EMPRESA" --puesto "PUESTO"
@@ -90,60 +113,91 @@ python3 $A/generar_adjuntos.py \
 # 5. Registrar el resultado final de cada oferta
 python3 $A/registrar_envio.py registrar \
   --empresa "EMPRESA" --puesto "PUESTO" --url "URL" \
-  --estado enviada --directorio output/YYYYMMDD-nombreempresa \
-  --maximo <tope diario>
+  --estado enviada --directorio output/YYYYMMDD-nombreempresa
 
 # 6. Avisar por Telegram de la oferta enviada (best-effort)
 python3 $A/notificar_telegram.py oferta \
   --empresa "EMPRESA" --puesto "PUESTO" --canal "LinkedIn Easy Apply" \
   --url "URL" --fecha "YYYY-MM-DDTHH:MM:SS+01:00" \
   --directorio output/YYYYMMDD-nombreempresa
+
+# 7. Cuando el portal exige cuenta: account-signup
+CU=.opencode/skills/account-signup/scripts/cuentas.py
+T=.opencode/skills/auto-apply/scripts/notificar_telegram.py
+python3 $CU buscar --dominio "empresa.com"
+python3 $CU verificar-credenciales
+python3 $CU registrar --empresa "EMPRESA" --dominio "empresa.com" \
+  --url "URL" --estado creada --notas "registro completado"
+
+# 8. Avisar de la cuenta al crearla y, más tarde, al verificarla
+python3 $T cuenta --empresa "EMPRESA" --dominio "empresa.com" \
+  --estado creada --fecha "YYYY-MM-DDTHH:MM:SS+01:00"
+python3 $T cuenta --empresa "EMPRESA" --dominio "empresa.com" \
+  --estado verificada --fecha "YYYY-MM-DDTHH:MM:SS+01:00"
 ```
 
-`registrar` devuelve JSON. `registrado: false` con `motivo: tope_diario` (código
-de salida 2) significa que el lote debe parar. Un `url` repetido no crea una
-entrada nueva: actualiza la existente.
+`registrar` devuelve JSON con `registrado` y `duplicado`. Un `url` repetido no
+crea una entrada nueva: actualiza la existente. No hay estado `tope_diario`:
+el lote solo termina cuando se agota la cola o se alcanza el objetivo sin que
+queden fuentes por explorar.
 
 `notificar_telegram.py` imprime JSON con `ok: true` o `ok: false` y **siempre
 termina con código 0**: si falla, se anota en el informe y el lote continúa.
-Añade `--sonda` para ver el mensaje sin enviarlo. Lee el token y el chat ID de
-las variables de entorno o, si no están, de
-`/home/elarreglador/D-Lab/info_sensible/telegram.env` (opción `--env`).
+Añade `--sonda` para ver el mensaje sin enviarlo. El token se lee del entorno o
+de `/home/elarreglador/D-Lab/info_sensible/telegram.env` (opción `--env`). El
+destino se resuelve en este orden: variable `TELEGRAM_CHAT_ID`, fichero ignorado
+`SENSIBLE/telegram-postulacion.env` (opción `--destino-env`) y, como último
+recurso, el chat de D-Lab. El `.env` de D-Lab no se toca: las alertas del clúster
+siguen en su conversación.
 
 ## Flujo de interacción
 
 ### Paso 0 — Preparar la ejecución
 
 1. Detecta si la orden contiene `--dry-run`. En modo seco se recorre todo el
-   flujo **menos** el clic final de envío.
-2. Lee los dos valores de la sección Configuración y `sources/datos-candidatura.md`.
-3. Consulta el hueco disponible con `registrar_envio.py contar`. Si no queda
-   hueco, escribe el informe con el lote vacío y termina.
+   flujo **menos** el clic final de envío. El modo seco se propaga a
+   `account-signup`: no crea cuentas, no abre el correo y no avisa.
+2. Lee los tres valores de la sección Configuración y `sources/datos-candidatura.md`.
+3. Consulta `registrar_envio.py contar` solo para dejar constancia de los envíos
+   de hoy: es informativo, **no limita el lote** (no hay tope diario).
 4. No pidas confirmaciones: esta skill nunca interactúa con el usuario.
 
 ### Paso 1 — Obtener las ofertas
 
 1. Ejecuta `job-search` con sus criterios habituales (cuatro pasadas: Valencia,
-   Barcelona, Madrid y remoto). Su Paso 2b delega en `company-jobs`; asegúrate de
-   que se ejecuta para incorporar las ofertas de `ofertas/empresas.json`.
+   Barcelona, Madrid y remoto), **incluida la reserva con encaje ≥ 25** de su
+   Paso 2. Su Paso 2b delega en `company-jobs`; asegúrate de que se ejecuta para
+   incorporar las ofertas de `ofertas/empresas.json`.
 2. Sus reglas de «mostrar la lista antes de escribir» y de «confirmar empresa»
    quedan **suspendidas** aquí: el informe es la entrada de datos, no una
    pantalla de aprobación.
 3. Lee `ofertas/YYYYMMDD/lista-HHMM.md` y `ofertas/YYYYMMDD/empresas-HHMM.md`.
    Si no hay ningún informe de hoy o ambos están vacíos, escribe el informe de
    postulación con «sin ofertas disponibles» y termina.
+4. Si tras el Paso 2 faltan ofertas para el objetivo, vuelve a invocar
+   `job-search` en su **modo ampliado** (Paso 2c): términos de informática afines,
+   incluidos puestos de técnico, con encaje ≥ 25. Incorpora cada informe
+   `lista-ampliada-HHMM.md` a la cola y repite con el siguiente grupo de términos
+   hasta llegar a 15 o agotar los grupos previstos. Registra cada ronda en el
+   informe de postulación.
 
-### Paso 2 — Preseleccionar
+### Paso 2 — Preseleccionar por encaje escalonado
 
-1. Descarta toda oferta con encaje inferior al umbral. **No lo bajes nunca**,
-   aunque queden menos ofertas de las que caben en el lote.
-2. Ordena por `Posibilidades` de mayor a menor. `No consta` va al final.
-3. Descarta las ya registradas en `ofertas/envios.json` (por `url`, o por
+1. Reúne la lista corta, la reserva y los informes ampliados. Ordena las ofertas
+   por `Encaje` de mayor a menor y, dentro del mismo encaje, por `Posibilidades`
+   de mayor a menor (`No consta` al final). Así se empieza por las más adecuadas
+   a las capacidades del candidato.
+2. Descarta las ya registradas en `ofertas/envios.json` (por `url`, o por
    empresa + puesto si no hay URL) y las que `revisar_output.py` detecte como
    candidatura previa al mismo puesto. Anota cada omisión para el informe.
-4. Compón una **cola** con las restantes, no solo las primeras: las que fallen
+3. Aplica los pisos de encaje **por pasadas sucesivas**, sin reordenar lo ya
+   elegido: `≥ 55` (umbral), luego `≥ 45` si faltan ofertas, luego `≥ 35` y, por
+   último, `≥ 25`. Cada pasada añade ofertas al final de la cola.
+4. Si tras el último piso faltan ofertas para llegar a 15, pasa al punto 4 del
+   Paso 1 (búsqueda ampliada) y vuelve a aplicar este paso sobre lo nuevo.
+5. Compón una **cola** con las resultantes, no solo las primeras: las que fallen
    un filtro del formulario se sustituyen por la siguiente de la cola.
-5. No presentes dos candidaturas al mismo puesto de empresa(s) relacionadas
+6. No presentes dos candidaturas al mismo puesto de empresa(s) relacionadas
    detectadas en la deduplicación de `job-search`.
 
 ### Paso 3 — Abrir la oferta y detectar el canal
@@ -152,10 +206,18 @@ las variables de entorno o, si no están, de
 2. Clasifica el canal: `LinkedIn Easy Apply` o `web de la empresa`.
 3. Si la URL no abre, no hay formulario o hace falta un navegador distinto,
    registra `error` con el motivo y pasa a la siguiente de la cola.
-4. Si el acceso exige iniciar sesión y la sesión persistente no está activa,
-   **detén el lote**: anota el fallo de login en el informe y termina.
+4. Si el acceso exige iniciar sesión o crear cuenta, invoca `account-signup`
+   (que antes comprueba el índice por dominio). Con cuenta `verificada` o
+   `creada`, continúa al Paso 4; con `pendiente-verificacion`, registra
+   `bloqueada` con ese motivo y pasa a la siguiente de la cola. Con
+   credenciales ausentes, 2FA, CAPTCHA o dato obligatorio sin valor, registra
+   el estado correspondiente y sigue: **un muro de registro ya no detiene el
+   lote**.
 
 ### Paso 4 — Comprobar los filtros eliminatorios antes de seguir
+
+Este paso se ejecuta **después** de que `account-signup` haya dejado la sesión
+autenticada, si el portal exigía cuenta.
 
 1. Lee con `browser_snapshot` / `browser_find` los campos obligatorios y sus
    opciones. Busca especialmente años de experiencia, salario, permiso de
@@ -223,15 +285,18 @@ las variables de entorno o, si no están, de
 ### Paso 9 — Registrar
 
 1. Rellena `envio-EMPRESA.md` con todos los campos, incluidas las tripletas
-   pregunta → respuesta → origen recogidas en el Paso 7. Si el estado no es
-   `enviada`, el **motivo** es obligatorio.
-2. Llama a `registrar_envio.py registrar` con el estado final y el tope diario.
-   Si devuelve `tope_diario`, termina el lote y anótalo en el informe.
+   pregunta → respuesta → origen recogidas en el Paso 7 y el campo **Cuenta**
+   devuelto por `account-signup`. Si el estado no es `enviada`, el **motivo**
+   es obligatorio.
+2. Llama a `registrar_envio.py registrar` con el estado final (sin tope diario).
+   Un `url` ya registrado actualiza la entrada; no envíes dos veces la misma
+   oferta.
 3. Si el estado final es `enviada`, llama a `notificar_telegram.py oferta` con
    los mismos datos del registro y su fecha real. Si devuelve `ok: false`,
    anota `telegram: error` en el informe y continúa. En `--dry-run` no se llama.
-4. Repite desde el Paso 3 con la siguiente oferta de la cola hasta agotar el
-   hueco disponible o la cola.
+4. Repite desde el Paso 3 con la siguiente oferta de la cola **hasta agotarla**,
+   incluidas las rondas ampliadas del Paso 1. Llegar a 15 no detiene el lote si
+   aún quedan ofertas viables: el objetivo es un mínimo, no un tope.
 
 ### Paso 10 — Escribir el informe diario
 
@@ -246,10 +311,12 @@ las variables de entorno o, si no están, de
 
 - **Modo:** normal | --dry-run
 - **Fecha y hora:** YYYY-MM-DDTHH:MM:SS+01:00
-- **Fuentes:** informes de job-search y company-jobs de hoy
+- **Fuentes:** informes de job-search y company-jobs de hoy, incluidas las rondas ampliadas
+- **Objetivo de envíos:** [valor de la configuración] (mínimo, sin tope)
 - **Umbral de encaje:** [valor de la configuración]
-- **Tope diario:** [valor de la configuración]
-- **Orden:** Posibilidades descendente (tras filtrar por encaje)
+- **Pisos aplicados:** [55 | 45 | 35 | 25 — último piso alcanzado]
+- **Rondas ampliadas:** [términos de cada ronda y ofertas aportadas, o «Ninguna»]
+- **Orden:** Encaje descendente; dentro del mismo encaje, Posibilidades descendente
 
 ## Seleccionadas
 
@@ -259,6 +326,12 @@ las variables de entorno o, si no están, de
 ## Enviadas
 
 - [empresa, puesto, hora y directorio, o «Ninguna»]
+
+## Cuentas
+
+| Empresa | Dominio | Estado | Momento del aviso |
+| --- | --- | --- | --- |
+| [o «Ninguna»] | | | |
 
 ## Avisos Telegram con error
 
@@ -291,8 +364,11 @@ las variables de entorno o, si no están, de
 ```
 
 Reglas del informe: si no hay ofertas, indícalo en «Seleccionadas» y deja el
-resto de secciones con «Ninguna». No escribas datos que no estén en los informes
-de entrada ni en los registros de `output/`.
+resto de secciones con «Ninguna». Si se envían menos de 15, añade una línea
+**Faltaron para el objetivo:** N, con el último piso y las rondas ampliadas
+agotadas. No escribas datos que no estén en los informes de entrada ni en los
+registros de `output/`. Nunca escribas credenciales en el informe:
+`SENSIBLE/credenciales.env` no se copia aquí.
 
 ## Registro de envío
 
@@ -307,6 +383,7 @@ Plantilla de `output/YYYYMMDD-nombreempresa/envio-EMPRESA.md`:
 - **Oferta:** [URL de la oferta original]
 - **Puesto:** [nombre del puesto]
 - **Canal:** LinkedIn Easy Apply | web de la empresa
+- **Cuenta:** no requerida | reutilizada | creada | pendiente-verificacion
 - **Estado:** enviada | descartada-por-filtro | bloqueada | sin-responder | error
 - **Adjuntos entregados:** curriculum-EMPRESA.pdf, carta-EMPRESA.pdf | solo CV | ninguno
 - **Motivo del estado:** [obligatorio si el estado no es «enviada»; una frase]
@@ -353,8 +430,10 @@ Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
 1. **Sin preguntas.** Modo autónomo: duda → omisión con registro.
 2. **Sin datos inventados.** Toda respuesta sale de `sources/datos-candidatura.md`;
    una obligatoria sin valor detiene esa candidatura.
-3. **Sin capas de umbral.** Nunca bajes el umbral de encaje ni envíes más del
-   tope diario.
+3. **Sin tope diario, con pisos.** El objetivo es al menos 15 envíos; se baja
+   por pasadas a 45, 35 y 25, y se amplían los términos a informática y puestos
+   de técnico si aún faltan ofertas. No se envía por debajo del último piso ni
+   se eluden los filtros del formulario para alcanzar la cifra.
 4. **Sin elusión.** CAPTCHA, 2FA y protecciones anti-bot se registran, no se
    sortean. Un fallo de login detiene el lote.
 5. **Sin secretos.** Nada de credenciales en `output/`, en el informe ni en esta
@@ -366,9 +445,15 @@ Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
 9. **Castellano** para CV, carta, registros e informe.
 10. **Ritmo pausado** entre formularios: el objetivo es pasar desapercibido, no
     ganar una carrera.
-11. **Aviso por oferta enviada.** El helper lee las credenciales en tiempo de
-    ejecución (entorno o fichero de D-Lab); nunca las copia al repo, a `output/`
-    ni al informe. Un fallo de Telegram se anota y no detiene el lote.
+11. **Aviso por oferta enviada.** El token se lee en tiempo de ejecución del
+    entorno o del fichero de D-Lab; el destino sale de
+    `SENSIBLE/telegram-postulacion.env` (o del entorno). Nada de eso se copia al
+    repo, a `output/` ni al informe. Un fallo de Telegram se anota y no detiene
+    el lote.
+12. **Cuentas sin detener el lote.** Si el portal exige registro o login, invoca
+    `account-signup`: un muro de registro ya no detiene el lote. Las credenciales
+    viven solo en `SENSIBLE/credenciales.env`; 2FA y CAPTCHA se registran, no se
+    eluden. Los avisos de cuenta se envían al crear y al verificar.
 
 ## Estructura de archivos
 
@@ -380,10 +465,14 @@ trabajo/
 │   └── datos-candidatura.md        # respuestas de formularios
 ├── SENSIBLE/                       # ignorado por git
 │   ├── playwright-profile/         # sesión del navegador
+│   ├── telegram-postulacion.env    # chat ID de los avisos
+│   ├── credenciales.env            # credenciales de account-signup
+│   ├── cuentas.json                # índice de cuentas por dominio
 │   └── tmp/                        # HTML temporal y perfil de LibreOffice
 ├── ofertas/
 │   ├── YYYYMMDD/
-│   │   ├── lista-HHMM.md           # job-search
+│   │   ├── lista-HHMM.md           # job-search (corta + reserva)
+│   │   ├── lista-ampliada-HHMM.md  # job-search, modo ampliado
 │   │   ├── empresas-HHMM.md        # company-jobs
 │   │   ├── postulacion-HHMM.md     # informe de esta skill
 │   │   └── postulacion-HHMM.log    # salida del lanzador
@@ -394,6 +483,9 @@ trabajo/
 │       ├── curriculum-EMPRESA.md / .pdf
 │       ├── carta-EMPRESA.md / .pdf
 │       └── envio-EMPRESA.md
+├── .opencode/skills/account-signup/
+│   ├── SKILL.md
+│   └── scripts/cuentas.py
 └── .opencode/skills/auto-apply/
     ├── SKILL.md
     └── scripts/

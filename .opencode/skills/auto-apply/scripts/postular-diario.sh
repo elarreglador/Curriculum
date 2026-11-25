@@ -24,9 +24,9 @@ HORA="$(date +%H%M)"
 mkdir -p "ofertas/$FECHA"
 LOG="ofertas/$FECHA/postulacion-$HORA.log"
 
-MODO="Ejecuta la skill auto-apply: busca ofertas con job-search y company-jobs, selecciona hasta el tope diario y envía las candidaturas que superen los filtros del formulario."
+MODO="Ejecuta la skill auto-apply: busca ofertas con job-search y company-jobs (con la reserva de encaje ≥ 25), crea o reutiliza cuentas con account-signup cuando un portal lo exija, prioriza las mejores ofertas y baja el umbral por pasadas (55/45/35/25) hasta enviar al menos 15 candidaturas; si faltan, amplía la búsqueda a empleos de informática afines, incluidos los de técnico. No hay tope diario: sigue hasta agotar la cola y envía las candidaturas que superen los filtros del formulario."
 if [[ "${1:-}" == "--dry-run" ]]; then
-  MODO="Ejecuta la skill auto-apply en modo --dry-run: recorre el flujo sin pulsar Enviar y registra cada oferta."
+  MODO="Ejecuta la skill auto-apply en modo --dry-run: recorre el flujo sin pulsar Enviar, sin crear cuentas ni abrir el correo, y registra cada oferta."
 fi
 
 # El modelo por defecto agotó los créditos del proveedor; se usa uno gratuito.

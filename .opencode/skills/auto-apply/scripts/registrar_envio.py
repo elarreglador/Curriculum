@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Alta y recuento de envíos en ofertas/envios.json.
 
-La deduplicación usa la URL; si falta, empresa + puesto. El tope diario se
-recibe como parámetro para que el único sitio con la constante sea SKILL.md.
+La deduplicación usa la URL; si falta, empresa + puesto. No hay tope diario:
+`contar` sólo informa de los envíos de hoy y `registrar` nunca rechaza un alta
+por cantidad, únicamente por estado no válido o índice mal formado.
 """
 
 from __future__ import annotations
@@ -99,22 +100,6 @@ def registrar(args: argparse.Namespace) -> int:
             )
             return 0
 
-    if args.estado == "enviada" and args.maximo is not None:
-        already = sent_today(data, date.today())
-        if already >= args.maximo:
-            print(
-                json.dumps(
-                    {
-                        "registrado": False,
-                        "motivo": "tope_diario",
-                        "enviadas_hoy": already,
-                        "maximo": args.maximo,
-                    },
-                    ensure_ascii=False,
-                )
-            )
-            return 2
-
     data["envios"].append(new_entry)
     save_index(args.index, data)
     print(json.dumps({"registrado": True, "duplicado": False, "entrada": new_entry}, ensure_ascii=False))
@@ -123,12 +108,7 @@ def registrar(args: argparse.Namespace) -> int:
 
 def contar(args: argparse.Namespace) -> int:
     data = load_index(args.index)
-    already = sent_today(data, date.today())
-    result = {"enviadas_hoy": already}
-    if args.maximo is not None:
-        result["maximo"] = args.maximo
-        result["restan"] = max(0, args.maximo - already)
-    print(json.dumps(result, ensure_ascii=False))
+    print(json.dumps({"enviadas_hoy": sent_today(data, date.today())}, ensure_ascii=False))
     return 0
 
 
@@ -144,11 +124,9 @@ def main() -> int:
     register.add_argument("--estado", required=True)
     register.add_argument("--directorio", default="")
     register.add_argument("--fecha", help="ISO 8601; por defecto, ahora")
-    register.add_argument("--maximo", type=int, help="Tope de envíos de hoy")
     register.set_defaults(handler=registrar)
 
     count = subparsers.add_parser("contar")
-    count.add_argument("--maximo", type=int)
     count.set_defaults(handler=contar)
 
     args = parser.parse_args()
