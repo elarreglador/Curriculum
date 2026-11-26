@@ -95,7 +95,7 @@ repositorio.
 | `ofertas/envios.json` | índice de deduplicación (sin tope diario) |
 | `output/YYYYMMDD-nombreempresa/` | candidatura y registro de envío |
 | `ofertas/YYYYMMDD/postulacion-HHMM.md` | informe del lote |
-| `.opencode/skills/auto-apply/scripts/notificar_telegram.py` | helper que avisa por Telegram de cada oferta enviada |
+| `.opencode/skills/auto-apply/scripts/notificar_telegram.py` | helper que avisa por Telegram de ofertas enviadas, cuentas y del lote diario |
 | `SENSIBLE/telegram-postulacion.env` | chat ID de destino de los avisos, ignorado por git |
 | `SENSIBLE/credenciales.env` | credenciales de `account-signup`, ignorado por git |
 | `SENSIBLE/cuentas.json` | índice de cuentas por dominio, sin contraseñas |
@@ -147,6 +147,13 @@ python3 $T cuenta --empresa "EMPRESA" --dominio "empresa.com" \
   --estado creada --fecha "YYYY-MM-DDTHH:MM:SS+01:00"
 python3 $T cuenta --empresa "EMPRESA" --dominio "empresa.com" \
   --estado verificada --fecha "YYYY-MM-DDTHH:MM:SS+01:00"
+
+# 9. Avisos de inicio y fin del lote: los envía postular-diario.sh por su cuenta.
+python3 $T lote --estado inicio --fecha "YYYY-MM-DDTHH:MM:SS+01:00" \
+  --modo normal --log ofertas/YYYYMMDD/postulacion-HHMM.log --sonda
+python3 $T lote --estado fin --fecha "YYYY-MM-DDTHH:MM:SS+01:00" \
+  --modo normal --duracion 2530 --enviadas 15 \
+  --log ofertas/YYYYMMDD/postulacion-HHMM.log --sonda
 ```
 
 `registrar` devuelve JSON con `registrado` y `duplicado`. Un `url` repetido no
@@ -162,6 +169,23 @@ destino se resuelve en este orden: variable `TELEGRAM_CHAT_ID`, fichero ignorado
 `SENSIBLE/telegram-postulacion.env` (opción `--destino-env`) y, como último
 recurso, el chat de D-Lab. El `.env` de D-Lab no se toca: las alertas del clúster
 siguen en su conversación.
+
+### Avisos de inicio y fin del lote
+
+`postular-diario.sh` envía dos avisos de lote con el mismo helper (subcomando
+`lote`), antes de lanzar `opencode run` y después de que termine:
+
+- **Inicio:** fecha y hora, modo y ruta del log.
+- **Fin:** fecha y hora, modo, duración, envíos registrados hoy
+  (`registrar_envio.py contar`) y ruta del log. Si el lanzador terminó con un
+  código distinto de 0, se añade `Resultado: error (código N)`.
+
+Ambos son best-effort: un fallo de Telegram se escribe como JSON en el log y no
+detiene la ejecución. En `--dry-run` **sí se envían**, con la línea
+`Modo: --dry-run (modo seco, sin envíos reales)`: sirven para confirmar que cron
+disparó y que el lote terminó, sin producir candidaturas. La prohibición de
+avisar en modo seco sigue aplicando **solo** a las ofertas enviadas y a las
+cuentas.
 
 ## Flujo de interacción
 
@@ -312,7 +336,8 @@ la oferta**: solo se anota lo que no encaja y se sigue con el envío.
    ninguna respuesta; el `0` de las numéricas es la única excepción prevista.
 2. **Si es modo seco:** detente aquí. Fija el estado `bloqueada` con motivo
    «Ejecución en modo seco: no se pulsó enviar» y pasa a la siguiente. No se
-   envía ningún aviso a Telegram.
+   envía ningún aviso de candidatura a Telegram; los avisos de inicio y fin del
+   lote los gestiona el lanzador y van marcados como modo seco.
 3. Si no es modo seco, pulsa «Enviar» una sola vez y espera la pantalla de
    confirmación. Sin confirmación visible, registra `error`.
 4. Con confirmación, fija el estado `enviada` y anota la fecha y hora reales.
@@ -454,7 +479,8 @@ registros históricos, pero esta skill ya no los produce.
 La orden `opencode run --auto ... "Ejecuta la skill auto-apply en modo --dry-run"`
 o `postular-diario.sh --dry-run` recorre las ofertas, genera CV, carta, adjuntos,
 registros e informe, pero **no pulsa «Enviar»**. Ningún registro queda con estado
-`enviada`. Es la única forma de probar el flujo contra ofertas reales.
+`enviada`. Los avisos de inicio y fin del lote sí se envían, marcados como
+`--dry-run`. Es la única forma de probar el flujo contra ofertas reales.
 
 ## Crontab
 
@@ -465,7 +491,8 @@ añadir a su crontab (la skill **no la instala**) es:
 0 9 * * * /home/elarreglador/Documentos/trabajo/.opencode/skills/auto-apply/scripts/postular-diario.sh
 ```
 
-Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
+Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log` y avisa por
+Telegram al inicio y al final (sección «Avisos de inicio y fin del lote»).
 
 ## Reglas importantes
 
@@ -494,11 +521,12 @@ Cada ejecución escribe `ofertas/YYYYMMDD/postulacion-HHMM.log`.
 9. **Castellano** para CV, carta, registros e informe.
 10. **Ritmo pausado** entre formularios: el objetivo es pasar desapercibido, no
     ganar una carrera.
-11. **Aviso por oferta enviada.** El token se lee en tiempo de ejecución del
-    entorno o del fichero de D-Lab; el destino sale de
+11. **Aviso por oferta enviada y por lote.** El token se lee en tiempo de
+    ejecución del entorno o del fichero de D-Lab; el destino sale de
     `SENSIBLE/telegram-postulacion.env` (o del entorno). Nada de eso se copia al
     repo, a `output/` ni al informe. Un fallo de Telegram se anota y no detiene
-    el lote.
+    el lote. El lanzador avisa del inicio y del fin; en modo seco los avisos de
+    lote van marcados como tal.
 12. **Cuentas sin detener el lote.** Si el portal exige registro o login, invoca
     `account-signup`: un muro de registro ya no detiene el lote. Las credenciales
     viven solo en `SENSIBLE/credenciales.env`; 2FA y CAPTCHA se registran, no se

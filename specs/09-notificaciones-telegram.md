@@ -153,3 +153,40 @@ Criterios verificados:
 - [x] Resolución de credenciales: token leído de D-Lab y `chat_id=-5333087186` desde el fichero local, sin imprimir el token.
 - [x] D-Lab y su `.env` permanecen intactos: las alertas del clúster siguen en su conversación privada.
 - [x] Mensaje de prueba entregado en el grupo: `{"ok": true, "message_id": 5038}` (`verificado 2026-11-24`).
+
+---
+
+## Enmienda de 2026-11-25 — avisos de inicio y fin del lote
+
+El usuario pidió que la rutina automatizada anuncie también cuándo arranca y
+cuándo termina. Se añade un tercer subcomando al mismo helper, `lote`, y se
+engancha en `postular-diario.sh`, que es el punto real de entrada y salida del
+proceso (incluye `job-search` y `company-jobs`, no solo los envíos).
+
+- **Subcomando `lote --estado inicio|fin`:** acepta `--fecha`, `--modo
+  normal|dry-run`, `--log` y, para el fin, `--duracion` (segundos), `--enviadas`
+  (recuento de hoy) y `--codigo` (salida del lanzador). Comparte credenciales,
+  destino, truncado y salida JSON con `oferta` y `cuenta`.
+- **Mensaje de inicio:** `🚀 Postulación diaria iniciada — <fecha>`, modo y log.
+- **Mensaje de fin:** `✅ Postulación diaria terminada — <fecha>`, modo, duración,
+  `Envíos registrados hoy: N` (solo si hay número) y log. Si el lanzador acabó
+  con código distinto de 0, se añade `Resultado: error (código N)`; así el aviso
+  de fin llega incluso cuando `opencode run` falla.
+- **Modo seco:** los avisos de lote **sí se envían** en `--dry-run`, con la línea
+  `Modo: --dry-run (modo seco, sin envíos reales)`. La regla original de no
+  avisar en modo seco sigue vigente para ofertas y cuentas.
+- **Best-effort:** cada llamada escribe su JSON en `postulacion-HHMM.log`; un
+  fallo de Telegram nunca impide iniciar ni terminar el lote. El recuento de
+  envíos se toma de `registrar_envio.py contar` (`enviadas_hoy`); si no se puede
+  leer, la línea se omite en lugar de inventar un `0`.
+
+Criterios verificados el 2026-11-25 con `--sonda` (sin red) y una copia del
+lanzador con `opencode run` sustituido por un stub:
+
+- [x] `lote --estado inicio` imprime fecha, modo y log.
+- [x] `lote --estado fin` imprime duración legible, envíos de hoy y log.
+- [x] `--modo dry-run` marca ambos mensajes como modo seco.
+- [x] `--codigo 7` añade `Resultado: error (código 7)` al mensaje de fin.
+- [x] El lanzador envía los dos avisos y sigue aunque falle la ejecución o el
+      propio aviso; el JSON queda registrado en el log.
+- [x] `notificar_telegram.py` compila y `postular-diario.sh` pasa `bash -n`.

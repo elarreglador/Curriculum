@@ -86,6 +86,11 @@ A=.opencode/skills/auto-apply/scripts
 $A/postular-diario.sh             # envío real
 $A/postular-diario.sh --dry-run   # prueba sin pulsar «Enviar»
 
+# Ambos avisan por Telegram al inicio y al fin; en --dry-run van marcados como tal.
+# Para ver el mensaje sin enviarlo:
+python3 $A/notificar_telegram.py lote --estado fin --fecha 2026-11-25T09:42:11+01:00 \
+  --modo normal --duracion 2530 --enviadas 15 --log ofertas/20261125/postulacion-0900.log --sonda
+
 # Gestión del índice de envíos
 python3 $A/registrar_envio.py contar
 python3 $A/registrar_envio.py registrar --empresa "X" --puesto "Y" \

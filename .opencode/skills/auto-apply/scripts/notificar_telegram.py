@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aviso por Telegram de candidaturas enviadas y de cuentas de empresa.
+"""Aviso por Telegram de candidaturas, cuentas y del lote diario.
 
 Envía un resumen breve a través de la API pública de Telegram con el bot de
 D-Lab. El token se lee en tiempo de ejecución del entorno o del fichero
@@ -104,6 +104,34 @@ def formatear_mensaje_cuenta(datos: argparse.Namespace) -> str:
     return truncar("\n".join(lineas))
 
 
+def formatear_duracion(segundos: int) -> str:
+    """Duración legible del lote; los segundos llegan como entero del lanzador."""
+    segundos = max(0, segundos)
+    horas, resto = divmod(segundos, 3600)
+    minutos, segundos = divmod(resto, 60)
+    if horas:
+        return f"{horas} h {minutos} min"
+    if minutos:
+        return f"{minutos} min {segundos} s"
+    return f"{segundos} s"
+
+
+def formatear_mensaje_lote(datos: argparse.Namespace) -> str:
+    """Aviso de inicio o fin de la rutina; el modo seco queda siempre marcado."""
+    modo = "--dry-run (modo seco, sin envíos reales)" if datos.modo == "dry-run" else "normal"
+    titulo = "🚀 Postulación diaria iniciada" if datos.estado == "inicio" else "✅ Postulación diaria terminada"
+    lineas = [f"{titulo} — {datos.fecha}", f"Modo: {modo}"]
+    if datos.codigo:
+        lineas.append(f"Resultado: error (código {datos.codigo})")
+    if datos.estado == "fin":
+        lineas.append(f"Duración: {formatear_duracion(datos.duracion)}")
+        if datos.enviadas:
+            lineas.append(f"Envíos registrados hoy: {datos.enviadas}")
+    if datos.log:
+        lineas.append(f"Log: {datos.log}")
+    return truncar("\n".join(lineas))
+
+
 def enviar(texto: str, token: str, chat_id: str) -> dict:
     url = f"{API_TELEGRAM}/bot{token}/sendMessage"
     cuerpo = json.dumps(
@@ -156,6 +184,18 @@ def main() -> int:
     oferta.add_argument("--destino-env", type=Path, default=argparse.SUPPRESS)
     oferta.add_argument("--sonda", action="store_true", default=argparse.SUPPRESS)
 
+    lote = subparsers.add_parser("lote", help="aviso de inicio o fin de la rutina diaria")
+    lote.add_argument("--estado", required=True, choices=["inicio", "fin"])
+    lote.add_argument("--fecha", required=True, help="ISO 8601; inicio o fin del lote")
+    lote.add_argument("--modo", default="normal", choices=["normal", "dry-run"])
+    lote.add_argument("--duracion", type=int, default=0, help="segundos; solo en el aviso de fin")
+    lote.add_argument("--enviadas", default="", help="envíos registrados hoy; solo en el aviso de fin")
+    lote.add_argument("--log", default="", help="ruta del log de la ejecución")
+    lote.add_argument("--codigo", type=int, default=0, help="código de salida del lanzador; 0 si terminó bien")
+    lote.add_argument("--env", type=Path, default=argparse.SUPPRESS)
+    lote.add_argument("--destino-env", type=Path, default=argparse.SUPPRESS)
+    lote.add_argument("--sonda", action="store_true", default=argparse.SUPPRESS)
+
     cuenta = subparsers.add_parser("cuenta", help="aviso de alta o verificación de cuenta")
     cuenta.add_argument("--empresa", required=True)
     cuenta.add_argument("--dominio", required=True)
@@ -171,7 +211,12 @@ def main() -> int:
     cuenta.add_argument("--sonda", action="store_true", default=argparse.SUPPRESS)
 
     args = parser.parse_args()
-    texto = formatear_mensaje_cuenta(args) if args.command == "cuenta" else formatear_mensaje(args)
+    if args.command == "cuenta":
+        texto = formatear_mensaje_cuenta(args)
+    elif args.command == "lote":
+        texto = formatear_mensaje_lote(args)
+    else:
+        texto = formatear_mensaje(args)
     if args.sonda:
         print(json.dumps({"sonda": True, "texto": texto}, ensure_ascii=False))
         return 0

@@ -20,6 +20,7 @@
 | --- | --- | --- |
 | Experiencia como desarrollador | 18 meses | sources/curriculum-base.md |
 | Experiencia con linux (usuario) | desde 1995 | el usuario lo indica 2026-11-25 |
+| conocimiento de redes avanzado | | el usuario lo indica 2026-11-25 |
 | Experiencia total en hardware e infraestructura | Más de 20 años | sources/curriculum-base.md |
 | Experiencia profesional gestionando infraestructuras en AWS y GCP | 0 años | Decisión del usuario, 2026-11-25 |
 | Salario pretendido | 24000-30000 EUR anuales según oferta | Decisión del usuario, 2026-11-24 |
